@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --green: #2D6A4F;
+  --green-light: #52B788;
+  --green-pale: #D8F3DC;
+  --earth: #8B5E3C;
+  --earth-light: #C8956C;
+  --cream: #FEFAE0;
+  --cream-dark: #F5EFC7;
+  --charcoal: #1A1A1A;
+  --gray: #6B7280;
+  --gray-light: #F3F4F6;
+  --white: #FFFFFF;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body {
+  background: #FAFAF8;
+  color: var(--charcoal);
+  line-height: 1.6;
+}
+
+@layer components {
+  .btn {
+    @apply px-5 py-2.5 rounded-tiny-sm text-sm font-semibold transition-all inline-flex items-center gap-2;
+  }
+  .btn-primary {
+    @apply bg-green text-white hover:bg-[#225C3E];
+  }
+  .btn-outline {
+    @apply border-2 border-green text-green hover:bg-green-pale bg-transparent;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-tiny;
+  }
+}

@@ -1,0 +1,328 @@
+0 verbose cli /Users/mustakimshaikh/.nvm/versions/node/v20.20.0/bin/node /Users/mustakimshaikh/.nvm/versions/node/v20.20.0/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.20.0
+3 silly config load:file:/Users/mustakimshaikh/.nvm/versions/node/v20.20.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/.npmrc
+5 silly config load:file:/Users/mustakimshaikh/.npmrc
+6 warn config optional Use `--omit=optional` to exclude optional dependencies, or
+6 warn config `--include=optional` to include them.
+6 warn config
+6 warn config       Default value does install optional deps unless otherwise omitted.
+7 silly config load:file:/Users/mustakimshaikh/.nvm/versions/node/v20.20.0/etc/npmrc
+8 verbose title npm install tailwindcss postcss autoprefixer
+9 verbose argv "install" "tailwindcss" "postcss" "autoprefixer" "--cache" "./.npm_cache"
+10 verbose logfile logs-max:10 dir:/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/.npm_cache/_logs/2026-03-19T04_18_08_373Z-
+11 verbose logfile /Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/.npm_cache/_logs/2026-03-19T04_18_08_373Z-debug-0.log
+12 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 silly fetch manifest tailwindcss@*
+16 silly packumentCache full:https://registry.npmmirror.com/tailwindcss cache-miss
+17 http fetch GET 200 https://registry.npmmirror.com/tailwindcss 552ms (cache miss)
+18 silly packumentCache full:https://registry.npmmirror.com/tailwindcss set size:1617894 disposed:false
+19 silly fetch manifest postcss@*
+20 silly packumentCache full:https://registry.npmmirror.com/postcss cache-miss
+21 http fetch GET 200 https://registry.npmmirror.com/postcss 7ms (cache hit)
+22 silly packumentCache full:https://registry.npmmirror.com/postcss set size:618007 disposed:false
+23 silly fetch manifest autoprefixer@*
+24 silly packumentCache full:https://registry.npmmirror.com/autoprefixer cache-miss
+25 http fetch GET 200 https://registry.npmmirror.com/autoprefixer 468ms (cache miss)
+26 silly packumentCache full:https://registry.npmmirror.com/autoprefixer set size:134016 disposed:false
+27 silly placeDep ROOT autoprefixer@10.4.27 OK for: tiny-nest-app@1.0.0 want: *
+28 silly placeDep ROOT postcss@8.5.8 REPLACE for: tiny-nest-app@1.0.0 want: *
+29 silly placeDep ROOT tailwindcss@4.2.2 OK for: tiny-nest-app@1.0.0 want: *
+30 silly fetch manifest browserslist@^4.28.1
+31 silly packumentCache full:https://registry.npmmirror.com/browserslist cache-miss
+32 silly fetch manifest fraction.js@^5.3.4
+33 silly packumentCache full:https://registry.npmmirror.com/fraction.js cache-miss
+34 silly fetch manifest postcss-value-parser@^4.2.0
+35 silly packumentCache full:https://registry.npmmirror.com/postcss-value-parser cache-miss
+36 http fetch GET 200 https://registry.npmmirror.com/browserslist 52ms (cache miss)
+37 silly packumentCache full:https://registry.npmmirror.com/browserslist set size:74370 disposed:false
+38 http fetch GET 200 https://registry.npmmirror.com/postcss-value-parser 566ms (cache miss)
+39 silly packumentCache full:https://registry.npmmirror.com/postcss-value-parser set size:14091 disposed:false
+40 http fetch GET 200 https://registry.npmmirror.com/fraction.js 592ms (cache miss)
+41 silly packumentCache full:https://registry.npmmirror.com/fraction.js set size:31162 disposed:false
+42 silly placeDep ROOT browserslist@4.28.1 OK for: autoprefixer@10.4.27 want: ^4.28.1
+43 silly placeDep ROOT fraction.js@5.3.4 OK for: autoprefixer@10.4.27 want: ^5.3.4
+44 silly placeDep ROOT postcss-value-parser@4.2.0 OK for: autoprefixer@10.4.27 want: ^4.2.0
+45 silly fetch manifest electron-to-chromium@^1.5.263
+46 silly packumentCache full:https://registry.npmmirror.com/electron-to-chromium cache-miss
+47 silly fetch manifest node-releases@^2.0.27
+48 silly packumentCache full:https://registry.npmmirror.com/node-releases cache-miss
+49 silly fetch manifest update-browserslist-db@^1.2.0
+50 silly packumentCache full:https://registry.npmmirror.com/update-browserslist-db cache-miss
+51 http fetch GET 200 https://registry.npmmirror.com/update-browserslist-db 67ms (cache miss)
+52 silly packumentCache full:https://registry.npmmirror.com/update-browserslist-db set size:17723 disposed:false
+53 http fetch GET 200 https://registry.npmmirror.com/node-releases 88ms (cache miss)
+54 silly packumentCache full:https://registry.npmmirror.com/node-releases set size:37836 disposed:false
+55 http fetch GET 200 https://registry.npmmirror.com/electron-to-chromium 126ms (cache miss)
+56 silly packumentCache full:https://registry.npmmirror.com/electron-to-chromium set size:801719 disposed:false
+57 silly fetch manifest browserslist@>= 4.21.0
+58 silly packumentCache full:https://registry.npmmirror.com/browserslist cache-hit
+59 silly placeDep ROOT electron-to-chromium@1.5.321 OK for: browserslist@4.28.1 want: ^1.5.263
+60 silly placeDep ROOT node-releases@2.0.36 OK for: browserslist@4.28.1 want: ^2.0.27
+61 silly placeDep ROOT update-browserslist-db@1.2.3 OK for: browserslist@4.28.1 want: ^1.2.0
+62 silly fetch manifest escalade@^3.2.0
+63 silly packumentCache full:https://registry.npmmirror.com/escalade cache-miss
+64 http fetch GET 200 https://registry.npmmirror.com/escalade 66ms (cache miss)
+65 silly packumentCache full:https://registry.npmmirror.com/escalade set size:6820 disposed:false
+66 silly fetch manifest postcss@8.4.31
+67 silly packumentCache full:https://registry.npmmirror.com/postcss cache-hit
+68 silly placeDep node_modules/next postcss@8.4.31 OK for: next@16.2.0 want: 8.4.31
+69 silly placeDep ROOT escalade@3.2.0 OK for: update-browserslist-db@1.2.3 want: ^3.2.0
+70 silly reify mark retired [
+70 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/postcss'
+70 silly reify ]
+71 silly reify moves {
+71 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/postcss': '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/.postcss-4qSj3QlO'
+71 silly reify }
+72 silly reify mark deleted [
+72 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@emnapi/runtime'
+72 silly reify ]
+73 silly reify mark deleted [
+73 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/colour'
+73 silly reify ]
+74 silly reify mark deleted [
+74 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-darwin-arm64'
+74 silly reify ]
+75 silly reify mark deleted [
+75 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-darwin-x64'
+75 silly reify ]
+76 silly reify mark deleted [
+76 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-darwin-arm64'
+76 silly reify ]
+77 silly reify mark deleted [
+77 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-darwin-x64'
+77 silly reify ]
+78 silly reify mark deleted [
+78 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linux-arm'
+78 silly reify ]
+79 silly reify mark deleted [
+79 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linux-arm64'
+79 silly reify ]
+80 silly reify mark deleted [
+80 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linux-ppc64'
+80 silly reify ]
+81 silly reify mark deleted [
+81 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linux-riscv64'
+81 silly reify ]
+82 silly reify mark deleted [
+82 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linux-s390x'
+82 silly reify ]
+83 silly reify mark deleted [
+83 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linux-x64'
+83 silly reify ]
+84 silly reify mark deleted [
+84 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linuxmusl-arm64'
+84 silly reify ]
+85 silly reify mark deleted [
+85 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-libvips-linuxmusl-x64'
+85 silly reify ]
+86 silly reify mark deleted [
+86 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linux-arm'
+86 silly reify ]
+87 silly reify mark deleted [
+87 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linux-arm64'
+87 silly reify ]
+88 silly reify mark deleted [
+88 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linux-ppc64'
+88 silly reify ]
+89 silly reify mark deleted [
+89 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linux-riscv64'
+89 silly reify ]
+90 silly reify mark deleted [
+90 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linux-s390x'
+90 silly reify ]
+91 silly reify mark deleted [
+91 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linux-x64'
+91 silly reify ]
+92 silly reify mark deleted [
+92 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linuxmusl-arm64'
+92 silly reify ]
+93 silly reify mark deleted [
+93 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-linuxmusl-x64'
+93 silly reify ]
+94 silly reify mark deleted [
+94 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-wasm32'
+94 silly reify ]
+95 silly reify mark deleted [
+95 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-win32-arm64'
+95 silly reify ]
+96 silly reify mark deleted [
+96 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-win32-ia32'
+96 silly reify ]
+97 silly reify mark deleted [
+97 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@img/sharp-win32-x64'
+97 silly reify ]
+98 silly reify mark deleted [
+98 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-darwin-arm64'
+98 silly reify ]
+99 silly reify mark deleted [
+99 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-darwin-x64'
+99 silly reify ]
+100 silly reify mark deleted [
+100 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-linux-arm64-gnu'
+100 silly reify ]
+101 silly reify mark deleted [
+101 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-linux-arm64-musl'
+101 silly reify ]
+102 silly reify mark deleted [
+102 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-linux-x64-gnu'
+102 silly reify ]
+103 silly reify mark deleted [
+103 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-linux-x64-musl'
+103 silly reify ]
+104 silly reify mark deleted [
+104 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-win32-arm64-msvc'
+104 silly reify ]
+105 silly reify mark deleted [
+105 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/@next/swc-win32-x64-msvc'
+105 silly reify ]
+106 silly reify mark deleted [
+106 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/detect-libc'
+106 silly reify ]
+107 silly reify mark deleted [
+107 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/semver',
+107 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/.bin/semver'
+107 silly reify ]
+108 silly reify mark deleted [
+108 silly reify   '/Users/mustakimshaikh/Downloads/code_front/tiny-nest-app/node_modules/sharp'
+108 silly reify ]
+109 silly audit bulk request {
+109 silly audit   '@next/env': [ '16.2.0' ],
+109 silly audit   '@swc/helpers': [ '0.5.15' ],
+109 silly audit   'baseline-browser-mapping': [ '2.10.8' ],
+109 silly audit   'caniuse-lite': [ '1.0.30001780' ],
+109 silly audit   'client-only': [ '0.0.1' ],
+109 silly audit   clsx: [ '2.1.1' ],
+109 silly audit   jose: [ '6.2.2' ],
+109 silly audit   lowdb: [ '7.0.1' ],
+109 silly audit   'lucide-react': [ '0.577.0' ],
+109 silly audit   nanoid: [ '3.3.11' ],
+109 silly audit   next: [ '16.2.0' ],
+109 silly audit   picocolors: [ '1.1.1' ],
+109 silly audit   react: [ '19.2.4' ],
+109 silly audit   'react-dom': [ '19.2.4' ],
+109 silly audit   scheduler: [ '0.27.0' ],
+109 silly audit   'source-map-js': [ '1.2.1' ],
+109 silly audit   steno: [ '4.0.2' ],
+109 silly audit   'styled-jsx': [ '5.1.6' ],
+109 silly audit   'tailwind-merge': [ '3.5.0' ],
+109 silly audit   tslib: [ '2.8.1' ],
+109 silly audit   autoprefixer: [ '10.4.27' ],
+109 silly audit   postcss: [ '8.5.8', '8.4.31' ],
+109 silly audit   tailwindcss: [ '4.2.2' ],
+109 silly audit   browserslist: [ '4.28.1' ],
+109 silly audit   'fraction.js': [ '5.3.4' ],
+109 silly audit   'postcss-value-parser': [ '4.2.0' ],
+109 silly audit   'electron-to-chromium': [ '1.5.321' ],
+109 silly audit   'node-releases': [ '2.0.36' ],
+109 silly audit   'update-browserslist-db': [ '1.2.3' ],
+109 silly audit   escalade: [ '3.2.0' ]
+109 silly audit }
+110 silly tarball no local data for escalade@https://registry.npmmirror.com/escalade/-/escalade-3.2.0.tgz. Extracting by manifest.
+111 silly tarball no local data for update-browserslist-db@https://registry.npmmirror.com/update-browserslist-db/-/update-browserslist-db-1.2.3.tgz. Extracting by manifest.
+112 silly tarball no local data for electron-to-chromium@https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.5.321.tgz. Extracting by manifest.
+113 silly tarball no local data for node-releases@https://registry.npmmirror.com/node-releases/-/node-releases-2.0.36.tgz. Extracting by manifest.
+114 silly tarball no local data for postcss-value-parser@https://registry.npmmirror.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz. Extracting by manifest.
+115 silly tarball no local data for fraction.js@https://registry.npmmirror.com/fraction.js/-/fraction.js-5.3.4.tgz. Extracting by manifest.
+116 silly tarball no local data for browserslist@https://registry.npmmirror.com/browserslist/-/browserslist-4.28.1.tgz. Extracting by manifest.
+117 silly tarball no local data for tailwindcss@https://registry.npmmirror.com/tailwindcss/-/tailwindcss-4.2.2.tgz. Extracting by manifest.
+118 silly tarball no local data for autoprefixer@https://registry.npmmirror.com/autoprefixer/-/autoprefixer-10.4.27.tgz. Extracting by manifest.
+119 silly tarball no local data for postcss@https://registry.npmmirror.com/postcss/-/postcss-8.5.8.tgz. Extracting by manifest.
+120 http fetch POST 404 https://registry.npmmirror.com/-/npm/v1/security/advisories/bulk 48ms
+121 silly audit bulk request failed [object Object]
+122 http fetch POST 404 https://registry.npmmirror.com/-/npm/v1/security/audits/quick 37ms
+123 verbose audit error HttpErrorGeneral: 404 Not Found - POST https://registry.npmmirror.com/-/npm/v1/security/audits/quick - [NOT_IMPLEMENTED] /-/npm/v1/security/* not implemented yet
+123 verbose audit error     at /Users/mustakimshaikh/.nvm/versions/node/v20.20.0/lib/node_modules/npm/node_modules/npm-registry-fetch/lib/check-response.js:95:15
+123 verbose audit error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+123 verbose audit error     at async [getReport] (/Users/mustakimshaikh/.nvm/versions/node/v20.20.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/audit-report.js:336:21)
+123 verbose audit error     at async AuditReport.run (/Users/mustakimshaikh/.nvm/versions/node/v20.20.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/audit-report.js:106:19) {
+123 verbose audit error   headers: [Object: null prototype] {
+123 verbose audit error     server: [ 'Tengine' ],
+123 verbose audit error     date: [ 'Thu, 19 Mar 2026 04:18:10 GMT' ],
+123 verbose audit error     'content-type': [ 'application/json' ],
+123 verbose audit error     'transfer-encoding': [ 'chunked' ],
+123 verbose audit error     connection: [ 'keep-alive' ],
+123 verbose audit error     'strict-transport-security': [ 'max-age=5184000' ],
+123 verbose audit error     via: [ 'cache4.in9[,404666]' ],
+123 verbose audit error     'timing-allow-origin': [ '*' ],
+123 verbose audit error     eagleid: [ '81e3ce9817738938905894187e' ],
+123 verbose audit error     'x-fetch-attempts': [ '1' ]
+123 verbose audit error   },
+123 verbose audit error   statusCode: 404,
+123 verbose audit error   code: 'E404',
+123 verbose audit error   method: 'POST',
+123 verbose audit error   uri: 'https://registry.npmmirror.com/-/npm/v1/security/audits/quick',
+123 verbose audit error   body: {
+123 verbose audit error     error: '[NOT_IMPLEMENTED] /-/npm/v1/security/* not implemented yet'
+123 verbose audit error   },
+123 verbose audit error   pkgid: undefined
+123 verbose audit error }
+124 silly audit error [object Object]
+125 silly audit report null
+126 http fetch GET 200 https://cdn.npmmirror.com/packages/update-browserslist-db/1.2.3/update-browserslist-db-1.2.3.tgz 608ms (cache miss)
+127 http fetch GET 200 https://cdn.npmmirror.com/packages/escalade/3.2.0/escalade-3.2.0.tgz 609ms (cache miss)
+128 http fetch GET 200 https://cdn.npmmirror.com/packages/postcss-value-parser/4.2.0/postcss-value-parser-4.2.0.tgz 692ms (cache miss)
+129 http fetch GET 200 https://cdn.npmmirror.com/packages/electron-to-chromium/1.5.321/electron-to-chromium-1.5.321.tgz 706ms (cache miss)
+130 http fetch GET 200 https://cdn.npmmirror.com/packages/fraction.js/5.3.4/fraction.js-5.3.4.tgz 744ms (cache miss)
+131 http fetch GET 200 https://cdn.npmmirror.com/packages/browserslist/4.28.1/browserslist-4.28.1.tgz 756ms (cache miss)
+132 http fetch GET 200 https://cdn.npmmirror.com/packages/node-releases/2.0.36/node-releases-2.0.36.tgz 764ms (cache miss)
+133 http fetch GET 200 https://cdn.npmmirror.com/packages/postcss/8.5.8/postcss-8.5.8.tgz 782ms (cache miss)
+134 http fetch GET 200 https://cdn.npmmirror.com/packages/tailwindcss/4.2.2/tailwindcss-4.2.2.tgz 803ms (cache miss)
+135 http fetch GET 200 https://cdn.npmmirror.com/packages/autoprefixer/10.4.27/autoprefixer-10.4.27.tgz 817ms (cache miss)
+136 silly ADD node_modules/escalade
+137 silly ADD node_modules/update-browserslist-db
+138 silly ADD node_modules/node-releases
+139 silly ADD node_modules/electron-to-chromium
+140 silly ADD node_modules/postcss-value-parser
+141 silly ADD node_modules/fraction.js
+142 silly ADD node_modules/browserslist
+143 silly ADD node_modules/tailwindcss
+144 silly ADD node_modules/autoprefixer
+145 silly ADD
+146 silly ADD
+147 silly ADD
+148 silly ADD
+149 silly ADD
+150 silly ADD
+151 silly ADD
+152 silly ADD
+153 silly ADD
+154 silly ADD
+155 silly ADD
+156 silly ADD
+157 silly ADD
+158 silly ADD
+159 silly ADD
+160 silly ADD
+161 silly ADD
+162 silly ADD
+163 silly ADD
+164 silly ADD
+165 silly ADD
+166 silly ADD
+167 silly ADD
+168 silly ADD
+169 silly ADD
+170 silly ADD
+171 silly ADD
+172 silly ADD
+173 silly ADD
+174 silly ADD
+175 silly ADD
+176 silly ADD
+177 silly ADD
+178 silly ADD
+179 silly ADD
+180 silly ADD
+181 silly ADD
+182 silly CHANGE node_modules/postcss
+183 silly ADD node_modules/next/node_modules/postcss
+184 verbose cwd /Users/mustakimshaikh/Downloads/code_front/tiny-nest-app
+185 verbose os Darwin 25.3.0
+186 verbose node v20.20.0
+187 verbose npm  v10.8.2
+188 verbose exit 0
+189 info ok
