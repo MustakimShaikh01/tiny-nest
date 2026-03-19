@@ -4,7 +4,7 @@ import { decrypt } from '../../../lib/auth';
 import { cookies } from 'next/headers';
 
 export async function GET() {
-  const db = getDb();
+  const db = await getDb();
   return NextResponse.json({ blogs: db.blogs });
 }
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const user = payload.user;
     
     const data = await request.json();
-    const db = getDb();
+    const db = await getDb();
     
     const newBlog = {
       ...data,
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     };
     
     db.blogs.push(newBlog);
-    saveDb(db);
+    await saveDb(db);
     
     return NextResponse.json({ blog: newBlog });
   } catch (error) {

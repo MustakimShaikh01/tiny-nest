@@ -4,7 +4,7 @@ import { decrypt } from '../../../../lib/auth';
 import { cookies } from 'next/headers';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const db = getDb();
+  const db = await getDb();
   const listing = db.listings.find((l: any) => l.id === params.id);
   if (!listing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
   return NextResponse.json({ listing });
@@ -19,7 +19,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const payload = await decrypt(sessionToken.value);
     const user = payload.user;
 
-    const db = getDb();
+    const db = await getDb();
     const listingIndex = db.listings.findIndex((l: any) => l.id === params.id);
     
     if (listingIndex === -1) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
@@ -37,7 +37,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       updatedAt: new Date().toISOString()
     };
     
-    saveDb(db);
+    await saveDb(db);
     
     return NextResponse.json({ listing: db.listings[listingIndex] });
   } catch (error) {
