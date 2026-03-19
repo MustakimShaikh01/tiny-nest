@@ -76,23 +76,29 @@ export default function SignupPage() {
           <p className="text-gray-500 font-medium mb-10">Already have an account? <Link href="/login" className="text-green font-bold hover:underline">Sign in instead</Link></p>
 
           <form onSubmit={handleSignup} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-3 gap-4 mb-8">
               <button 
                 type="button" 
                 onClick={() => setRole('buyer')}
-                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-xs uppercase tracking-widest text-center ${role === 'buyer' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
+                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-[10px] uppercase tracking-widest text-center ${role === 'buyer' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
               >
-                I want to Buy/Rent
+                Buyer
               </button>
               <button 
                 type="button" 
                 onClick={() => setRole('seller')}
-                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-xs uppercase tracking-widest text-center ${role === 'seller' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
+                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-[10px] uppercase tracking-widest text-center ${role === 'seller' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
               >
-                I want to Sell
+                Seller
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setRole('admin')}
+                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-[10px] uppercase tracking-widest text-center ${role === 'admin' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
+              >
+                Admin
               </button>
             </div>
-
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Full Name</label>
               <div className="relative flex items-center">

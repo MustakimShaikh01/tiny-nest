@@ -7,10 +7,12 @@ import { getSession } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 import Link from 'next/link';
 import { Search, MapPin, Tag, SlidersHorizontal, ArrowUpDown, Loader2 } from 'lucide-react';
+import path from 'path';
 
 async function getListings(searchParams: any) {
   const db = getDb();
-  let listings = db.listings.filter((l: any) => l.status === 'approved');
+  
+  let listings = (db.listings || []).filter((l: any) => l.status === 'approved');
   
   if (searchParams.type && searchParams.type !== 'all') {
     listings = listings.filter((l: any) => l.type === searchParams.type);

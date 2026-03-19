@@ -5,14 +5,42 @@ import Link from 'next/link';
 import { Heart, MapPin, Ruler, Bed, ShowerHead, Eye, MessageSquare, Plus } from 'lucide-react';
 
 export function ListingCard({ listing, showActions = false, onApprove, onReject }: { listing: any; showActions?: boolean; onApprove?: () => void; onReject?: () => void }) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+      return favorites.includes(listing.id);
+    }
+    return false;
+  });
+  
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+    let updated;
+    if (isFavorite) {
+      updated = favorites.filter((id: string) => id !== listing.id);
+    } else {
+      updated = [...favorites, listing.id];
+    }
+    localStorage.setItem('tinynest_favorites', JSON.stringify(updated));
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/listings/${listing.id}`;
+    navigator.clipboard.writeText(url);
+    alert('Listing URL copied to clipboard! Share the tiny living joy.');
+  };
   
   const isImageUrl = listing.img && (listing.img.startsWith('http') || listing.img.startsWith('/'));
 
   return (
     <div className="group bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all duration-300 relative overflow-hidden flex flex-col">
-      <Link href={`/listings/${listing.id}`} className="relative h-64 overflow-hidden block">
-        <div className="absolute inset-0 bg-gray-100 transition-colors duration-500 flex items-center justify-center">
+      <div className="relative h-64 overflow-hidden block">
+        <Link href={`/listings/${listing.id}`} className="absolute inset-0 bg-gray-100 transition-colors duration-500 flex items-center justify-center">
            {isImageUrl ? (
              <img 
                src={listing.img} 
@@ -24,9 +52,9 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
                {listing.img || '🏠'}
              </span>
            )}
-        </div>
+        </Link>
         
-        <div className="absolute top-4 left-4 flex gap-2">
+        <div className="absolute top-4 left-4 flex gap-2 pointer-events-none">
            <span className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-2xl backdrop-blur-md ${listing.type === 'sale' ? 'bg-green/90' : 'bg-earth/90'}`}>
              {listing.type === 'sale' ? 'For Sale' : 'For Rent'}
            </span>
@@ -37,23 +65,29 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
            )}
         </div>
 
-        <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-500">
+        <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-500 z-10">
           <button 
-            onClick={(e) => { e.preventDefault(); setIsFavorite(!isFavorite); }}
+            onClick={toggleFavorite}
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl border border-white/20 ${isFavorite ? 'bg-red-500 text-white' : 'bg-white/90 backdrop-blur-md text-charcoal hover:bg-white'}`}
           >
             <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
           </button>
           
+          <button 
+            onClick={handleShare}
+            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-green hover:bg-green hover:text-white flex items-center justify-center transition-all duration-300 shadow-xl border border-white/20"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+          
           <Link 
             href={`/messages?to=${listing.seller}&listingId=${listing.id}&title=${encodeURIComponent(listing.title)}`}
-            onClick={(e) => e.stopPropagation()}
             className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-green hover:bg-green hover:text-white flex items-center justify-center transition-all duration-300 shadow-xl border border-white/20"
           >
             <MessageSquare className="w-4 h-4" />
           </Link>
         </div>
-      </Link>
+      </div>
 
       <div className="p-6 flex-1 flex flex-col">
         <div className="mb-6">

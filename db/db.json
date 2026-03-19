@@ -159,6 +159,35 @@
       "views": 156,
       "favorites": 12,
       "createdAt": "2026-03-05T16:45:00Z"
+    },
+    {
+      "title": "test",
+      "price": 2344,
+      "type": "sale",
+      "sqft": 1234,
+      "beds": 2,
+      "baths": 3,
+      "year": 2020,
+      "description": "test",
+      "location": "test",
+      "amenities": [
+        "Solar Power",
+        "Modern Kitchen",
+        "High Ceilings",
+        "Wood Finish"
+      ],
+      "img": "/uploads/9dmb77sig-ChatGPT-Image-Mar-18,-2026,-02_04_19-AM.png",
+      "images": [
+        "/uploads/9dmb77sig-ChatGPT-Image-Mar-18,-2026,-02_04_19-AM.png",
+        "/uploads/kjv0b0gow-ChatGPT-Image-Mar-18,-2026,-02_05_33-AM.png"
+      ],
+      "id": "kw9anevfj",
+      "status": "pending",
+      "views": 0,
+      "favorites": 0,
+      "seller": "test@autoify.com",
+      "sellerName": "mutskaim",
+      "createdAt": "2026-03-19T05:42:53.481Z"
     }
   ],
   "blogs": [
