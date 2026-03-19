@@ -9,14 +9,14 @@ import Link from 'next/link';
 import { ArrowRight, Star, ShieldCheck, MapPin } from 'lucide-react';
 
 async function getListings() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/listings?status=approved`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/listings?status=approved`, { cache: 'no-store' });
   if (!res.ok) return [];
   const data = await res.json();
   return data.listings.slice(0, 3);
 }
 
 async function getBlogs() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/blogs`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs`, { cache: 'no-store' });
   if (!res.ok) return [];
   const data = await res.json();
   return data.blogs.slice(0, 3);

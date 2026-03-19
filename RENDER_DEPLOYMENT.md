@@ -26,7 +26,7 @@ If you prefer not to use Blueprints, follow these steps:
 ### B. Add Environment Variables
 Add these in the **Environment** tab:
 - `NODE_ENV`: `production`
-- `NEXT_PUBLIC_API_URL`: Your actual URL (e.g., `https://tiny-nest.onrender.com`)
+- `NEXT_PUBLIC_BASE_URL`: Your actual URL (e.g., `https://tiny-nest.onrender.com`)
 
 ### C. Add Persistent Disks
 Add these in the **Disks** tab:

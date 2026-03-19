@@ -6,7 +6,7 @@ import { Plus, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
 
 async function getBlogs() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/blogs`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs`, { cache: 'no-store' });
   if (!res.ok) return [];
   const data = await res.json();
   return data.blogs;
