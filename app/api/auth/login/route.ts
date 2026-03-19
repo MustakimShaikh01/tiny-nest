@@ -5,8 +5,9 @@ import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
-    const { email: rawEmail, password } = await request.json();
+    const { email: rawEmail, password: rawPassword } = await request.json();
     const email = rawEmail.trim().toLowerCase();
+    const password = rawPassword.trim();
     const db = getDb();
     
     console.log('Login attempt:', email);

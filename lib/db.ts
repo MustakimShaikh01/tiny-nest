@@ -3,12 +3,15 @@ import path from 'path';
 
 import { initialData } from './initialData';
 
+console.log('--- DB MODULE LOADED. CWD:', process.cwd());
+console.log('--- NODE_ENV:', process.env.NODE_ENV);
+
 // On Render, we use a different path for the persistent disk. Locally, we use the root 'db' folder.
 const DB_DIR = process.env.NODE_ENV === 'production' 
   ? '/opt/render/project/src/storage/db' 
-  : path.join(process.cwd(), 'db');
+  : path.resolve(process.cwd(), 'db');
 
-const DB_PATH = path.join(DB_DIR, 'db.json');
+const DB_PATH = path.resolve(DB_DIR, 'db.json');
 
 // Ensure directory exists
 if (!fs.existsSync(DB_DIR)) {
@@ -28,8 +31,21 @@ if (!fs.existsSync(DB_PATH) || fs.readFileSync(DB_PATH, 'utf-8').trim() === '' |
 }
 
 export function getDb() {
+  console.log('--- ATTEMPTING TO READ DB AT:', DB_PATH);
+  if (!fs.existsSync(DB_PATH)) {
+    console.error('--- DB FILE NOT FOUND AT:', DB_PATH);
+    return { users: [], listings: [], blogs: [], messages: [] };
+  }
   const data = fs.readFileSync(DB_PATH, 'utf-8');
-  return JSON.parse(data);
+  console.log('--- DB DATA LENGTH:', data.length);
+  try {
+    const parsed = JSON.parse(data);
+    console.log('--- DB PARSED LISTINGS:', parsed.listings?.length);
+    return parsed;
+  } catch (err) {
+    console.error('--- DB JSON PARSE ERROR:', err);
+    return { users: [], listings: [], blogs: [], messages: [] };
+  }
 }
 
 export function saveDb(data: any) {
