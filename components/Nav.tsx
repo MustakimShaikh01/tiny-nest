@@ -126,3 +126,4 @@ export function Nav({ user }: { user: any }) {
     </nav>
   );
 }
+export default Nav;

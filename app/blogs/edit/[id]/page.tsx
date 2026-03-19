@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Nav } from '@/components/Nav';
-import { Footer } from '@/components/Footer';
+import Nav from '../../../../components/Nav';
+import Footer from '../../../../components/Footer';
 import { useRouter } from 'next/navigation';
 import { Loader2, Send, Type, AlignLeft } from 'lucide-react';
 

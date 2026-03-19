@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Nav } from '@/components/Nav';
-import { Footer } from '@/components/Footer';
+import Nav from '../../components/Nav';
+import Footer from '../../components/Footer';
 import { useRouter } from 'next/navigation';
 import { Home, MapPin, Ruler, Bed, ShowerHead, Calendar, ImagePlus, ArrowRight, Loader2, CheckCircle2, X, Plus } from 'lucide-react';
 
@@ -154,7 +154,7 @@ export default function ListHomePage() {
                     <input name="beds" type="number" required className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-tiny font-medium focus:bg-white focus:border-green transition-all outline-none" placeholder="1" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Bathrooms</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Bedrooms</label>
                     <input name="baths" type="number" required className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-tiny font-medium focus:bg-white focus:border-green transition-all outline-none" placeholder="1" />
                   </div>
                   <div className="space-y-2">

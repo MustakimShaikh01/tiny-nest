@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Nav } from '@/components/Nav';
-import { Footer } from '@/components/Footer';
+import Nav from '../../../components/Nav';
+import Footer from '../../../components/Footer';
 import { useRouter } from 'next/navigation';
 import { ImagePlus, X, Loader2, Send, Layout, Type, AlignLeft } from 'lucide-react';
 
