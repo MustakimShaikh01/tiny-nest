@@ -1,0 +1,189 @@
+export const initialData = {
+  "users": [
+    {
+      "id": "1",
+      "name": "Sarah Mitchell",
+      "email": "sarah@example.com",
+      "password": "password123",
+      "role": "seller",
+      "joined": "Jan 2026",
+      "listings": 2,
+      "status": "active"
+    },
+    {
+      "id": "2",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "password": "password123",
+      "role": "buyer",
+      "joined": "Feb 2026",
+      "listings": 0,
+      "status": "active"
+    },
+    {
+      "id": "admin",
+      "name": "Admin User",
+      "email": "admin@tinynest.com",
+      "password": "adminpassword",
+      "role": "admin",
+      "joined": "Jan 2026",
+      "listings": 0,
+      "status": "active"
+    },
+    {
+      "id": "3j0k0uknm",
+      "name": "mutskaim",
+      "email": "test@autoify.com",
+      "password": "Password123!",
+      "role": "buyer",
+      "joined": "Mar 2026",
+      "listings": 0,
+      "status": "active"
+    }
+  ],
+  "listings": [
+    {
+      "id": "1",
+      "title": "Modern Cabin on Wheels",
+      "type": "sale",
+      "price": 68000,
+      "location": "Asheville, NC",
+      "sqft": 280,
+      "beds": 1,
+      "baths": 1,
+      "status": "approved",
+      "seller": "sarah@example.com",
+      "sellerName": "Sarah Mitchell",
+      "img": "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800",
+      "images": [
+        "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1449156001437-37c64b4df502?auto=format&fit=crop&q=80&w=800"
+      ],
+      "description": "Beautiful off-grid cabin with solar panels, composting toilet, and rainwater collection. Built on a gooseneck trailer for easy transport.",
+      "amenities": [
+        "Solar Power",
+        "Composting Toilet",
+        "Rainwater Collection",
+        "Loft Bedroom",
+        "Full Kitchen",
+        "Deck"
+      ],
+      "year": 2022,
+      "views": 342,
+      "favorites": 28,
+      "createdAt": "2026-01-15T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Cozy Forest Retreat",
+      "type": "rent",
+      "price": 1200,
+      "location": "Portland, OR",
+      "sqft": 220,
+      "beds": 1,
+      "baths": 1,
+      "status": "approved",
+      "seller": "john@example.com",
+      "sellerName": "John Doe",
+      "img": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=800",
+      "images": [
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=800"
+      ],
+      "description": "A peaceful tiny home nestled in the trees. Perfect for remote workers and nature lovers.",
+      "amenities": [
+        "High-Speed WiFi",
+        "Wood Stove",
+        "Mountain Views",
+        "Full Kitchen",
+        "Pet Friendly"
+      ],
+      "year": 2021,
+      "views": 215,
+      "favorites": 19,
+      "createdAt": "2026-02-10T14:30:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Lakeside Tiny Villa",
+      "type": "sale",
+      "price": 89000,
+      "location": "South Lake Tahoe, CA",
+      "sqft": 350,
+      "beds": 2,
+      "baths": 1,
+      "status": "approved",
+      "seller": "sarah@example.com",
+      "sellerName": "Sarah Mitchell",
+      "img": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
+      "images": [
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"
+      ],
+      "description": "Luxurious tiny home with stunning lake views, custom woodwork, and a wrap-around porch.",
+      "amenities": [
+        "Lake Views",
+        "Wrap Porch",
+        "Skylights",
+        "2 Bedrooms",
+        "Full Appliances",
+        "Hot Tub"
+      ],
+      "year": 2023,
+      "views": 891,
+      "favorites": 67,
+      "createdAt": "2026-03-01T09:12:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Urban Compact Loft",
+      "type": "rent",
+      "price": 950,
+      "location": "Austin, TX",
+      "sqft": 180,
+      "beds": 0,
+      "baths": 1,
+      "status": "approved",
+      "seller": "admin@tinynest.com",
+      "sellerName": "Admin Nest",
+      "img": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=800",
+      "images": [
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=800"
+      ],
+      "description": "Minimalist living in the heart of the city. High ceilings and efficient storage make this 180sqft unit feel spacious.",
+      "amenities": [
+        "City Center",
+        "Smart Furniture",
+        "Shared Rooftop",
+        "Bike Storage"
+      ],
+      "year": 2024,
+      "views": 156,
+      "favorites": 12,
+      "createdAt": "2026-03-05T16:45:00Z"
+    }
+  ],
+  "blogs": [
+    {
+      "id": "1",
+      "title": "10 Things to Know Before Buying a Tiny House",
+      "category": "Buying Guide",
+      "excerpt": "From zoning laws to financing options, here's everything first-time buyers need to know.",
+      "date": "Mar 10, 2026",
+      "readTime": "7 min read",
+      "emoji": "📋",
+      "content": "Buying a tiny house is an exciting journey toward minimalism and financial freedom. However, before you sign on the dotted line, there are several critical factors to consider. \n\nFirstly, zoning laws are the most significant hurdle. Many cities still have minimum square footage requirements for permanent dwellings. \n\nSecondly, financing is different than a traditional mortgage. Most tiny homes don't qualify for FHA loans, so you might need to look into RV loans or personal credit lines.",
+      "author": "admin@tinynest.com"
+    },
+    {
+      "id": "2",
+      "title": "Best States for Tiny House Living in 2026",
+      "category": "Lifestyle",
+      "excerpt": "Not all states are created equal when it comes to tiny home regulations. Find your perfect state.",
+      "date": "Mar 5, 2026",
+      "readTime": "9 min read",
+      "emoji": "🗺️",
+      "content": "Tiny house regulations vary wildly across the US. Some states like Oregon and California have become pioneers in recognizing tiny homes on wheels as legal dwellings. \n\nFlorida is another great option, with several communities specifically designed for tiny living near the coast. \n\nIn this guide, we break down the legal landscape state by state.",
+      "author": "admin@tinynest.com"
+    }
+  ],
+  "messages": []
+};

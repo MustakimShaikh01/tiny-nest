@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { initialData } from './initialData';
+
 // Use /storage mount for Render if configured, else fallback to project root
 const DB_DIR = process.env.DB_MOUNT_PATH || path.join(process.cwd(), 'storage', 'db');
 const DB_PATH = path.join(DB_DIR, 'db.json');
@@ -11,8 +13,8 @@ if (!fs.existsSync(DB_DIR)) {
 }
 
 // Ensure file exists with initial structure if missing
-if (!fs.existsSync(DB_PATH)) {
-  fs.writeFileSync(DB_PATH, JSON.stringify({ users: [], listings: [], blogs: [], messages: [] }));
+if (!fs.existsSync(DB_PATH) || fs.readFileSync(DB_PATH, 'utf-8').trim() === '' || JSON.parse(fs.readFileSync(DB_PATH, 'utf-8')).listings.length === 0) {
+  fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2));
 }
 
 export function getDb() {
