@@ -68,8 +68,12 @@ export function Footer() {
         <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 font-bold text-xs uppercase tracking-widest text-white/30">
           <p>© 2026 TINYNEST INC. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-10">
-            {['Privacy Policy', 'Terms of Service', 'Cookie Settings'].map((link) => (
-              <Link key={link} href="#" className="hover:text-white transition-colors">{link}</Link>
+            {[
+              { name: 'Privacy Policy', path: '/privacy' },
+              { name: 'Terms of Service', path: '/terms' },
+              { name: 'Cookie Settings', path: '/cookies' }
+            ].map((link) => (
+              <Link key={link.name} href={link.path} className="hover:text-white transition-colors">{link.name}</Link>
             ))}
           </div>
         </div>
