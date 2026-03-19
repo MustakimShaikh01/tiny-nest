@@ -1,8 +1,8 @@
-import { Nav } from '@/components/Nav';
-import { BlogCard } from '@/components/BlogCard';
-import { Footer } from '@/components/Footer';
-import { getSession } from '@/lib/auth';
-import { getDb } from '@/lib/db';
+import { Nav } from '../../components/Nav';
+import { BlogCard } from '../../components/BlogCard';
+import { Footer } from '../../components/Footer';
+import { getSession } from '../../lib/auth';
+import { getDb } from '../../lib/db';
 import { Plus, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
 
