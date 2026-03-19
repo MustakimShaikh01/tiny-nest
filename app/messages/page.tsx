@@ -41,15 +41,39 @@ function MessagesContent() {
     fetchData();
   }, [router, searchParams]);
 
+  const markAsRead = async (convEmail: string) => {
+    const unreadFromThisUser = messages.filter(m => m.from === convEmail && m.status === 'unread');
+    for (const msg of unreadFromThisUser) {
+      try {
+        await fetch('/api/messages', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: msg._id, status: 'read' }),
+        });
+      } catch (err) {
+        console.error('Failed to mark as read:', err);
+      }
+    }
+    // Update local state
+    setMessages(prev => prev.map(m => m.from === convEmail ? { ...m, status: 'read' } : m));
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedConv) return;
 
-    const partnerMsg = messages.find(m => m.from === selectedConv || m.to === selectedConv);
+    // Determine partner email
+    let partnerEmail = selectedConv;
+    if (selectedConv.includes('<->')) {
+      const parts = selectedConv.split('<->');
+      partnerEmail = parts[0] === currentUser?.email ? parts[1] : parts[0];
+    }
+
+    const partnerMsg = messages.find(m => m.from === partnerEmail || m.to === partnerEmail);
     
     const msgData = {
-      to: selectedConv,
-      toName: partnerMsg?.from === selectedConv ? partnerMsg.fromName : partnerMsg?.toName || 'User',
+      to: partnerEmail,
+      toName: partnerMsg?.from === partnerEmail ? partnerMsg.fromName : partnerMsg?.toName || 'User',
       listingId: partnerMsg?.listingId || searchParams.get('listingId'),
       listingTitle: partnerMsg?.listingTitle || searchParams.get('title'),
       text: newMessage
@@ -68,44 +92,43 @@ function MessagesContent() {
     }
   };
 
-  const conversations = Array.from(new Set(messages.map(m => {
+  // Group messages into unique conversations
+  const conversationsMap = new Map();
+  messages.forEach(m => {
+    let convId;
     if (currentUser?.role === 'admin') {
       const pair = [m.from, m.to].sort();
-      return `${pair[0]}<->${pair[1]}`;
+      convId = `${pair[0]}<->${pair[1]}`;
+    } else {
+      convId = m.from === currentUser?.email ? m.to : m.from;
     }
-    return m.from === currentUser?.email ? m.to : m.from;
-  })));
-  
-  if (selectedConv && !conversations.includes(selectedConv)) {
-    conversations.push(selectedConv);
-  }
+    
+    if (!conversationsMap.has(convId) || new Date(m.createdAt) > new Date(conversationsMap.get(convId).createdAt)) {
+      conversationsMap.set(convId, m);
+    }
+  });
 
-  const convList = conversations.map(id => {
+  const convList = Array.from(conversationsMap.entries()).map(([id, lastMsg]) => {
     let email = id;
     let label = '';
     
     if (id.includes('<->')) {
       const parts = id.split('<->');
       email = parts[0] === currentUser?.email ? parts[1] : parts[0];
-      label = `Chat: ${parts[0].split('@')[0]} & ${parts[1].split('@')[0]}`;
+      label = `${parts[0].split('@')[0]} & ${parts[1].split('@')[0]}`;
     }
 
-    const lastMsg = [...messages].reverse().find(m => {
-      if (id.includes('<->')) {
-        const pair = [m.from, m.to].sort();
-        return `${pair[0]}<->${pair[1]}` === id;
-      }
-      return m.from === email || m.to === email;
-    });
+    const unreadCount = messages.filter(m => m.from === email && m.to === currentUser?.email && m.status === 'unread').length;
 
     return {
       email: id,
       displayEmail: email,
       name: label || (lastMsg?.from === email ? lastMsg.fromName : (lastMsg?.toName || (email === searchParams.get('to') ? 'New Contact' : email.split('@')[0]))),
       lastText: lastMsg?.text || 'Start a conversation...',
-      time: lastMsg?.time || 'Now',
+      time: lastMsg?.createdAt ? new Date(lastMsg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now',
       listing: lastMsg?.listingTitle || searchParams.get('title'),
-      listingId: lastMsg?.listingId || searchParams.get('listingId')
+      listingId: lastMsg?.listingId || searchParams.get('listingId'),
+      unreadCount
     };
   });
 
@@ -115,7 +138,7 @@ function MessagesContent() {
       return `${pair[0]}<->${pair[1]}` === selectedConv;
     }
     return m.from === selectedConv || m.to === selectedConv;
-  });
+  }).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
   return (
     <main className="min-h-screen bg-white flex flex-col">
@@ -134,15 +157,18 @@ function MessagesContent() {
           
           <div className="flex-1 overflow-y-auto">
              {convList.length > 0 ? convList.map((conv, i) => (
-                <div 
-                  key={i} 
-                  onClick={() => setSelectedConv(conv.email)}
-                  className={`p-6 border-b border-gray-50 cursor-pointer transition-all hover:bg-gray-50 relative ${selectedConv === conv.email ? 'bg-green-pale/30 border-l-4 border-l-green' : ''}`}
-                >
-                   <div className="flex justify-between items-start mb-1">
-                      <span className="font-bold text-charcoal text-sm">{conv.name}</span>
-                      <span className="text-[10px] font-bold text-gray-400 tracking-tighter uppercase">{conv.time}</span>
-                   </div>
+                 <div 
+                   key={i} 
+                   onClick={() => { setSelectedConv(conv.email); markAsRead(conv.displayEmail); }}
+                   className={`p-6 border-b border-gray-50 cursor-pointer transition-all hover:bg-gray-50 relative ${selectedConv === conv.email ? 'bg-green-pale/30 border-l-4 border-l-green' : ''}`}
+                 >
+                    <div className="flex justify-between items-start mb-1">
+                       <span className={`font-bold text-sm ${conv.unreadCount > 0 ? 'text-charcoal' : 'text-gray-600'}`}>
+                         {conv.name}
+                         {conv.unreadCount > 0 && <span className="ml-2 w-2 h-2 bg-red-500 rounded-full inline-block animate-pulse"></span>}
+                       </span>
+                       <span className="text-[10px] font-bold text-gray-400 tracking-tighter uppercase">{conv.time}</span>
+                    </div>
                    <div className="text-xs font-bold text-green mb-2 opacity-70 truncate uppercase tracking-widest">{conv.listing}</div>
                    <p className="text-sm text-gray-500 font-medium truncate leading-normal">{conv.lastText}</p>
                 </div>

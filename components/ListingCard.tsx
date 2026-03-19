@@ -8,7 +8,7 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
   const [isFavorite, setIsFavorite] = useState(() => {
     if (typeof window !== 'undefined') {
       const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
-      return favorites.includes(listing.id);
+      return favorites.includes((listing.id || listing._id));
     }
     return false;
   });
@@ -19,9 +19,9 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
     const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
     let updated;
     if (isFavorite) {
-      updated = favorites.filter((id: string) => id !== listing.id);
+      updated = favorites.filter((id: string) => id !== (listing.id || listing._id));
     } else {
-      updated = [...favorites, listing.id];
+      updated = [...favorites, (listing.id || listing._id)];
     }
     localStorage.setItem('tinynest_favorites', JSON.stringify(updated));
     setIsFavorite(!isFavorite);
@@ -30,7 +30,7 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
   const handleShare = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const url = `${window.location.origin}/listings/${listing.id}`;
+    const url = `${window.location.origin}/listings/${(listing.id || listing._id)}`;
     navigator.clipboard.writeText(url);
     alert('Listing URL copied to clipboard! Share the tiny living joy.');
   };
@@ -40,7 +40,7 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
   return (
     <div className="group bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all duration-300 relative overflow-hidden flex flex-col">
       <div className="relative h-64 overflow-hidden block">
-        <Link href={`/listings/${listing.id}`} className="absolute inset-0 bg-gray-100 transition-colors duration-500 flex items-center justify-center">
+        <Link href={`/listings/${(listing.id || listing._id)}`} className="absolute inset-0 bg-gray-100 transition-colors duration-500 flex items-center justify-center">
            {isImageUrl ? (
              <img 
                src={listing.img} 
@@ -81,7 +81,7 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
           </button>
           
           <Link 
-            href={`/messages?to=${listing.seller}&listingId=${listing.id}&title=${encodeURIComponent(listing.title)}`}
+            href={`/messages?to=${listing.seller}&listingId=${(listing.id || listing._id)}&title=${encodeURIComponent(listing.title)}`}
             className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-green hover:bg-green hover:text-white flex items-center justify-center transition-all duration-300 shadow-xl border border-white/20"
           >
             <MessageSquare className="w-4 h-4" />
@@ -96,7 +96,7 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
               {listing.type === 'rent' ? `$${listing.price.toLocaleString()}/mo` : `$${listing.price.toLocaleString()}`}
             </span>
           </div>
-          <Link href={`/listings/${listing.id}`} className="block">
+          <Link href={`/listings/${(listing.id || listing._id)}`} className="block">
             <h3 className="text-xl font-bold text-charcoal mb-2 line-clamp-1 group-hover:text-green transition-colors leading-tight">
               {listing.title}
             </h3>

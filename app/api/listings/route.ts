@@ -1,50 +1,36 @@
 import { NextResponse } from 'next/server';
-import { getDb, saveDb, generateId } from '@/lib/db';
+import { connectDB } from '@/lib/db';
+import { Listing } from '@/lib/models';
 import { decrypt } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
-  const db = getDb();
-  const { searchParams } = new URL(request.url);
-  const type = searchParams.get('type');
-  const status = searchParams.get('status') || 'approved';
-  const location = searchParams.get('location');
-  const search = searchParams.get('search');
-  const minPrice = searchParams.get('minPrice');
-  const maxPrice = searchParams.get('maxPrice');
-  
-  let listings = db.listings;
-  
-  if (status !== 'all') {
-    listings = listings.filter((l: any) => l.status === status);
-  }
-  
-  if (type && type !== 'all') {
-    listings = listings.filter((l: any) => l.type === type);
-  }
+  try {
+    await connectDB();
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type');
+    const status = searchParams.get('status') || 'approved';
+    const location = searchParams.get('location');
+    const search = searchParams.get('search');
+    
+    let query: any = {};
+    
+    if (status !== 'all') query.status = status;
+    if (type && type !== 'all') query.type = type;
+    if (location) query.location = { $regex: location, $options: 'i' };
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } }
+      ];
+    }
 
-  if (location) {
-    listings = listings.filter((l: any) => l.location.toLowerCase().includes(location.toLowerCase()));
+    const listings = await Listing.find(query).sort({ createdAt: -1 }).lean();
+    return NextResponse.json({ listings });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  if (search) {
-     const s = search.toLowerCase();
-     listings = listings.filter((l: any) => 
-       l.title.toLowerCase().includes(s) || 
-       l.description.toLowerCase().includes(s) ||
-       l.location.toLowerCase().includes(s)
-     );
-  }
-
-  if (minPrice) {
-    listings = listings.filter((l: any) => l.price >= Number(minPrice));
-  }
-
-  if (maxPrice) {
-    listings = listings.filter((l: any) => l.price <= Number(maxPrice));
-  }
-  
-  return NextResponse.json({ listings });
 }
 
 export async function POST(request: Request) {
@@ -57,24 +43,22 @@ export async function POST(request: Request) {
     const user = payload.user;
     
     const data = await request.json();
-    const db = getDb();
+    await connectDB();
     
-    const newListing = {
+    const newListing = new Listing({
       ...data,
-      id: generateId(),
       status: 'pending',
       views: 0,
       favorites: 0,
       seller: user.email,
-      sellerName: user.name,
-      createdAt: new Date().toISOString()
-    };
+      sellerName: user.name
+    });
     
-    db.listings.push(newListing);
-    saveDb(db);
+    await newListing.save();
     
     return NextResponse.json({ listing: newListing });
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } catch (error: any) {
+    console.error(error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -10,7 +10,7 @@ import { Search, MapPin, Tag, SlidersHorizontal, ArrowUpDown, Loader2 } from 'lu
 import path from 'path';
 
 async function getListings(searchParams: any) {
-  const db = getDb();
+  const db = await getDb();
   
   let listings = (db.listings || []).filter((l: any) => l.status === 'approved');
   

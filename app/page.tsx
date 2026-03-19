@@ -1,125 +1,201 @@
 import { Nav } from '@/components/Nav';
-import { Hero } from '@/components/Hero';
-import { ListingCard } from '@/components/ListingCard';
-import { BlogCard } from '@/components/BlogCard';
 import { Footer } from '@/components/Footer';
-import { getSession } from '@/lib/auth';
-import { getDb } from '@/lib/db';
 import Link from 'next/link';
-import { ArrowRight, Star, ShieldCheck, MapPin } from 'lucide-react';
+import { ArrowRight, Star, MapPin, Search } from 'lucide-react';
+import { getDb } from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 async function getListings() {
-  const db = getDb();
+  const db = await getDb();
   return db.listings.filter((l: any) => l.status === 'approved').slice(0, 3);
 }
 
 async function getBlogs() {
-  const db = getDb();
+  const db = await getDb();
   return db.blogs.slice(0, 3);
 }
 
-export default async function HomeView() {
+export default async function Home() {
+  const listings = await getListings();
+  const blogs = await getBlogs();
   const session = await getSession();
-  const featuredListings = await getListings();
-  const latestBlogs = await getBlogs();
+  const user = session?.user;
 
   return (
-    <main className="min-h-screen bg-white selection:bg-green-pale selection:text-green overflow-x-hidden">
-      <Nav user={session?.user} />
-      <Hero />
+    <main className="min-h-screen bg-white">
+      <Nav user={user} />
 
-      {/* Trust Badges */}
-      <section className="bg-white py-12 border-b">
-        <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-12 lg:gap-24 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-           <div className="flex items-center gap-2 font-bold text-lg tracking-tight">
-             <ShieldCheck className="text-green" /> VERIFIED BUILDERS
-           </div>
-           <div className="flex items-center gap-2 font-bold text-lg tracking-tight">
-             <Star className="text-green" /> 4.9 AVERAGE RATING
-           </div>
-           <div className="flex items-center gap-2 font-bold text-lg tracking-tight">
-             <MapPin className="text-green" /> USA WIDE NETWORK
-           </div>
+      {/* Hero Section - Restored to original design */}
+      <section className="relative min-h-[580px] flex items-center overflow-hidden" 
+        style={{ background: 'linear-gradient(135deg, #1A3D2B 0%, #2D6A4F 50%, #40916C 100%)' }}>
+        
+        {/* SVG Mesh Pattern */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none" 
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-20 lg:py-32">
+          <div className="hero-badge inline-flex items-center gap-2 bg-white/10 text-white px-4 py-1.5 rounded-full text-xs font-bold border border-white/20 mb-8 backdrop-blur-sm">
+             🏡 #1 Tiny House Marketplace in the USA
+          </div>
+          
+          <h1 className="font-serif text-white text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 max-w-4xl tracking-tight">
+             Find Your Perfect <span className="text-[#95D5B2] italic">Tiny Home</span> & Live Large
+          </h1>
+          
+          <p className="text-white/80 text-lg md:text-xl font-medium mb-12 max-w-2xl leading-relaxed">
+             Browse thousands of tiny houses for sale and rent across America. Join a community of 50,000+ tiny home enthusiasts.
+          </p>
+
+          <form action="/listings" className="search-box bg-white p-2 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex flex-wrap gap-2 max-w-2xl">
+             <div className="flex-1 min-w-[200px] flex items-center px-4 py-3 bg-[#F8FAF9] rounded-xl border border-transparent focus-within:border-green transition-all">
+                <Search className="w-4 h-4 text-gray-400 mr-2" />
+                <input name="q" placeholder="Search by city, state, or keyword..." className="bg-transparent border-none outline-none w-full text-sm font-medium text-charcoal" />
+             </div>
+             <select name="type" className="px-4 py-3 bg-[#F8FAF9] rounded-xl border border-transparent outline-none text-sm font-bold text-charcoal">
+                <option value="all">Buy or Rent</option>
+                <option value="sale">For Sale</option>
+                <option value="rent">For Rent</option>
+             </select>
+             <button type="submit" className="btn btn-primary px-10 py-3 text-sm font-bold shadow-xl">
+                Search
+             </button>
+          </form>
+
+          <div className="flex gap-10 mt-12 overflow-x-auto pb-4 scrollbar-hide">
+            <div className="flex-shrink-0">
+               <div className="font-serif text-3xl font-bold text-white mb-1">12,400+</div>
+               <div className="text-xs font-bold text-white/60 uppercase tracking-widest">Active Listings</div>
+            </div>
+            <div className="flex-shrink-0">
+               <div className="font-serif text-3xl font-bold text-white mb-1">50K+</div>
+               <div className="text-xs font-bold text-white/60 uppercase tracking-widest">Homes Sold</div>
+            </div>
+            <div className="flex-shrink-0">
+               <div className="font-serif text-3xl font-bold text-white mb-1">15M</div>
+               <div className="text-xs font-bold text-white/60 uppercase tracking-widest">Monthly Visitors</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Links Section */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { label: 'Tiny Houses for Sale', icon: '🏡', q: 'sale', color: 'bg-green-pale' },
+            { label: 'Tiny Houses for Rent', icon: '🔑', q: 'rent', color: 'bg-earth/10' },
+            { label: 'On Wheels (THOW)', icon: '🚐', q: 'wheels', color: 'bg-blue-50' },
+            { label: 'Communities', icon: '🏘️', q: 'community', color: 'bg-amber-50' }
+          ].map((c) => (
+             <Link key={c.q} href="/listings" className="group bg-white p-8 rounded-3xl border border-gray-100 shadow-tiny-sm hover:shadow-tiny hover:-translate-y-1 transition-all text-center">
+                <div className={`w-16 h-16 ${c.color} rounded-2xl flex items-center justify-center text-3xl mb-4 mx-auto group-hover:scale-110 transition-transform`}>
+                   {c.icon}
+                </div>
+                <div className="font-bold text-charcoal text-sm">{c.label}</div>
+             </Link>
+          ))}
         </div>
       </section>
 
       {/* Featured Listings */}
-      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div className="max-w-xl">
-             <h2 className="font-serif text-4xl lg:text-5xl font-bold text-charcoal mb-4 leading-tight">
-               Featured <span className="text-green italic">Tiny Homes</span>
-             </h2>
-             <p className="text-gray-500 font-medium text-lg leading-relaxed">
-               Hand-picked listings from verified sellers across the nation. Experience the best of tiny living.
-             </p>
+      <section className="py-24 bg-gray-50/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-end mb-16">
+            <div>
+              <h2 className="font-serif text-4xl font-bold text-charcoal tracking-tight mb-4">Newly Listed Homes</h2>
+              <p className="text-gray-500 font-medium">Handpicked properties verified by our tiny home experts.</p>
+            </div>
+            <Link href="/listings" className="text-green font-bold flex items-center gap-2 hover:gap-3 transition-all">
+              View All <ArrowRight className="w-5 h-5" />
+            </Link>
           </div>
-          <Link href="/listings" className="group btn btn-outline border-green shadow-sm hover:shadow-tiny transition-all">
-             Browse All Listings <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
 
-        {featuredListings.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {featuredListings.map((listing: any) => (
-              <ListingCard key={listing.id} listing={listing} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {listings.map((item: any) => (
+              <div key={item.id} className="bg-white rounded-3xl overflow-hidden shadow-tiny-sm hover:shadow-tiny transition-all group">
+                <div className="aspect-[4/3] overflow-hidden relative">
+                  <img src={item.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={item.title} />
+                  <div className="absolute top-6 left-6 flex gap-2">
+                    <span className="px-4 py-2 bg-white/90 backdrop-blur-md rounded-full text-xs font-bold text-charcoal shadow-sm">
+                      ${item.price.toLocaleString()}
+                    </span>
+                    <span className="px-4 py-2 bg-green/90 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-widest">
+                      {item.type}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="flex items-center gap-2 text-green text-[10px] font-bold uppercase tracking-widest mb-3">
+                    <MapPin className="w-3 h-3" /> {item.location}
+                  </div>
+                  <h3 className="text-xl font-bold text-charcoal mb-4 group-hover:text-green transition-colors leading-tight">{item.title}</h3>
+                  <div className="flex items-center justify-between pt-6 border-t border-gray-50 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    <span>{item.beds} beds</span>
+                    <span>{item.sqft} sqft</span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        ) : (
-          <div className="p-16 text-center bg-gray-50 rounded-tiny border-2 border-dashed border-gray-200">
-             <h3 className="text-lg font-bold text-gray-400">Loading new featured homes...</h3>
-          </div>
-        )}
+        </div>
       </section>
 
-      {/* Trust & CTA Section */}
-      <section className="py-24 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-           <div className="relative">
-             <div className="absolute -top-12 -left-12 w-64 h-64 bg-green-pale rounded-full blur-3xl opacity-30"></div>
-             <div className="bg-white p-6 rounded-tiny shadow-2xl relative z-10 rotate-2 hover:rotate-0 transition-transform duration-500">
-                <div className="bg-green/10 p-8 rounded-tiny mb-6 text-center">
-                  <span className="text-9xl">🪵</span>
-                </div>
-                <div className="space-y-4">
-                  <div className="h-4 bg-gray-100 rounded-full w-3/4"></div>
-                  <div className="h-4 bg-gray-100 rounded-full w-1/2"></div>
-                  <div className="h-20 bg-gray-50 rounded-tiny"></div>
-                </div>
-             </div>
-             <div className="absolute -bottom-8 -right-8 bg-green text-white p-8 rounded-tiny shadow-2xl z-20 animate-bounce-slow">
-                <div className="text-4xl font-serif font-bold mb-1">98%</div>
-                <div className="text-xs font-bold tracking-widest uppercase opacity-70">Seller Rate</div>
-             </div>
-           </div>
-           
-           <div className="space-y-8">
-              <h2 className="font-serif text-4xl lg:text-6xl font-bold text-charcoal leading-tight">
-                Ready to Sell Your <span className="text-earth italic underline decoration-earth/20 underline-offset-8">Tiny Home?</span>
-              </h2>
-              <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                List your tiny house for free and reach millions of potential buyers. No hidden fees, no lead charges—just you and your next buyer.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-4">
-                 <Link href="/list-home" className="btn btn-primary px-10 py-4 text-base shadow-xl hover:-translate-y-1 transition-all">List Your Home Free</Link>
-                 <Link href="/signup" className="btn bg-white border border-gray-200 text-charcoal px-10 py-4 text-base shadow-sm hover:bg-gray-50 transition-all">Create Free Account</Link>
+      {/* Hero CTA */}
+      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-charcoal rounded-3xl p-12 md:p-24 text-center relative overflow-hidden group shadow-2xl">
+          <div className="absolute inset-0 bg-green/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative z-10 max-w-3xl mx-auto">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white tracking-tight mb-8">
+              Ready to Sell Your Tiny Home?
+            </h2>
+            <p className="text-gray-400 text-lg md:text-xl font-medium mb-12 leading-relaxed">
+              List your tiny house for free and reach millions of potential buyers. No hidden fees, no lead charges—just you and your next buyer.
+            </p>
+            {!user ? (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link href="/signup" className="btn btn-primary btn-lg w-full sm:w-auto px-12 py-5 text-sm font-bold shadow-2xl">
+                  List Your Home Free
+                </Link>
+                <Link href="/signup" className="text-white font-bold hover:underline transition-all">
+                  Create Free Account
+                </Link>
               </div>
-              <p className="text-xs font-bold text-gray-400 tracking-wider">★ TRUSTED BY 50,000+ TINY HOME ENTHUSIASTS</p>
-           </div>
+            ) : (
+                <Link href="/listings" className="btn btn-white btn-lg w-full sm:w-auto px-12 py-5 text-sm font-bold shadow-2xl" 
+                  style={{ background: 'white', color: '#1A1A1A' }}>
+                  Manage Your Listings
+                </Link>
+            )}
+            <div className="mt-12 pt-12 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-8 text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">
+               ★ TRUSTED BY 50,000+ TINY HOME ENTHUSIASTS
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Blog Section */}
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-green font-bold text-xs tracking-widest uppercase mb-4 block">Our Latest Articles</span>
-          <h2 className="font-serif text-4xl lg:text-5xl font-bold text-charcoal mb-6">Expert Guides & Inspiration</h2>
-          <p className="text-gray-500 font-medium text-lg">Zoning laws, financing tips, and design trends to help you navigate the tiny living movement.</p>
+          <h2 className="font-serif text-4xl font-bold text-charcoal tracking-tight mb-4">The Tiny Life Blog</h2>
+          <p className="text-gray-500 font-medium leading-relaxed italic">Tips, inspiration, and expert advice on downsizing and living big in a tiny home.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {latestBlogs.map((blog: any) => (
-            <BlogCard key={blog.id} blog={blog} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {blogs.map((post: any) => (
+            <Link key={post.id} href={`/blogs/${post.id}`} className="group relative block overflow-hidden rounded-3xl border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all">
+               <div className="aspect-video bg-gray-50 flex items-center justify-center group-hover:bg-green-pale transition-colors overflow-hidden">
+                  <span className="text-6xl group-hover:scale-125 transition-transform duration-500">{post.emoji}</span>
+               </div>
+               <div className="p-8 bg-white">
+                  <div className="text-[10px] font-bold text-green uppercase tracking-[0.2em] mb-4">{post.category}</div>
+                  <h3 className="text-xl font-bold text-charcoal mb-4 group-hover:text-green transition-colors leading-tight">{post.title}</h3>
+                  <div className="flex items-center gap-4 text-xs font-bold text-gray-400">
+                    <span>{post.date}</span>
+                    <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
+                    <span>{post.readTime}</span>
+                  </div>
+               </div>
+            </Link>
           ))}
         </div>
       </section>

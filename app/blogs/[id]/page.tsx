@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 async function getBlog(id: string) {
-  const db = getDb();
-  return db.blogs.find((b: any) => b.id === id) || null;
+  const db = await getDb();
+  return db.blogs.find((b: any) => b.id === id);
 }
 
 export default async function BlogDetailPage({ params }: { params: { id: string } }) {

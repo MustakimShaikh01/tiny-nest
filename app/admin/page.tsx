@@ -12,7 +12,7 @@ export default async function AdminPage() {
     redirect('/login');
   }
 
-  const db = getDb();
+  const db = await getDb();
   const pendingListings = db.listings.filter((l: any) => l.status === 'pending');
   const totalUsers = db.users.length;
   const totalListings = db.listings.length;

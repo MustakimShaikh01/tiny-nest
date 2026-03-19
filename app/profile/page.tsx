@@ -179,7 +179,7 @@ export default function ProfilePage() {
                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">User Rating</div>
             </div>
             <div className="bg-white p-8 rounded-tiny border border-gray-100 shadow-tiny-sm text-center text-uppercase">
-               <div className="text-3xl font-bold text-green mb-1">{user.id ? user.id.slice(0, 4) : '...' }</div>
+               <div className="text-3xl font-bold text-green mb-1">{user.id ? String(user.id).slice(0, 4) : '...' }</div>
                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Member ID</div>
             </div>
          </div>

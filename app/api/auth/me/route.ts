@@ -29,22 +29,30 @@ export async function PATCH(request: Request) {
     const currentUser = payload.user;
 
     const data = await request.json();
-    const db = getDb();
+    const db = await getDb();
     
-    const userIndex = db.users.findIndex((u: any) => u.id === currentUser.id || u.email === currentUser.email);
-    if (userIndex === -1) return NextResponse.json({ error: 'User not found' }, { status: 404 });
-
-    // Update user in DB
-    db.users[userIndex] = {
-      ...db.users[userIndex],
-      ...data,
-      // Ensure role/id/email don't change if not allowed
-    };
-    
-    saveDb(db);
+    // In Mongo mode, we update using User model
+    let updatedUser;
+    try {
+      const { User } = require('@/lib/models');
+      const user = await User.findOneAndUpdate(
+        { $or: [{ id: currentUser.id }, { email: currentUser.email }] },
+        { $set: data },
+        { new: true }
+      ).lean();
+      if (user) {
+        updatedUser = { id: user._id, name: user.name, email: user.email, role: user.role, ...data };
+      }
+    } catch (e) {
+      // Fallback to JSON
+      const userIndex = db.users.findIndex((u: any) => u.id === currentUser.id || u.email === currentUser.email);
+      if (userIndex === -1) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      db.users[userIndex] = { ...db.users[userIndex], ...data };
+      saveDb(db);
+      updatedUser = db.users[userIndex];
+    }
 
     // Update Session
-    const updatedUser = { ...currentUser, ...data };
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const session = await encrypt({ user: updatedUser, expires });
 

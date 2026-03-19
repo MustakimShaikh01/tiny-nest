@@ -7,7 +7,7 @@ import { Plus, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
 
 async function getBlogs() {
-  const db = getDb();
+  const db = await getDb();
   return db.blogs;
 }
 

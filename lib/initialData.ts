@@ -159,6 +159,36 @@ export const initialData = {
       "views": 156,
       "favorites": 12,
       "createdAt": "2026-03-05T16:45:00Z"
+    },
+    {
+      "title": "test",
+      "price": 2344,
+      "type": "sale",
+      "sqft": 1234,
+      "beds": 2,
+      "baths": 3,
+      "year": 2020,
+      "description": "test",
+      "location": "test",
+      "amenities": [
+        "Solar Power",
+        "Modern Kitchen",
+        "High Ceilings",
+        "Wood Finish"
+      ],
+      "img": "/uploads/9dmb77sig-ChatGPT-Image-Mar-18,-2026,-02_04_19-AM.png",
+      "images": [
+        "/uploads/9dmb77sig-ChatGPT-Image-Mar-18,-2026,-02_04_19-AM.png",
+        "/uploads/kjv0b0gow-ChatGPT-Image-Mar-18,-2026,-02_05_33-AM.png"
+      ],
+      "id": "kw9anevfj",
+      "status": "approved",
+      "views": 0,
+      "favorites": 0,
+      "seller": "test@autoify.com",
+      "sellerName": "mutskaim",
+      "createdAt": "2026-03-19T05:42:53.481Z",
+      "updatedAt": "2026-03-19T05:50:31.116Z"
     }
   ],
   "blogs": [
@@ -185,5 +215,43 @@ export const initialData = {
       "author": "admin@tinynest.com"
     }
   ],
-  "messages": []
+  "messages": [
+    {
+      "id": "1",
+      "from": "john@example.com",
+      "fromName": "John Doe",
+      "to": "sarah@example.com",
+      "toName": "Sarah Mitchell",
+      "listingId": "1",
+      "listingTitle": "Modern Cabin on Wheels",
+      "text": "Hi Sarah! I'm very interested in your cabin.",
+      "time": "10:30 AM",
+      "date": "Mar 14",
+      "status": "unread"
+    },
+    {
+      "to": "admin@tinynest.com",
+      "toName": "User",
+      "listingId": "4",
+      "listingTitle": "Urban Compact Loft",
+      "text": "hello",
+      "id": "v2z2esmf4",
+      "from": "test@autoify.com",
+      "fromName": "mutskaim",
+      "time": "10:07 AM",
+      "date": "Today"
+    },
+    {
+      "to": "test@autoify.com",
+      "toName": "mutskaim",
+      "listingId": "4",
+      "listingTitle": "Urban Compact Loft",
+      "text": "this is about ur approval",
+      "id": "5g744daln",
+      "from": "admin@tinynest.com",
+      "fromName": "Admin User",
+      "time": "11:21 AM",
+      "date": "Today"
+    }
+  ]
 };

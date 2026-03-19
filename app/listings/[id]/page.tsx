@@ -1,135 +1,147 @@
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
-import { getSession } from '@/lib/auth';
 import { getDb } from '@/lib/db';
-import { MapPin, Ruler, Bed, ShowerHead, Calendar, CheckCircle2, MessageSquare, ArrowRight, Star, Heart } from 'lucide-react';
-import Link from 'next/link';
+import { getSession } from '@/lib/auth';
 import { notFound } from 'next/navigation';
+import { 
+  MapPin, Bed, Maximize, Calendar, Share2, Heart, 
+  MessageCircle, ShieldCheck, CheckCircle2, ArrowLeft, ArrowRight 
+} from 'lucide-react';
+import Link from 'next/link';
+import { PropertyMap } from '@/components/PropertyMap';
 
 async function getListing(id: string) {
-  const db = getDb();
-  return db.listings.find((l: any) => l.id === id) || null;
+  const db = await getDb();
+  // Find by either standard id string or MongoDB _id string
+  return db.listings.find((l: any) => 
+    String(l.id) === String(id) || 
+    String(l._id) === String(id)
+  );
 }
 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
-  const session = await getSession();
   const listing = await getListing(params.id);
-
   if (!listing) notFound();
+
+  const session = await getSession();
+  const user = session?.user;
 
   return (
     <main className="min-h-screen bg-white">
-      <Nav user={session?.user} />
+      <Nav user={user} />
 
-      <section className="bg-gray-50 pt-12 pb-24 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="mb-10 flex items-center justify-between">
-              <Link href="/listings" className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-green transition-colors">
-                <ArrowRight className="w-4 h-4 rotate-180 transition-transform group-hover:-translate-x-1" /> Back to listings
-              </Link>
-              <div className="flex gap-3">
-                 <button className="p-3 bg-white border border-gray-200 rounded-tiny-sm shadow-tiny-sm hover:shadow-tiny transition-all"><Heart className="w-4 h-4 text-gray-400" /></button>
-                 <button className="p-3 bg-white border border-gray-200 rounded-tiny-sm shadow-tiny-sm hover:shadow-tiny transition-all font-bold text-xs uppercase tracking-widest text-charcoal">Share Listing</button>
+      <div className="max-w-7xl mx-auto px-4 py-12 md:px-8">
+        <Link href="/listings" className="inline-flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-green transition-colors mb-8 group">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to listings
+        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Main Info */}
+          <div className="lg:col-span-2 space-y-12">
+            <div className="aspect-[16/9] bg-gray-100 rounded-[2.5rem] overflow-hidden shadow-2xl relative">
+              <img src={listing.img} className="w-full h-full object-cover" alt={listing.title} />
+              <div className="absolute top-8 left-8 flex gap-3">
+                 <span className="px-6 py-2.5 bg-white/90 backdrop-blur-md rounded-full text-sm font-bold text-charcoal shadow-xl">
+                   ${listing.price.toLocaleString()}
+                 </span>
+                 <span className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-xl backdrop-blur-md ${
+                   listing.type === 'sale' ? 'bg-green/90 text-white' : 'bg-earth/90 text-white'
+                 }`}>
+                   For {listing.type}
+                 </span>
               </div>
-           </div>
+            </div>
 
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-              {/* Media Container */}
-              <div className="space-y-6">
-                 <div className="aspect-[4/3] bg-gray-100 rounded-tiny shadow-2xl flex items-center justify-center relative overflow-hidden group">
-                    {listing.img && (listing.img.startsWith('http') || listing.img.startsWith('/')) ? (
-                      <img src={listing.img} alt={listing.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    ) : (
-                      <span className="text-[160px] opacity-80 group-hover:scale-105 transition-transform duration-700">{listing.img || '🏠'}</span>
-                    )}
-                    <div className="absolute top-6 left-6 flex gap-3">
-                       <span className="px-5 py-2 bg-green shadow-xl text-white font-bold text-xs uppercase tracking-widest rounded-full">{listing.type === 'sale' ? 'For Sale' : 'For Rent'}</span>
-                       <span className="px-5 py-2 bg-white/90 backdrop-blur-md shadow-xl text-charcoal font-bold text-xs uppercase tracking-widest rounded-full flex items-center gap-2">
-                          <Star className="w-3 h-3 text-amber-500 fill-current" /> Verified Home
-                       </span>
-                    </div>
-                 </div>
-                 <div className="grid grid-cols-3 gap-4">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="aspect-square bg-gray-200 rounded-tiny hover:opacity-80 transition-opacity cursor-pointer"></div>
-                    ))}
-                 </div>
-              </div>
+            <div className="space-y-6">
+               <div className="flex items-center gap-2 text-green text-xs font-bold uppercase tracking-[0.2em]">
+                  <MapPin className="w-4 h-4" /> {listing.location}
+               </div>
+               <h1 className="font-serif text-4xl md:text-6xl font-bold text-charcoal leading-tight tracking-tight">
+                 {listing.title}
+               </h1>
+            </div>
 
-              {/* Info Container */}
-              <div className="space-y-12">
-                 <div>
-                    <div className="text-3xl lg:text-5xl font-serif font-bold text-green mb-4 mb-2 tracking-tight">
-                        {listing.type === 'rent' ? `$${listing.price.toLocaleString()}/mo` : `$${listing.price.toLocaleString()}`}
-                    </div>
-                    <div className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-6 flex items-center gap-3">
-                       <MapPin className="w-4 h-4 text-green-light" /> {listing.location} · 24 SALES IN AREA
-                    </div>
-                    <h1 className="text-3xl lg:text-4xl font-bold text-charcoal mb-8 leading-tight">{listing.title}</h1>
-                    
-                    <div className="flex flex-wrap gap-4 mb-10">
-                       {[
-                         { icon: Ruler, val: `${listing.sqft} FT²`, lbl: 'TOTAL AREA' },
-                         { icon: Bed, val: listing.beds === 0 ? 'STUDIO' : `${listing.beds} BED`, lbl: 'SLEEP CAPACITY' },
-                         { icon: ShowerHead, val: `${listing.baths} BATH`, lbl: 'FULL BATHS' },
-                         { icon: Calendar, val: listing.year, lbl: 'YEAR BUILT' }
-                       ].map((spec, i) => (
-                         <div key={i} className="flex-1 min-w-[140px] bg-white border border-gray-100 p-6 rounded-tiny shadow-tiny-sm hover:shadow-tiny transition-all">
-                            <spec.icon className="w-5 h-5 text-green-light mb-4" />
-                            <div className="text-lg font-bold text-charcoal leading-none mb-1">{spec.val}</div>
-                            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{spec.lbl}</div>
-                         </div>
-                       ))}
-                    </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100">
+               <div className="space-y-1">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Square Feet</div>
+                  <div className="flex items-center gap-2 text-charcoal font-bold">
+                    <Maximize className="w-4 h-4 text-green" /> {listing.sqft}
+                  </div>
+               </div>
+               <div className="space-y-1">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Bedrooms</div>
+                  <div className="flex items-center gap-2 text-charcoal font-bold">
+                    <Bed className="w-4 h-4 text-green" /> {listing.beds}
+                  </div>
+               </div>
+               <div className="space-y-1">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Build Year</div>
+                  <div className="flex items-center gap-2 text-charcoal font-bold">
+                    <Calendar className="w-4 h-4 text-green" /> {listing.year}
+                  </div>
+               </div>
+               <div className="space-y-1">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Condition</div>
+                  <div className="flex items-center gap-2 text-charcoal font-bold">
+                    <ShieldCheck className="w-4 h-4 text-green" /> Like New
+                  </div>
+               </div>
+            </div>
 
-                    <div className="space-y-4">
-                       <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">Home Description</h3>
-                       <p className="text-gray-500 font-medium text-lg leading-relaxed">{listing.description}</p>
-                    </div>
-                 </div>
+            <div className="space-y-6">
+               <h2 className="font-serif text-3xl font-bold text-charcoal">Description</h2>
+               <p className="text-lg text-gray-500 font-medium leading-relaxed">
+                 {listing.description}
+               </p>
+            </div>
 
-                 {/* Seller Card */}
-                 <div className="bg-white p-8 rounded-tiny border border-gray-100 shadow-tiny-sm">
-                    <div className="flex items-center gap-6 mb-8 group">
-                       <div className="w-16 h-16 rounded-full bg-green text-white flex items-center justify-center font-serif font-bold text-2xl shadow-xl group-hover:scale-105 transition-transform duration-300">
-                          {listing.sellerName[0]}
-                       </div>
-                       <div>
-                          <div className="text-xl font-bold text-charcoal mb-1 flex items-center gap-2">
-                             {listing.sellerName} <CheckCircle2 className="w-5 h-5 text-green-light" />
-                          </div>
-                          <div className="text-sm font-bold text-gray-400 uppercase tracking-widest">Verified Multi-Unit Seller</div>
-                       </div>
+            {/* Map Section */}
+            <div className="space-y-6 pt-12 border-t border-gray-100">
+               <h2 className="font-serif text-3xl font-bold text-charcoal">Location</h2>
+               <PropertyMap location={listing.location} title={listing.title} />
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <aside className="space-y-8">
+            <div className="bg-charcoal text-white p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+               <div className="absolute inset-0 bg-green/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+               <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-8 pb-8 border-b border-white/10">
+                    <div className="w-14 h-14 rounded-full bg-green text-white flex items-center justify-center font-serif text-2xl font-bold">
+                       {listing.sellerName[0]}
                     </div>
-                    <div className="space-y-4">
-                       <Link 
-                         href={`/messages?to=${listing.seller}&listingId=${listing.id}&title=${encodeURIComponent(listing.title)}`} 
-                         className="w-full btn btn-primary py-5 justify-center shadow-xl hover:-translate-y-1 transition-all"
-                       >
-                          <MessageSquare className="w-5 h-5 mr-2" /> Message Seller
-                       </Link>
-                       <button className="w-full btn bg-white border-2 border-green text-green px-10 py-4 font-bold rounded-tiny shadow-sm hover:bg-green-pale transition-all">Request Individual Viewing</button>
+                    <div>
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Seller</div>
+                      <div className="font-bold text-lg flex items-center gap-2">{listing.sellerName} <CheckCircle2 className="w-4 h-4 text-green" /></div>
                     </div>
-                 </div>
-              </div>
-           </div>
+                  </div>
+
+                  <div className="space-y-4">
+                     <Link 
+                       href={`/messages?to=${listing.seller}&title=${encodeURIComponent(listing.title)}&listingId=${listing.id}`} 
+                       className="btn btn-primary w-full py-5 font-bold flex items-center justify-center gap-3 shadow-xl"
+                     >
+                       <MessageCircle className="w-5 h-5" /> Message Seller
+                     </Link>
+                     <button className="w-full py-5 bg-white/10 hover:bg-white/20 rounded-tiny font-bold text-sm transition-all flex items-center justify-center gap-3">
+                        <Heart className="w-5 h-5" /> Save to Favorites
+                     </button>
+                     <button className="w-full py-5 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                        <Share2 className="w-4 h-4" /> Share Listing
+                     </button>
+                  </div>
+               </div>
+            </div>
+
+            <div className="p-10 bg-gray-50 rounded-[2.5rem] border border-gray-100 text-center">
+               <div className="text-3xl mb-4">💡</div>
+               <h4 className="font-bold text-charcoal mb-2">Buying Tip</h4>
+               <p className="text-xs text-gray-400 font-medium leading-relaxed">Most tiny houses sell within 14 days. We recommend messaging the seller early to secure your viewing.</p>
+            </div>
+          </aside>
         </div>
-      </section>
-
-      {/* Amenities Section */}
-      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-         <h2 className="font-serif text-3xl font-bold text-charcoal mb-12">Amenities & Standard Features</h2>
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-12">
-            {listing.amenities.map((amenity: string, i: number) => (
-              <div key={i} className="flex items-center gap-4 group">
-                 <div className="w-10 h-10 rounded-tiny bg-green-pale text-green flex items-center justify-center shrink-0 group-hover:bg-green group-hover:text-white transition-colors duration-300">
-                    <CheckCircle2 className="w-5 h-5" />
-                 </div>
-                 <span className="text-lg font-semibold text-gray-500 group-hover:text-charcoal transition-colors">{amenity}</span>
-              </div>
-            ))}
-         </div>
-      </section>
+      </div>
 
       <Footer />
     </main>

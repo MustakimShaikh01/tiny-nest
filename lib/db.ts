@@ -1,57 +1,79 @@
 import fs from 'fs';
 import path from 'path';
-
 import { initialData } from './initialData';
 
-console.log('--- DB MODULE LOADED. CWD:', process.cwd());
-console.log('--- NODE_ENV:', process.env.NODE_ENV);
-
-// On Render, we use a different path for the persistent disk. Locally, we use the root 'db' folder.
-const DB_DIR = process.env.NODE_ENV === 'production' 
-  ? '/opt/render/project/src/storage/db' 
-  : path.resolve(process.cwd(), 'db');
-
-const DB_PATH = path.resolve(DB_DIR, 'db.json');
-
-// Ensure directory exists
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
+// Dynamic Import Fallback for missing mongoose
+let mongoose: any = null;
+try {
+  mongoose = require('mongoose');
+} catch (e) {
+  console.warn('--- MONGOOSE NOT DETECTED. FALLING BACK TO JSON DB ---');
 }
 
-// Ensure file exists with initial structure if missing
-if (!fs.existsSync(DB_PATH) || fs.readFileSync(DB_PATH, 'utf-8').trim() === '' || JSON.parse(fs.readFileSync(DB_PATH, 'utf-8')).listings.length === 0) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2));
-} else {
-  // Ensure admin user exists in existing database
-  const db = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
-  if (!db.users.find((u: any) => u.email === 'admin@tinynest.com')) {
-    db.users.push(initialData.users.find((u: any) => u.email === 'admin@tinynest.com'));
-    fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
-  }
-}
+const MONGODB_URI = process.env.MONGODB_URI;
 
-export function getDb() {
-  console.log('--- ATTEMPTING TO READ DB AT:', DB_PATH);
-  if (!fs.existsSync(DB_PATH)) {
-    console.error('--- DB FILE NOT FOUND AT:', DB_PATH);
-    return { users: [], listings: [], blogs: [], messages: [] };
+let cached = (global as any).mongoose;
+if (!cached) cached = (global as any).mongoose = { conn: null, promise: null };
+
+export async function connectDB() {
+  if (!mongoose) return null;
+  if (cached.conn) return cached.conn;
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI!).then((m: any) => m);
   }
-  const data = fs.readFileSync(DB_PATH, 'utf-8');
-  console.log('--- DB DATA LENGTH:', data.length);
-  try {
-    const parsed = JSON.parse(data);
-    console.log('--- DB PARSED LISTINGS:', parsed.listings?.length);
-    return parsed;
-  } catch (err) {
-    console.error('--- DB JSON PARSE ERROR:', err);
-    return { users: [], listings: [], blogs: [], messages: [] };
-  }
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
 export function saveDb(data: any) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  if (!mongoose || !MONGODB_URI) {
+    const DB_PATH = path.resolve(process.cwd(), 'db/db.json');
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  }
+}
+
+const DB_PATH = path.resolve(process.cwd(), 'db/db.json');
+
+export async function getDb() {
+  if (mongoose && MONGODB_URI) {
+    try {
+      await connectDB();
+      const { User, Listing, Blog, Message } = require('./models');
+      const [usersRaw, listingsRaw, blogsRaw, messagesRaw] = await Promise.all([
+        User.find({}).lean(),
+        Listing.find({}).lean(),
+        Blog.find({}).lean(),
+        Message.find({}).lean()
+      ]);
+      
+      const normalize = (arr: any[]) => arr.map(item => ({ 
+        ...item, 
+        id: item.id || item._id?.toString() || item._id 
+      }));
+
+      return JSON.parse(JSON.stringify({
+        users: normalize(usersRaw),
+        listings: normalize(listingsRaw),
+        blogs: normalize(blogsRaw),
+        messages: normalize(messagesRaw)
+      }));
+    } catch (e) {
+       console.error('Mongo load failed, falling back to JSON:', e);
+    }
+  }
+
+  // JSON Fallback
+  if (!fs.existsSync(DB_PATH)) {
+    const dbDir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
+    fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2));
+  }
+  
+  const data = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+  return data;
 }
 
 export function generateId() {
-  return Math.random().toString(36).substring(2, 11);
+  if (mongoose) return new mongoose.Types.ObjectId().toString();
+  return Math.random().toString(36).substring(2, 15);
 }
