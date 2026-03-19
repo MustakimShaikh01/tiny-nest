@@ -182,12 +182,13 @@
         "/uploads/kjv0b0gow-ChatGPT-Image-Mar-18,-2026,-02_05_33-AM.png"
       ],
       "id": "kw9anevfj",
-      "status": "pending",
+      "status": "approved",
       "views": 0,
       "favorites": 0,
       "seller": "test@autoify.com",
       "sellerName": "mutskaim",
-      "createdAt": "2026-03-19T05:42:53.481Z"
+      "createdAt": "2026-03-19T05:42:53.481Z",
+      "updatedAt": "2026-03-19T05:50:31.116Z"
     }
   ],
   "blogs": [
@@ -238,6 +239,18 @@
       "from": "test@autoify.com",
       "fromName": "mutskaim",
       "time": "10:07 AM",
+      "date": "Today"
+    },
+    {
+      "to": "test@autoify.com",
+      "toName": "mutskaim",
+      "listingId": "4",
+      "listingTitle": "Urban Compact Loft",
+      "text": "this is about ur approval",
+      "id": "5g744daln",
+      "from": "admin@tinynest.com",
+      "fromName": "Admin User",
+      "time": "11:21 AM",
       "date": "Today"
     }
   ]

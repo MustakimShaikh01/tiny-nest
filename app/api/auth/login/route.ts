@@ -5,12 +5,15 @@ import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    const { email: rawEmail, password } = await request.json();
+    const email = rawEmail.trim().toLowerCase();
     const db = getDb();
     
-    const user = db.users.find((u: any) => u.email === email && u.password === password);
+    console.log('Login attempt:', email);
+    const user = db.users.find((u: any) => u.email.toLowerCase() === email && u.password === password);
     
     if (!user) {
+      console.log('User not found or password mismatch for:', email);
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
