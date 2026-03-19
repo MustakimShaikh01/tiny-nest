@@ -4,22 +4,18 @@ import { ListingCard } from '@/components/ListingCard';
 import { BlogCard } from '@/components/BlogCard';
 import { Footer } from '@/components/Footer';
 import { getSession } from '@/lib/auth';
-import { cookies } from 'next/headers';
+import { getDb } from '@/lib/db';
 import Link from 'next/link';
 import { ArrowRight, Star, ShieldCheck, MapPin } from 'lucide-react';
 
 async function getListings() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/listings?status=approved`, { cache: 'no-store' });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.listings.slice(0, 3);
+  const db = getDb();
+  return db.listings.filter((l: any) => l.status === 'approved').slice(0, 3);
 }
 
 async function getBlogs() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs`, { cache: 'no-store' });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.blogs.slice(0, 3);
+  const db = getDb();
+  return db.blogs.slice(0, 3);
 }
 
 export default async function HomeView() {

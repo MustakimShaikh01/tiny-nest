@@ -1,15 +1,14 @@
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { getSession } from '@/lib/auth';
+import { getDb } from '@/lib/db';
 import { Calendar, Clock, ArrowRight, User, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 async function getBlog(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs/${id}`, { cache: 'no-store' });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.blog;
+  const db = getDb();
+  return db.blogs.find((b: any) => b.id === id) || null;
 }
 
 export default async function BlogDetailPage({ params }: { params: { id: string } }) {

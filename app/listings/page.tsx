@@ -4,15 +4,30 @@ import { ListingFilters } from '@/components/ListingFilters';
 import { ListingCard } from '@/components/ListingCard';
 import { Footer } from '@/components/Footer';
 import { getSession } from '@/lib/auth';
+import { getDb } from '@/lib/db';
 import Link from 'next/link';
 import { Search, MapPin, Tag, SlidersHorizontal, ArrowUpDown, Loader2 } from 'lucide-react';
 
 async function getListings(searchParams: any) {
-  const query = new URLSearchParams(searchParams).toString();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/listings?${query}`, { cache: 'no-store' });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.listings;
+  const db = getDb();
+  let listings = db.listings.filter((l: any) => l.status === 'approved');
+  
+  if (searchParams.type && searchParams.type !== 'all') {
+    listings = listings.filter((l: any) => l.type === searchParams.type);
+  }
+  if (searchParams.location) {
+    const loc = searchParams.location.toLowerCase();
+    listings = listings.filter((l: any) => l.location.toLowerCase().includes(loc));
+  }
+  if (searchParams.search) {
+    const s = searchParams.search.toLowerCase();
+    listings = listings.filter((l: any) => 
+      l.title.toLowerCase().includes(s) || 
+      l.description.toLowerCase().includes(s)
+    );
+  }
+
+  return listings;
 }
 
 export default async function ListingsPage({ searchParams }: { searchParams: any }) {

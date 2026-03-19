@@ -1,15 +1,14 @@
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { getSession } from '@/lib/auth';
+import { getDb } from '@/lib/db';
 import { MapPin, Ruler, Bed, ShowerHead, Calendar, CheckCircle2, MessageSquare, ArrowRight, Star, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 async function getListing(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/listings/${id}`, { cache: 'no-store' });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.listing;
+  const db = getDb();
+  return db.listings.find((l: any) => l.id === id) || null;
 }
 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
