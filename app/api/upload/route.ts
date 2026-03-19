@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { writeFile, mkdir } from 'fs/promises';
+import { join, dirname } from 'path';
 import { generateId } from '@/lib/db';
 
 export async function POST(request: Request) {
@@ -16,7 +16,11 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
     
     const uniqueName = `${generateId()}-${file.name.replace(/\s+/g, '-')}`;
-    const path = join(process.cwd(), 'public', 'uploads', uniqueName);
+    const uploadDir = join(process.cwd(), 'public', 'uploads');
+    const path = join(uploadDir, uniqueName);
+    
+    // Ensure the directory exists
+    await mkdir(uploadDir, { recursive: true });
     
     await writeFile(path, buffer);
     
