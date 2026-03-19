@@ -1,1 +1,12 @@
-{}
+{
+  "/page": "app/page.js",
+  "/api/auth/logout/route": "app/api/auth/logout/route.js",
+  "/api/messages/route": "app/api/messages/route.js",
+  "/login/page": "app/login/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/messages/page": "app/messages/page.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/listings/page": "app/listings/page.js",
+  "/blogs/page": "app/blogs/page.js",
+  "/signup/page": "app/signup/page.js"
+}

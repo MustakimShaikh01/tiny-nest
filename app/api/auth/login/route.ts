@@ -23,9 +23,14 @@ export async function POST(request: Request) {
     
     // Final check against JSON if mongo user not found
     if (!user) {
-       user = db.users.find((u: any) => u.email === email);
+       const fs = require('fs');
+       const path = require('path');
+       const DB_PATH = path.resolve(process.cwd(), 'db/db.json');
+       if (fs.existsSync(DB_PATH)) {
+         const fallbackData = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+         user = fallbackData.users.find((u: any) => u.email === email);
+       }
     }
-
     if (!user || user.password !== password) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
