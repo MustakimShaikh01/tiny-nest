@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getDb, saveDb, generateId } from '@/lib/db';
-import { decrypt } from '@/lib/auth';
+import { getDb, saveDb, generateId } from '../../../lib/db';
+import { decrypt } from '../../../lib/auth';
 import { cookies } from 'next/headers';
 
 export async function GET() {

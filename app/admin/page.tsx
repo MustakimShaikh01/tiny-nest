@@ -1,8 +1,8 @@
-import { Nav } from '@/components/Nav';
-import { Footer } from '@/components/Footer';
-import { getSession } from '@/lib/auth';
-import { getDb } from '@/lib/db';
-import { ModerationList } from '@/components/ModerationList';
+import Nav from '../../components/Nav';
+import Footer from '../../components/Footer';
+import { getSession } from '../../lib/auth';
+import { getDb } from '../../lib/db';
+import { ModerationList } from '../../components/ModerationList';
 import { Users, Home, MessageSquare, CheckCircle2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { connectDB, getDb } from '@/lib/db';
-import { encrypt } from '@/lib/auth';
+import { connectDB, getDb } from '../../../../lib/db';
+import { encrypt } from '../../../../lib/auth';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     
     let user;
     try {
-      const { User } = require('@/lib/models');
+      const { User } = require('../../../../lib/models');
       user = await User.findOne({ email }).lean();
     } catch (e) {
       // Fallback

@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import { Nav } from '@/components/Nav';
-import { ListingFilters } from '@/components/ListingFilters';
-import { ListingCard } from '@/components/ListingCard';
-import { Footer } from '@/components/Footer';
-import { getSession } from '@/lib/auth';
-import { getDb } from '@/lib/db';
+import Nav from '../../components/Nav';
+import { ListingFilters } from '../../components/ListingFilters';
+import { ListingCard } from '../../components/ListingCard';
+import Footer from '../../components/Footer';
+import { getSession } from '../../lib/auth';
+import { getDb } from '../../lib/db';
 import Link from 'next/link';
 import { Search, MapPin, Tag, SlidersHorizontal, ArrowUpDown, Loader2 } from 'lucide-react';
 import path from 'path';

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
-import { generateId } from '@/lib/db';
+import { generateId } from '../../../lib/db';
 
 export async function POST(request: Request) {
   try {

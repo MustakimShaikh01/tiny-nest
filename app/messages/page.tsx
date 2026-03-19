@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { Nav } from '@/components/Nav';
-import { Footer } from '@/components/Footer';
+import Nav from '../../components/Nav';
+import Footer from '../../components/Footer';
 import Link from 'next/link';
 import { Search, Send, MapPin, ArrowRight, Loader2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';

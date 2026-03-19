@@ -1,14 +1,14 @@
-import { Nav } from '@/components/Nav';
-import { Footer } from '@/components/Footer';
-import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import Nav from '../../../components/Nav';
+import Footer from '../../../components/Footer';
+import { getDb } from '../../../lib/db';
+import { getSession } from '../../../lib/auth';
 import { notFound } from 'next/navigation';
 import { 
   MapPin, Bed, Maximize, Calendar, Share2, Heart, 
   MessageCircle, ShieldCheck, CheckCircle2, ArrowLeft, ArrowRight 
 } from 'lucide-react';
 import Link from 'next/link';
-import { PropertyMap } from '@/components/PropertyMap';
+import { PropertyMap } from '../../../components/PropertyMap';
 
 async function getListing(id: string) {
   const db = await getDb();

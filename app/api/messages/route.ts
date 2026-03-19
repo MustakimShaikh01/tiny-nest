@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/db';
-import { Message } from '@/lib/models';
-import { decrypt } from '@/lib/auth';
+import { connectDB } from '../../../lib/db';
+import { Message } from '../../../lib/models';
+import { decrypt } from '../../../lib/auth';
 import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {

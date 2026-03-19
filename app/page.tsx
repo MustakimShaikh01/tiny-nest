@@ -1,9 +1,9 @@
-import { Nav } from '@/components/Nav';
-import { Footer } from '@/components/Footer';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
 import Link from 'next/link';
 import { ArrowRight, Star, MapPin, Search } from 'lucide-react';
-import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import { getDb } from '../lib/db';
+import { getSession } from '../lib/auth';
 
 async function getListings() {
   const db = await getDb();

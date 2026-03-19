@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/db';
-import { User } from '@/lib/models';
-import { encrypt } from '@/lib/auth';
+import { connectDB } from '../../../../lib/db';
+import { User } from '../../../../lib/models';
+import { encrypt } from '../../../../lib/auth';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {

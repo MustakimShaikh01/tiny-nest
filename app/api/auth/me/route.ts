@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { decrypt, encrypt } from '@/lib/auth';
-import { getDb, saveDb } from '@/lib/db';
+import { decrypt, encrypt } from '../../../../lib/auth';
+import { getDb, saveDb } from '../../../../lib/db';
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -34,7 +34,7 @@ export async function PATCH(request: Request) {
     // In Mongo mode, we update using User model
     let updatedUser;
     try {
-      const { User } = require('@/lib/models');
+      const { User } = require('../../../../lib/models');
       const user = await User.findOneAndUpdate(
         { $or: [{ id: currentUser.id }, { email: currentUser.email }] },
         { $set: data },
