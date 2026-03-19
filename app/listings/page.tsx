@@ -1,10 +1,11 @@
+import { Suspense } from 'react';
 import { Nav } from '@/components/Nav';
 import { ListingFilters } from '@/components/ListingFilters';
 import { ListingCard } from '@/components/ListingCard';
 import { Footer } from '@/components/Footer';
 import { getSession } from '@/lib/auth';
 import Link from 'next/link';
-import { Search, MapPin, Tag, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { Search, MapPin, Tag, SlidersHorizontal, ArrowUpDown, Loader2 } from 'lucide-react';
 
 async function getListings(searchParams: any) {
   const query = new URLSearchParams(searchParams).toString();
@@ -32,7 +33,9 @@ export default async function ListingsPage({ searchParams }: { searchParams: any
              </p>
            </div>
 
-           <ListingFilters />
+           <Suspense fallback={<div className="bg-white p-8 rounded-tiny text-center text-gray-400 font-bold uppercase tracking-widest animate-pulse border border-gray-100">Loading Filters...</div>}>
+              <ListingFilters />
+           </Suspense>
         </div>
       </section>
 

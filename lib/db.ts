@@ -1,7 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 
-const DB_PATH = path.join(process.cwd(), 'db', 'db.json');
+// Use /storage mount for Render if configured, else fallback to project root
+const DB_DIR = process.env.DB_MOUNT_PATH || path.join(process.cwd(), 'storage', 'db');
+const DB_PATH = path.join(DB_DIR, 'db.json');
+
+// Ensure directory exists
+if (!fs.existsSync(DB_DIR)) {
+  fs.mkdirSync(DB_DIR, { recursive: true });
+}
+
+// Ensure file exists with initial structure if missing
+if (!fs.existsSync(DB_PATH)) {
+  fs.writeFileSync(DB_PATH, JSON.stringify({ users: [], listings: [], blogs: [], messages: [] }));
+}
 
 export function getDb() {
   const data = fs.readFileSync(DB_PATH, 'utf-8');

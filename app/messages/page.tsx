@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
-import { Search, Send, MapPin, ArrowRight } from 'lucide-react';
+import { Search, Send, MapPin, ArrowRight, Loader2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function MessagesPage() {
+function MessagesContent() {
   const [messages, setMessages] = useState<any[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedConv, setSelectedConv] = useState<string | null>(null);
@@ -70,7 +70,6 @@ export default function MessagesPage() {
 
   const conversations = Array.from(new Set(messages.map(m => {
     if (currentUser?.role === 'admin') {
-      // For Admin: show unique pairs [A, B] as 'A ↔ B'
       const pair = [m.from, m.to].sort();
       return `${pair[0]}<->${pair[1]}`;
     }
@@ -100,8 +99,8 @@ export default function MessagesPage() {
     });
 
     return {
-      email: id, // Original ID for selection
-      displayEmail: email, // Email to interact with
+      email: id,
+      displayEmail: email,
       name: label || (lastMsg?.from === email ? lastMsg.fromName : (lastMsg?.toName || (email === searchParams.get('to') ? 'New Contact' : email.split('@')[0]))),
       lastText: lastMsg?.text || 'Start a conversation...',
       time: lastMsg?.time || 'Now',
@@ -219,5 +218,13 @@ export default function MessagesPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-green" /></div>}>
+      <MessagesContent />
+    </Suspense>
   );
 }

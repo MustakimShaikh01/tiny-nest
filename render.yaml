@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: tiny-nest-marketplace
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        fromContext: git_url
+    disks:
+      - name: tinynest-uploads
+        mountPath: /opt/render/project/src/public/uploads
+        sizeGB: 1
+      - name: tinynest-db
+        mountPath: /opt/render/project/src/storage/db
+        sizeGB: 1
