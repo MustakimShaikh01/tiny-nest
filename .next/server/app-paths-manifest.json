@@ -1,10 +1,1 @@
-{
-  "/messages/page": "app/messages/page.js",
-  "/profile/page": "app/profile/page.js",
-  "/page": "app/page.js",
-  "/signup/page": "app/signup/page.js",
-  "/login/page": "app/login/page.js",
-  "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/listings/route": "app/api/listings/route.js",
-  "/api/blogs/route": "app/api/blogs/route.js"
-}
+{}
