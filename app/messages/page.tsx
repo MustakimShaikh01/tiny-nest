@@ -203,14 +203,45 @@ function MessagesContent() {
 
                 {/* Messages Area */}
                 <div className="flex-1 overflow-y-auto p-10 space-y-6">
-                   {currentMessages.map((msg, i) => (
-                      <div key={i} className={`flex flex-col ${msg.from === currentUser?.email ? 'items-end' : 'items-start'}`}>
-                         <div className={`max-w-md p-5 rounded-tiny shadow-tiny-sm font-medium text-sm leading-relaxed ${msg.from === currentUser?.email ? 'bg-green text-white rounded-br-none' : 'bg-white text-charcoal rounded-bl-none border border-gray-100'}`}>
-                            {msg.text}
-                         </div>
-                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">{msg.time}</span>
-                      </div>
-                   ))}
+                   {currentMessages.map((msg, i) => {
+                      // Determine message alignment & color
+                      // For admin viewing other users' conversations, differentiate the two participants
+                      let isRightSide = msg.from === currentUser?.email;
+                      let bubbleStyle = 'bg-white text-charcoal rounded-bl-none border border-gray-100';
+                      let labelColor = 'text-gray-400';
+
+                      if (selectedConv?.includes('<->') && currentUser?.role === 'admin') {
+                        const parts = selectedConv.split('<->');
+                        const isParticipant = parts.includes(currentUser?.email);
+
+                        if (isParticipant) {
+                          // Admin is one of the participants
+                          isRightSide = msg.from === currentUser?.email;
+                        } else {
+                          // Admin is watching two OTHER users — assign sides by sorted order
+                          isRightSide = msg.from === parts[1]; // second sorted email goes right
+                        }
+                      }
+
+                      if (isRightSide) {
+                        bubbleStyle = 'bg-green text-white rounded-br-none';
+                        labelColor = 'text-green';
+                      } else if (selectedConv?.includes('<->') && currentUser?.role === 'admin' && msg.from !== currentUser?.email) {
+                        // Left-side user in admin view gets a distinct blue style
+                        bubbleStyle = 'bg-blue-50 text-charcoal rounded-bl-none border border-blue-100';
+                        labelColor = 'text-blue-600';
+                      }
+
+                      return (
+                        <div key={i} className={`flex flex-col ${isRightSide ? 'items-end' : 'items-start'}`}>
+                           <span className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${labelColor}`}>{msg.fromName || msg.from?.split('@')[0]}</span>
+                           <div className={`max-w-md p-5 rounded-tiny shadow-tiny-sm font-medium text-sm leading-relaxed ${bubbleStyle}`}>
+                              {msg.text}
+                           </div>
+                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">{msg.time}</span>
+                        </div>
+                      );
+                   })}
                 </div>
 
                 {/* Input Area */}

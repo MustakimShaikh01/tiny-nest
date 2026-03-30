@@ -154,13 +154,23 @@ export default function ListHomePage() {
                     <input name="beds" type="number" required className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-tiny font-medium focus:bg-white focus:border-green transition-all outline-none" placeholder="1" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Bedrooms</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Bathrooms</label>
                     <input name="baths" type="number" required className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-tiny font-medium focus:bg-white focus:border-green transition-all outline-none" placeholder="1" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Year Built</label>
                     <input name="year" type="number" required className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-tiny font-medium focus:bg-white focus:border-green transition-all outline-none" placeholder="2026" />
                   </div>
+               </div>
+               <div className="mt-8 space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Category</label>
+                  <select name="category" required className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-tiny font-bold text-charcoal focus:bg-white focus:border-green transition-all outline-none appearance-none">
+                    <option value="Tiny House">Tiny House</option>
+                    <option value="Cabin">Cabin</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Loft">Loft</option>
+                    <option value="Cottage">Cottage</option>
+                  </select>
                </div>
                <div className="mt-8 space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Home Description</label>
