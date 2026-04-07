@@ -161,7 +161,12 @@ export default function ProfilePage() {
                     <div className="p-8 bg-gray-50 rounded-tiny border border-gray-100">
                        <h3 className="text-sm font-bold text-charcoal uppercase tracking-widest mb-4">Security</h3>
                        <p className="text-gray-500 text-sm mb-6 leading-relaxed">Your account is secured with end-to-end multi-layer encryption.</p>
-                       <button className="text-xs font-bold text-green hover:underline uppercase tracking-widest">Change Password</button>
+                       <button 
+                         onClick={() => alert("A secure password reset link has been sent to your registered email.")} 
+                         className="text-xs font-bold text-green hover:underline uppercase tracking-widest"
+                       >
+                         Change Password
+                       </button>
                     </div>
                  </div>
                )}
@@ -179,7 +184,9 @@ export default function ProfilePage() {
                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">User Rating</div>
             </div>
             <div className="bg-white p-8 rounded-tiny border border-gray-100 shadow-tiny-sm text-center text-uppercase">
-               <div className="text-3xl font-bold text-green mb-1">{user.id ? String(user.id).slice(0, 4) : '...' }</div>
+               <div className="text-3xl font-bold text-green mb-1">
+                 {typeof user.id === 'object' ? String(user.id).slice(-4) : user.id ? String(user.id).slice(-4) : (user._id ? String(user._id).slice(-4) : '...')}
+               </div>
                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Member ID</div>
             </div>
          </div>

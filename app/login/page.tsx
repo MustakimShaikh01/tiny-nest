@@ -39,10 +39,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      <div className="hidden lg:flex flex-col bg-green p-12 relative overflow-hidden">
+    <div className="h-screen overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+      <div className="hidden lg:flex flex-col bg-green p-8 xl:p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-green-light/20 via-transparent to-transparent opacity-50"></div>
-        <Link href="/" className="flex items-center gap-2.5 relative z-10 group mb-20 text-white">
+        <Link href="/" className="flex items-center gap-2.5 relative z-10 group mb-12 text-white">
           <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-tiny flex items-center justify-center transition-transform group-hover:scale-105">
             <Home className="text-white w-5 h-5" />
           </div>
@@ -56,8 +56,8 @@ export default function LoginPage() {
         <div className="absolute -bottom-24 -right-24 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="bg-white flex items-center justify-center p-8 sm:p-12 lg:p-24 relative">
-        <div className="w-full max-w-md">
+      <div className="bg-white flex items-center justify-center p-6 sm:p-8 lg:p-12 relative overflow-y-auto">
+        <div className="w-full max-w-md my-auto">
           <div className="lg:hidden mb-12 flex justify-center">
             <Link href="/" className="flex items-center gap-2.5">
               <div className="w-9 h-9 bg-green rounded-tiny flex items-center justify-center">
