@@ -18,17 +18,76 @@
   --radius-sm: 8px;
   --shadow: 0 4px 24px rgba(0,0,0,0.08);
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+
+  /* Typography scale */
+  --text-base: 1rem;       /* 16px */
+  --text-sm: 0.9375rem;   /* 15px */
+  --text-xs: 0.8125rem;   /* 13px */
+}
+
+/* ─── Base Typography ─────────────────────────────────── */
+html {
+  font-size: 16px;
 }
 
 body {
   background: #FAFAF8;
   color: var(--charcoal);
-  line-height: 1.6;
+  line-height: 1.65;
+  font-size: 1rem; /* 16px body text */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+p {
+  font-size: 1rem; /* 16px */
+  line-height: 1.7;
+}
+
+/* Normalize tracking – remove excessive tracking-widest from body text */
+.text-base,
+.text-sm,
+.text-lg {
+  letter-spacing: normal;
+}
+
+/* ─── Online Presence Indicator ──────────────────────── */
+.online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid white;
+  background: #22c55e; /* bright green */
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.online-dot.offline {
+  background: #9ca3af; /* grey */
+  box-shadow: none;
+}
+
+.online-dot.away {
+  background: #f59e0b; /* amber */
+}
+
+/* Pulse animation for online dot */
+@keyframes onlinePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  50%       { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); }
+}
+
+.online-dot:not(.offline):not(.away) {
+  animation: onlinePulse 2.5s ease-in-out infinite;
+}
+
+/* ─── Buttons ─────────────────────────────────────────── */
 @layer components {
   .btn {
     @apply px-5 py-2.5 rounded-tiny-sm text-sm font-semibold transition-all inline-flex items-center gap-2;
+    letter-spacing: normal;
   }
   .btn-primary {
     @apply bg-green text-white hover:bg-[#225C3E];

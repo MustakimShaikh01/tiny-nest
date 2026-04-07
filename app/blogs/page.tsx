@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Nav from '../../components/Nav';
 import { BlogCard } from '../../components/BlogCard';
 import Footer from '../../components/Footer';
@@ -5,6 +6,29 @@ import { getSession } from '../../lib/auth';
 import { getDb } from '../../lib/db';
 import { Plus, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+
+export const metadata: Metadata = {
+  title: 'Tiny House Blog – Tips, Guides & Inspiration | TinyNest Journal',
+  description:
+    'Expert tiny house tips, buying guides, zoning laws, design inspiration, and community stories. Your go-to resource for tiny living in 2026.',
+  keywords: [
+    'tiny house blog',
+    'tiny home tips',
+    'tiny house buying guide',
+    'tiny living inspiration',
+    'tiny house zoning laws',
+    'tiny house financing tips',
+  ],
+  alternates: { canonical: `${siteUrl}/blogs` },
+  openGraph: {
+    title: 'Tiny House Blog | TinyNest Journal',
+    description: 'Expert insights, buying guides, and inspiration for the tiny house lifestyle.',
+    url: `${siteUrl}/blogs`,
+    type: 'website',
+  },
+};
 
 async function getBlogs() {
   const db = await getDb();

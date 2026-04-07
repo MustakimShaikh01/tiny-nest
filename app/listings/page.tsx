@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Nav from '../../components/Nav';
 import { ListingFilters } from '../../components/ListingFilters';
@@ -8,6 +9,29 @@ import { getDb } from '../../lib/db';
 import Link from 'next/link';
 import { Search, MapPin, Tag, SlidersHorizontal, ArrowUpDown, Loader2 } from 'lucide-react';
 import path from 'path';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+
+export const metadata: Metadata = {
+  title: 'Tiny Houses for Sale & Rent – Browse 12,400+ Listings | TinyNest',
+  description:
+    'Browse 12,400+ verified tiny house listings across the USA. Filter by price, location, and type. Find tiny homes for sale and rent on TinyNest.',
+  keywords: [
+    'tiny houses for sale',
+    'tiny homes for rent',
+    'tiny house listings USA',
+    'buy tiny house',
+    'affordable tiny homes',
+    'tiny house on wheels for sale',
+  ],
+  alternates: { canonical: `${siteUrl}/listings` },
+  openGraph: {
+    title: 'Browse Tiny House Listings | TinyNest Marketplace',
+    description: 'Filter 12,400+ tiny homes by price, location and type. Find your perfect tiny house on TinyNest.',
+    url: `${siteUrl}/listings`,
+    type: 'website',
+  },
+};
 
 async function getListings(searchParams: any) {
   const db = await getDb();
