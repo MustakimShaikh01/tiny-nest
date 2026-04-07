@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import Nav from '../../components/Nav';
-import Footer from '../../components/Footer';
 import Link from 'next/link';
 import { Search, Send, ArrowRight, Loader2, CheckCheck, Check } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -10,40 +9,63 @@ import { useRouter, useSearchParams } from 'next/navigation';
 // ─── Types ───────────────────────────────────────────
 type PresenceStatus = 'online' | 'away' | 'offline';
 
+interface PresenceData {
+  status: PresenceStatus;
+  lastSeen?: number;
+}
+
 interface PresenceMap {
-  [email: string]: PresenceStatus;
+  [email: string]: PresenceData;
+}
+
+function formatLastSeen(ts?: number) {
+  if (!ts) return 'offline';
+  const date = new Date(ts);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+  const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  if (isToday) return `today at ${timeStr}`;
+  
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (date.toDateString() === yesterday.toDateString()) {
+    return `yesterday at ${timeStr}`;
+  }
+  
+  return `${date.toLocaleDateString([], { month: 'short', day: 'numeric'})} at ${timeStr}`;
 }
 
 // ─── Online Dot Component ────────────────────────────
-function OnlineDot({ status }: { status: PresenceStatus }) {
-  const cls =
-    status === 'online'
-      ? 'online-dot'
-      : status === 'away'
-      ? 'online-dot away'
-      : 'online-dot offline';
+function OnlineDot({ status }: { status?: PresenceStatus }) {
+  if (!status || status === 'offline') return null; // WhatsApp only shows dot for online/away on avatars usually, but we can show it
+  const cls = status === 'online' ? 'online-dot' : 'online-dot away';
   return <span className={cls} aria-label={`${status}`} title={`Status: ${status}`} />;
 }
 
-function StatusText({ status }: { status: PresenceStatus }) {
-  if (status === 'online') {
-    return <span className="text-[11px] font-semibold text-green-500">● Online</span>;
+// ─── Status Text (Header) ─────────────────────────────
+function StatusText({ data }: { data?: PresenceData }) {
+  if (!data) return <span className="text-[12px] text-gray-400">offline</span>;
+  
+  if (data.status === 'online') {
+    return <span className="text-[12px] text-green-500 font-medium">online</span>;
   }
-  if (status === 'away') {
-    return <span className="text-[11px] font-semibold text-amber-500">● Away</span>;
+  if (data.status === 'away') {
+    return <span className="text-[12px] text-amber-500 font-medium">away</span>;
   }
-  return <span className="text-[11px] font-medium text-gray-400">Last seen recently</span>;
+  if (data.lastSeen) {
+    return <span className="text-[12px] text-gray-500">last seen {formatLastSeen(data.lastSeen)}</span>;
+  }
+  return <span className="text-[12px] text-gray-500">offline</span>;
 }
 
-// ─── Avatar with Online Dot ───────────────────────────
+// ─── Avatar ───────────────────────────────────────────
 function Avatar({
   name,
-  email,
-  size = 10,
+  size = 11,
   status,
 }: {
   name: string;
-  email?: string;
   size?: number;
   status?: PresenceStatus;
 }) {
@@ -51,7 +73,7 @@ function Avatar({
   return (
     <div className={`relative flex-shrink-0 w-${size} h-${size}`}>
       <div
-        className={`w-full h-full rounded-full bg-green text-white flex items-center justify-center font-bold text-sm shadow-sm select-none`}
+        className={`w-full h-full rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-semibold text-[15px] shadow-sm select-none`}
       >
         {initials}
       </div>
@@ -85,17 +107,29 @@ function MessagesContent() {
 
       const msgRes = await fetch('/api/messages');
       const msgData = await msgRes.json();
-      const allMessages = msgData.messages || [];
-      setMessages(allMessages);
+      
+      // Remove any exact DB duplicates just in case there's a glitch
+      const uniqueMessages = Array.from(
+        new Map((msgData.messages || []).map((m: any) => [m._id, m])).values()
+      ) as any[];
+
+      setMessages(uniqueMessages);
       setLoading(false);
 
       const toParam = searchParams.get('to');
       if (toParam) {
         setSelectedConv(toParam);
-      } else if (allMessages.length > 0) {
-        const first = allMessages[0];
+      } else if (uniqueMessages.length > 0) {
+        const first = uniqueMessages[0];
         const firstPartner = first.from === userData.user.email ? first.to : first.from;
-        setSelectedConv(firstPartner);
+        
+        // Handle admin view edge case where from and to are both not current user
+        if (userData.user.role === 'admin' && first.from !== userData.user.email && first.to !== userData.user.email) {
+            const pair = [first.from, first.to].sort();
+            setSelectedConv(`${pair[0]}<->${pair[1]}`);
+        } else {
+            setSelectedConv(firstPartner);
+        }
       }
     };
     fetchData();
@@ -116,9 +150,7 @@ function MessagesContent() {
 
     const partnerEmails = Array.from(
       new Set(
-        messages.map((m) =>
-          m.from === currentUser.email ? m.to : m.from
-        )
+        messages.flatMap((m) => [m.from, m.to])
       )
     ).filter((e) => e !== currentUser.email);
 
@@ -139,13 +171,17 @@ function MessagesContent() {
 
   // ── Auto-scroll to bottom on new messages
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (bottomRef.current) {
+        setTimeout(() => {
+            bottomRef.current?.scrollIntoView({ behavior: 'auto' });
+        }, 100);
+    }
   }, [messages, selectedConv]);
 
   // ── Mark messages as read
   const markAsRead = async (convEmail: string) => {
     const unread = messages.filter(
-      (m) => m.from === convEmail && m.status === 'unread'
+      (m) => m.from === convEmail && m.to === currentUser?.email && m.status === 'unread'
     );
     for (const msg of unread) {
       try {
@@ -157,7 +193,7 @@ function MessagesContent() {
       } catch {}
     }
     setMessages((prev) =>
-      prev.map((m) => (m.from === convEmail ? { ...m, status: 'read' } : m))
+      prev.map((m) => (m.from === convEmail && m.to === currentUser?.email ? { ...m, status: 'read' } : m))
     );
   };
 
@@ -187,6 +223,20 @@ function MessagesContent() {
       text: newMessage,
     };
 
+    // Optimistic UI update
+    const tempId = Date.now().toString();
+    const optimisticMsg = {
+        _id: tempId,
+        ...payload,
+        from: currentUser.email,
+        fromName: currentUser.name || currentUser.email.split('@')[0],
+        status: 'unread',
+        createdAt: new Date().toISOString()
+    };
+    
+    setMessages((prev) => [...prev, optimisticMsg]);
+    setNewMessage('');
+
     const res = await fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -195,8 +245,11 @@ function MessagesContent() {
 
     if (res.ok) {
       const { message } = await res.json();
-      setMessages((prev) => [...prev, message]);
-      setNewMessage('');
+      // Replace optimistic message with real message
+      setMessages((prev) => prev.map(m => m._id === tempId ? message : m));
+    } else {
+      // Remove if failed
+      setMessages((prev) => prev.filter(m => m._id !== tempId));
     }
   };
 
@@ -247,24 +300,29 @@ function MessagesContent() {
           hour: '2-digit',
           minute: '2-digit',
         })
-      : 'Now';
+      : '';
 
     // Determine the actual partner email for presence lookup
     const partnerEmail = id.includes('<->') ? email : id;
-    const userPresence: PresenceStatus = presence[partnerEmail] ?? 'offline';
+    const pData: PresenceData = presence[partnerEmail] || { status: 'offline' };
 
     return {
       id,
       email: id,
       displayEmail: email,
       name,
-      lastText: lastMsg?.text || 'Start a conversation...',
+      lastText: lastMsg?.text || '',
       time,
       listing: lastMsg?.listingTitle || searchParams.get('title'),
       listingId: lastMsg?.listingId || searchParams.get('listingId'),
       unreadCount,
-      presence: userPresence,
+      presenceData: pData,
     };
+  }).sort((a,b) => {
+      // Sort conversations by most recent message
+      const timeA = messages.find(m => m._id === conversationsMap.get(a.id)?._id)?.createdAt || 0;
+      const timeB = messages.find(m => m._id === conversationsMap.get(b.id)?._id)?.createdAt || 0;
+      return new Date(timeB).getTime() - new Date(timeA).getTime();
   });
 
   const currentMessages = messages
@@ -281,37 +339,42 @@ function MessagesContent() {
     );
 
   const activeConv = convList.find((c) => c.email === selectedConv);
-  const activePresence: PresenceStatus = activeConv?.presence ?? 'offline';
+  const activePresenceData: PresenceData = activeConv?.presenceData || { status: 'offline' };
 
-  // ── Render
+  // ── Render - Strict 100vh layout with overflow-hidden on body wrapper
   return (
-    <main className="min-h-screen bg-white flex flex-col">
-      <Nav user={currentUser} />
+    <main className="h-screen flex flex-col bg-[#f0f2f5] overflow-hidden">
+      {/* Keeping top Nav, but preventing the page itself from scrolling */}
+      <div className="flex-shrink-0 z-10 shadow-sm relative">
+         <Nav user={currentUser} />
+      </div>
 
-      <div
-        className="flex-1 flex max-w-7xl mx-auto w-full overflow-hidden border-x border-gray-100 mt-2 shadow-tiny"
-        style={{ height: 'calc(100vh - 130px)', minHeight: '500px' }}
-      >
+      <div className="flex-1 flex w-full max-w-[1600px] mx-auto overflow-hidden bg-white shadow-sm sm:mt-4 sm:mb-4 sm:rounded-md sm:border border-gray-200 min-h-0">
+        
         {/* ─── Sidebar ──────────────────────────── */}
-        <aside className="w-80 lg:w-96 border-r border-gray-100 flex flex-col bg-white flex-shrink-0">
+        <aside className="w-full sm:w-80 md:w-[400px] border-r border-gray-200 flex flex-col bg-white flex-shrink-0 h-full">
           {/* Header */}
-          <div className="px-5 py-5 border-b border-gray-100">
-            <h1 className="text-xl font-bold text-charcoal mb-4">Messages</h1>
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center h-[60px] flex-shrink-0">
+            <h1 className="text-[20px] font-semibold text-charcoal">Chats</h1>
+          </div>
+          
+          {/* Search */}
+          <div className="px-3 py-2 bg-white border-b border-gray-100 flex-shrink-0">
             <div className="relative flex items-center">
-              <Search className="absolute left-3.5 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 w-4 h-4 text-gray-400" />
               <input
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-transparent rounded-xl text-[15px] font-medium focus:bg-white focus:border-green-light transition-all outline-none placeholder:text-gray-400"
-                placeholder="Search conversations..."
+                className="w-full pl-10 pr-4 py-1.5 bg-[#f0f2f5] rounded-lg text-[14px] focus:outline-none transition-all placeholder:text-gray-500"
+                placeholder="Search or start new chat"
                 aria-label="Search conversations"
               />
             </div>
           </div>
 
           {/* Conversation list */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto bg-white custom-scrollbar">
             {loading ? (
-              <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-gray-300" />
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="w-8 h-8 animate-spin text-green" />
               </div>
             ) : convList.length > 0 ? (
               convList.map((conv, i) => {
@@ -323,61 +386,42 @@ function MessagesContent() {
                       setSelectedConv(conv.email);
                       markAsRead(conv.displayEmail);
                     }}
-                    className={`w-full text-left px-5 py-4 border-b border-gray-50 cursor-pointer transition-all hover:bg-gray-50 flex items-center gap-3 relative ${
-                      isActive ? 'bg-green-pale/40 border-l-[3px] border-l-green' : 'border-l-[3px] border-l-transparent'
+                    className={`w-full text-left px-3 py-3 border-b border-gray-100 hover:bg-[#f5f6f6] flex items-center gap-3 transition-colors ${
+                      isActive ? 'bg-[#f0f2f5]' : ''
                     }`}
-                    aria-current={isActive ? 'true' : undefined}
                   >
-                    {/* Avatar with online dot */}
                     <Avatar
                       name={conv.name}
-                      email={conv.displayEmail}
-                      size={10}
-                      status={conv.presence}
+                      size={12}
+                      status={conv.presenceData.status}
                     />
 
-                    {/* Conv info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-0.5">
-                        <span
-                          className={`font-semibold text-[15px] truncate ${
-                            conv.unreadCount > 0 ? 'text-charcoal' : 'text-gray-700'
-                          }`}
-                        >
+                    <div className="flex-1 min-w-0 border-b border-transparent">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium text-[16px] truncate text-charcoal">
                           {conv.name}
                         </span>
-                        <span className="text-[11px] text-gray-400 ml-2 flex-shrink-0">
+                        <span className={`text-[12px] flex-shrink-0 ${conv.unreadCount > 0 ? 'text-green-600 font-medium' : 'text-gray-500'}`}>
                           {conv.time}
                         </span>
                       </div>
 
-                      {/* Online status pill */}
-                      <div className="mb-1">
-                        <StatusText status={conv.presence} />
+                      <div className="flex items-center justify-between">
+                         <p className={`text-[14px] truncate ${conv.unreadCount > 0 ? 'text-charcoal font-medium' : 'text-gray-500'}`}>
+                           {conv.lastText}
+                         </p>
+                         {conv.unreadCount > 0 && (
+                           <span className="w-5 h-5 bg-green-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center flex-shrink-0 ml-2 shadow-sm">
+                             {conv.unreadCount}
+                           </span>
+                         )}
                       </div>
-
-                      <p
-                        className={`text-[13px] truncate leading-snug ${
-                          conv.unreadCount > 0
-                            ? 'text-charcoal font-semibold'
-                            : 'text-gray-500 font-normal'
-                        }`}
-                      >
-                        {conv.lastText}
-                      </p>
                     </div>
-
-                    {/* Unread badge */}
-                    {conv.unreadCount > 0 && (
-                      <span className="flex-shrink-0 w-5 h-5 bg-green text-white text-[10px] font-bold rounded-full flex items-center justify-center ml-1">
-                        {conv.unreadCount > 9 ? '9+' : conv.unreadCount}
-                      </span>
-                    )}
                   </button>
                 );
               })
             ) : (
-              <div className="px-5 py-16 text-center text-gray-400 text-[15px] font-medium">
+              <div className="px-5 py-16 text-center text-gray-400 text-[14px]">
                 No conversations yet
               </div>
             )}
@@ -385,164 +429,177 @@ function MessagesContent() {
         </aside>
 
         {/* ─── Chat Area ─────────────────────────── */}
-        <section className="flex-1 flex flex-col bg-[#F0F2F5] relative overflow-hidden">
+        <section className="flex-1 flex flex-col bg-[#efeae2] relative min-w-0 h-full">
+            {/* WhatsApp Web Classic Chat Background Image (CSS pattern equivalent via pseudo element) */}
+            <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #d4d0ce 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+
           {selectedConv ? (
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-full relative z-10">
               {/* Chat Header */}
-              <div className="px-5 py-3.5 bg-white border-b border-gray-100 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-3">
+              <div className="px-4 py-2 bg-gray-50 border-b border-gray-200 flex items-center justify-between shadow-sm h-[60px] flex-shrink-0">
+                <div className="flex items-center gap-3 cursor-pointer">
                   <Avatar
                     name={activeConv?.name || '?'}
-                    size={11}
-                    status={activePresence}
+                    size={10}
+                    status={activePresenceData.status}
                   />
-                  <div>
-                    <div className="font-semibold text-[15px] text-charcoal leading-tight">
+                  <div className="flex flex-col justify-center">
+                    <span className="font-medium text-[16px] text-charcoal leading-tight">
                       {activeConv?.name}
-                    </div>
-                    <StatusText status={activePresence} />
+                    </span>
+                    <StatusText data={activePresenceData} />
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center">
                   {activeConv?.listingId && (
                     <Link
                       href={`/listings/${activeConv.listingId}`}
-                      className="btn btn-outline btn-sm text-[13px] px-4 py-2 flex items-center gap-2 group/btn"
+                      className="px-3 py-1.5 bg-white border border-gray-200 rounded-md text-[13px] font-medium text-gray-700 shadow-sm hover:bg-gray-50 flex items-center gap-2"
                     >
                       View Listing
-                      <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
                     </Link>
                   )}
                 </div>
               </div>
 
-              {/* Listing context bar */}
-              {activeConv?.listing && (
-                <div className="px-5 py-2 bg-green-pale/40 border-b border-green-pale text-[13px] font-medium text-green-700 flex items-center gap-2">
-                  <span className="text-green text-xs">🏡</span>
-                  Re: <span className="font-semibold">{activeConv.listing}</span>
+              {/* Chat Scroll Area (The strictly scrollable part) */}
+              <div className="flex-1 overflow-y-auto px-[5%] py-4 custom-scrollbar flex flex-col">
+                
+                {/* Security Message */}
+                <div className="flex justify-center mb-6">
+                    <span className="bg-[#ffeecd] text-charcoal/70 text-[12.5px] px-4 py-1.5 rounded-lg text-center shadow-sm max-w-md">
+                        🔒 Messages are end-to-end encrypted. No one outside of this chat, not even TinyNest, can read to them.
+                    </span>
                 </div>
-              )}
 
-              {/* Messages Area */}
-              <div className="flex-1 overflow-y-auto px-5 py-6 space-y-3">
-                {currentMessages.length === 0 && (
-                  <div className="text-center text-gray-400 text-[14px] font-medium py-8">
-                    No messages yet. Say hello! 👋
-                  </div>
-                )}
+                {/* Messages Rendering */}
                 {currentMessages.map((msg, i) => {
                   let isRightSide = msg.from === currentUser?.email;
-                  let bubbleClass = 'bg-white text-charcoal rounded-tl-none shadow-sm border border-gray-100';
-                  let wrapClass = 'items-start';
-
+                  
                   if (selectedConv?.includes('<->') && currentUser?.role === 'admin') {
                     const parts = selectedConv.split('<->');
                     const isParticipant = parts.includes(currentUser?.email);
                     if (isParticipant) {
                       isRightSide = msg.from === currentUser?.email;
                     } else {
-                      isRightSide = msg.from === parts[1];
+                      isRightSide = msg.from === parts[1]; // arbitrary deterministic side
                     }
                   }
 
-                  if (isRightSide) {
-                    bubbleClass = 'bg-green text-white rounded-tr-none shadow-sm';
-                    wrapClass = 'items-end';
-                  } else if (
-                    selectedConv?.includes('<->') &&
-                    currentUser?.role === 'admin' &&
-                    msg.from !== currentUser?.email
-                  ) {
-                    bubbleClass =
-                      'bg-blue-50 text-charcoal rounded-tl-none shadow-sm border border-blue-100';
-                  }
-
                   const isRead = msg.status === 'read';
+                  
+                  // Bubble styling identical to WhatsApp
+                  const bubbleBg = isRightSide ? 'bg-[#d9fdd3]' : 'bg-white';
+                  const bubbleTail = isRightSide ? 'rounded-tr-none' : 'rounded-tl-none';
+
+                  // Format time
+                  const msgTime = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                   return (
-                    <div key={i} className={`flex flex-col ${wrapClass}`}>
-                      {/* Sender name (only for non-self in group/admin view) */}
-                      {!isRightSide && (
-                        <span className="text-[11px] font-semibold text-gray-500 mb-1 ml-1">
-                          {msg.fromName || msg.from?.split('@')[0]}
-                        </span>
-                      )}
-
+                    <div key={msg._id || i} className={`flex w-full mb-2 ${isRightSide ? 'justify-end' : 'justify-start'}`}>
                       <div
-                        className={`max-w-[70%] md:max-w-[60%] px-4 py-2.5 rounded-2xl text-[15px] leading-relaxed font-normal ${bubbleClass}`}
+                        className={`relative max-w-[85%] md:max-w-[70%] px-2.5 py-1.5 rounded-lg shadow-sm ${bubbleBg} ${bubbleTail}`}
                       >
-                        {msg.text}
-                      </div>
-
-                      {/* Timestamp + read receipt */}
-                      <div className={`flex items-center gap-1 mt-1 ${isRightSide ? 'mr-1' : 'ml-1'}`}>
-                        <span className="text-[11px] text-gray-400">
-                          {msg.time ||
-                            (msg.createdAt
-                              ? new Date(msg.createdAt).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })
-                              : '')}
-                        </span>
-                        {isRightSide && (
-                          isRead ? (
-                            <CheckCheck className="w-3.5 h-3.5 text-green-400" title="Read" />
-                          ) : (
-                            <Check className="w-3.5 h-3.5 text-gray-300" title="Delivered" />
-                          )
+                        {/* Render Name for Group/Admin contexts */}
+                        {!isRightSide && selectedConv?.includes('<->') && (
+                            <div className="text-[12px] font-bold text-emerald-600 mb-0.5">
+                                {msg.fromName || msg.from.split('@')[0]}
+                            </div>
                         )}
+                        
+                        <span className="text-[14.5px] text-[#111b21] leading-relaxed break-words whitespace-pre-wrap">
+                          {msg.text}
+                          {/* Invisible placeholder to make room for time/ticks on the last line */}
+                          <span className="inline-block w-14 h-4"></span>
+                        </span>
+
+                        {/* Floating Time and Ticks */}
+                        <div className="absolute right-2.5 bottom-1 flex items-center justify-end gap-1 text-[#667781] select-none">
+                          <span className="text-[11px] leading-none mt-[2px]">{msgTime}</span>
+                          {isRightSide && (
+                            isRead ? (
+                                <CheckCheck className="w-[15px] h-[15px] text-[#53bdeb] ml-0.5 mt-[1px]" />
+                            ) : (
+                                <Check className="w-[14px] h-[14px] ml-0.5 mt-[1px]" />
+                            )
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
                 })}
-                <div ref={bottomRef} />
+                <div ref={bottomRef} className="h-1 w-full" />
               </div>
 
               {/* Input Area */}
-              <div className="px-5 py-4 bg-white border-t border-gray-100">
-                <form onSubmit={handleSend} className="flex gap-3 items-center">
-                  <input
-                    id="message-input"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 bg-gray-50 px-5 py-3 rounded-full border border-transparent focus:bg-white focus:border-green-light transition-all outline-none text-[15px] font-normal placeholder:text-gray-400"
-                    placeholder="Type a message..."
-                    aria-label="Type your message"
-                    autoComplete="off"
-                  />
+              <div className="px-4 py-3 bg-[#f0f2f5] flex items-center gap-3 h-[62px] flex-shrink-0 z-20">
+                <form onSubmit={handleSend} className="flex-1 flex items-center gap-3 w-full h-full">
+                  <div className="flex-1 h-full relative">
+                      <input
+                        id="message-input"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        className="w-full h-full bg-white px-4 rounded-lg border-transparent focus:outline-none text-[15px] shadow-sm placeholder:text-gray-500"
+                        placeholder="Type a message"
+                        autoComplete="off"
+                      />
+                  </div>
                   <button
                     type="submit"
-                    id="send-message-btn"
-                    className="w-11 h-11 bg-green text-white rounded-full flex items-center justify-center shadow-md hover:bg-[#225C3E] transition-colors active:scale-95 flex-shrink-0"
-                    aria-label="Send message"
                     disabled={!newMessage.trim()}
+                    className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50 flex-shrink-0"
+                    aria-label="Send message"
                   >
-                    <Send className="w-4 h-4" />
+                    {newMessage.trim() ? (
+                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-sm text-white hover:bg-green-600">
+                            <Send className="w-4 h-4 ml-0.5" />
+                        </div>
+                    ) : (
+                        <Send className="w-6 h-6" />
+                    )}
                   </button>
                 </form>
-                <p className="text-center text-[11px] text-gray-300 mt-2.5 font-medium">
-                  🔒 End-to-end encrypted messaging
-                </p>
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center p-12 text-center">
-              <div className="text-7xl mb-6 grayscale opacity-30 select-none">💬</div>
-              <h2 className="text-xl font-bold text-charcoal/40 mb-2">
-                Select a Conversation
+            <div className="h-full flex flex-col items-center justify-center text-center px-4 bg-[#f0f2f5] z-10 border-b-[6px] border-b-green-500">
+              <div className="w-[320px] mb-8">
+                  <div className="w-full aspect-square max-h-[250px] bg-slate-200 rounded-full mx-auto mb-6 flex items-center justify-center text-[80px] shadow-inner font-mono text-slate-300">
+                      TN
+                  </div>
+              </div>
+              <h2 className="text-[32px] font-light text-[#41525d] mb-4">
+                TinyNest for Web
               </h2>
-              <p className="text-[15px] text-gray-400 max-w-xs leading-relaxed">
-                Your private messages with buyers and sellers will appear here.
+              <p className="text-[14px] text-[#667781] max-w-md leading-relaxed mb-8">
+                Send and receive messages privately with buyers and sellers. <br/>
+                Messages are secured with end-to-end encryption.
               </p>
+              <div className="flex items-center justify-center gap-2 text-[13px] text-[#8696a0]">
+                 🔒 End-to-end encrypted
+              </div>
             </div>
           )}
         </section>
       </div>
 
-      <Footer />
+      {/* Inject custom scrollbar CSS just for this page */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.3);
+        }
+      `}} />
     </main>
   );
 }
@@ -551,8 +608,8 @@ export default function MessagesPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="w-10 h-10 animate-spin text-green" />
+        <div className="h-screen flex items-center justify-center bg-[#f0f2f5]">
+          <Loader2 className="w-10 h-10 animate-spin text-green-500" />
         </div>
       }
     >

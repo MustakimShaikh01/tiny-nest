@@ -35,19 +35,19 @@ export async function GET(request: Request) {
     const emails = emailsParam.split(',').filter(Boolean);
     const now = Date.now();
 
-    const presence: Record<string, 'online' | 'away' | 'offline'> = {};
+    const presence: Record<string, { status: 'online' | 'away' | 'offline', lastSeen?: number }> = {};
     for (const email of emails) {
       const lastSeen = presenceStore.get(email);
       if (!lastSeen) {
-        presence[email] = 'offline';
+        presence[email] = { status: 'offline' };
       } else {
         const elapsed = now - lastSeen;
         if (elapsed < ONLINE_THRESHOLD_MS) {
-          presence[email] = 'online';
+          presence[email] = { status: 'online', lastSeen };
         } else if (elapsed < 5 * 60 * 1000) { // 5 minutes = away
-          presence[email] = 'away';
+          presence[email] = { status: 'away', lastSeen };
         } else {
-          presence[email] = 'offline';
+          presence[email] = { status: 'offline', lastSeen };
         }
       }
     }
