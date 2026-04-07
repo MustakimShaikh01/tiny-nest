@@ -124,27 +124,21 @@ export default function LoginPage() {
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 bg-white relative z-10">Or continue with social</span>
                 <div className="h-px bg-gray-100 -mt-2"></div>
              </div>
-             <div className="grid grid-cols-2 gap-4 mb-10">
+             <div className="grid grid-cols-2 gap-4 mb-2">
                 <button 
-                  onClick={() => { setEmail('admin@tinynest.com'); setPassword('admin123'); }}
-                  className="flex items-center justify-center gap-2 p-4 border border-gray-200 rounded-tiny hover:bg-gray-50 transition-colors font-bold text-[10px] uppercase tracking-[0.15em] text-gray-500 shadow-sm"
+                  type="button"
+                  onClick={() => alert("OAuth integration requires Google Developer Console API keys. This is a UI placeholder.")}
+                  className="flex items-center justify-center gap-2 p-4 border border-gray-200 rounded-[1rem] hover:bg-gray-50 transition-colors font-bold text-[11px] uppercase tracking-[0.1em] text-gray-600 shadow-sm"
                 >
                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-4 h-4" /> Google
                 </button>
                 <button 
-                  onClick={() => { setEmail('sarah@example.com'); setPassword('password123'); }}
-                  className="flex items-center justify-center gap-2 p-4 border border-gray-200 rounded-tiny hover:bg-gray-50 transition-colors font-bold text-[10px] uppercase tracking-[0.15em] text-gray-500 shadow-sm"
+                  type="button"
+                  onClick={() => alert("OAuth integration requires Facebook Developer API keys. This is a UI placeholder.")}
+                  className="flex items-center justify-center gap-2 p-4 border border-gray-200 rounded-[1rem] hover:bg-gray-50 transition-colors font-bold text-[11px] uppercase tracking-[0.1em] text-gray-600 shadow-sm"
                 >
                   <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-4 h-4" /> Facebook
                 </button>
-             </div>
-             
-             <div className="bg-green-pale/30 border border-green/10 rounded-tiny p-6 flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-green text-white flex items-center justify-center text-xs font-serif italic shadow-tiny-sm flex-shrink-0">i</div>
-                <div>
-                   <h4 className="text-xs font-bold text-green uppercase tracking-widest mb-1.5">Demo Access</h4>
-                   <p className="text-[11px] text-green font-medium leading-relaxed opacity-80">Click the social buttons above to instantly pre-fill credentials for <strong>Admin</strong> or <strong>Seller</strong> accounts during this preview.</p>
-                </div>
              </div>
           </div>
         </div>

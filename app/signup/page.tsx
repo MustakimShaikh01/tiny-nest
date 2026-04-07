@@ -76,27 +76,20 @@ export default function SignupPage() {
           <p className="text-gray-500 font-medium mb-10">Already have an account? <Link href="/login" className="text-green font-bold hover:underline">Sign in instead</Link></p>
 
           <form onSubmit={handleSignup} className="space-y-6">
-            <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-2 gap-4 mb-8">
               <button 
                 type="button" 
                 onClick={() => setRole('buyer')}
-                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-[10px] uppercase tracking-widest text-center ${role === 'buyer' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
+                className={`p-4 rounded-xl border-2 transition-all font-bold text-[12px] uppercase tracking-widest text-center ${role === 'buyer' ? 'border-green bg-green-50 text-green' : 'border-gray-100 text-gray-400 hover:border-green-100 hover:bg-gray-50'}`}
               >
-                Buyer
+                Buy a Home
               </button>
               <button 
                 type="button" 
                 onClick={() => setRole('seller')}
-                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-[10px] uppercase tracking-widest text-center ${role === 'seller' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
+                className={`p-4 rounded-xl border-2 transition-all font-bold text-[12px] uppercase tracking-widest text-center ${role === 'seller' ? 'border-green bg-green-50 text-green' : 'border-gray-100 text-gray-400 hover:border-green-100 hover:bg-gray-50'}`}
               >
-                Seller
-              </button>
-              <button 
-                type="button" 
-                onClick={() => setRole('admin')}
-                className={`p-4 rounded-tiny-sm border-2 transition-all font-bold text-[10px] uppercase tracking-widest text-center ${role === 'admin' ? 'border-green bg-green-pale text-green' : 'border-gray-100 text-gray-400'}`}
-              >
-                Admin
+                Sell a Home
               </button>
             </div>
             <div className="space-y-1.5">
