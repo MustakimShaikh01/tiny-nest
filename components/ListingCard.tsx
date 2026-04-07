@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, MapPin, Ruler, Bed, ShowerHead, Eye, MessageSquare, Plus } from 'lucide-react';
+import { Heart, MapPin, Ruler, Bed, ShowerHead, Eye, MessageSquare, Plus, Check } from 'lucide-react';
 
 export function ListingCard({ listing, showActions = false, onApprove, onReject }: { listing: any; showActions?: boolean; onApprove?: () => void; onReject?: () => void }) {
   const [isFavorite, setIsFavorite] = useState(() => {
@@ -12,7 +12,8 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
     }
     return false;
   });
-  
+  const [showModal, setShowModal] = useState(false);
+
   const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -32,7 +33,8 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
     e.stopPropagation();
     const url = `${window.location.origin}/listings/${(listing.id || listing._id)}`;
     navigator.clipboard.writeText(url);
-    alert('Link copied to clipboard');
+    setShowModal(true);
+    setTimeout(() => setShowModal(false), 2500);
   };
   
   const isImageUrl = listing.img && (listing.img.startsWith('http') || listing.img.startsWith('/'));
@@ -142,6 +144,21 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
           </div>
         )}
       </div>
+
+      {/* Center Modal overlay for Share Copy */}
+      {showModal && (
+        <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-4 bg-charcoal/40 backdrop-blur-sm shadow-2xl transition-all duration-300 pointer-events-auto" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowModal(false); }}>
+            <div className="bg-white px-8 py-8 rounded-[2rem] shadow-2xl flex flex-col items-center gap-3 w-full max-w-sm animate-in zoom-in-95 fade-in duration-300">
+               <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center text-green border border-green-100 mb-2">
+                  <Check className="w-8 h-8" />
+               </div>
+               <h4 className="font-serif text-2xl font-bold text-charcoal text-center mt-2">Link Copied</h4>
+               <p className="text-[15px] font-medium text-gray-400 text-center leading-relaxed">
+                 The URL is safely on your clipboard. Paste it anywhere to share this tiny home.
+               </p>
+            </div>
+        </div>
+      )}
     </div>
   );
 }
