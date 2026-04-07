@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { decrypt } from '../../../../lib/auth';
+import { decrypt } from '@/lib/auth';
 
 // In-memory presence store (resets on server restart — good for dev/small scale)
 // For production use Redis or a DB with TTL

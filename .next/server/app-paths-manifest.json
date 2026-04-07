@@ -1,10 +1,1 @@
-{
-  "/admin/page": "app/admin/page.js",
-  "/signup/page": "app/signup/page.js",
-  "/page": "app/page.js",
-  "/api/messages/route": "app/api/messages/route.js",
-  "/login/page": "app/login/page.js",
-  "/api/auth/me/route": "app/api/auth/me/route.js",
-  "/messages/page": "app/messages/page.js",
-  "/listings/page": "app/listings/page.js"
-}
+{}
