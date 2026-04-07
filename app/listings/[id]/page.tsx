@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { PropertyMap } from '../../../components/PropertyMap';
+import { ListingActions } from '../../../components/ListingActions';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
 
@@ -264,30 +265,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <Link
-                      href={`/messages?to=${listing.seller}&title=${encodeURIComponent(listing.title)}&listingId=${listing.id}`}
-                      id={`contact-seller-${listing.id}`}
-                      className="btn btn-primary w-full py-5 font-bold flex items-center justify-center gap-3 shadow-xl"
-                      aria-label={`Message ${listing.sellerName} about ${listing.title}`}
-                    >
-                      <MessageCircle className="w-5 h-5" aria-hidden="true" /> Message Seller
-                    </Link>
-                    <button
-                      id={`save-listing-${listing.id}`}
-                      className="w-full py-5 bg-white/10 hover:bg-white/20 rounded-tiny font-bold text-sm transition-all flex items-center justify-center gap-3"
-                      aria-label="Save to favorites"
-                    >
-                      <Heart className="w-5 h-5" aria-hidden="true" /> Save to Favorites
-                    </button>
-                    <button
-                      id={`share-listing-${listing.id}`}
-                      className="w-full py-5 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-                      aria-label="Share this listing"
-                    >
-                      <Share2 className="w-4 h-4" aria-hidden="true" /> Share Listing
-                    </button>
-                  </div>
+                  <ListingActions listingId={listing.id} sellerEmail={listing.seller} listingTitle={listing.title} />
                 </div>
               </div>
 
@@ -298,7 +276,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                   Most tiny houses sell within 14 days. We recommend messaging the seller early to secure your viewing.
                 </p>
                 <Link
-                  href="https://docs.google.com/document/d/1tiny_buyers_checklist_2026/view"
+                  href="https://drive.google.com/file/d/1SWqzToHyludoVLrV2U90fCo17Axj9gRk/view"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-green font-bold text-xs mt-4 hover:underline"

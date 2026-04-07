@@ -5,13 +5,13 @@ import { Home, Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, FileT
 const resources = [
   {
     name: "Buyer's Checklist (PDF)",
-    href: 'https://docs.google.com/document/d/1tiny_buyers_checklist_2026/view',
+    href: 'https://drive.google.com/file/d/1SWqzToHyludoVLrV2U90fCo17Axj9gRk/view',
     external: true,
     icon: '📄',
   },
   {
     name: 'Zoning Laws by State 2026',
-    href: 'https://docs.google.com/spreadsheets/d/1tiny_zoning_laws_2026/view',
+    href: 'https://drive.google.com/file/d/1qr_BeiaLUEn0xj-29EeHZRACqODZ73a_/view',
     external: true,
     icon: '⚖️',
   },

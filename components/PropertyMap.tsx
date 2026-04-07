@@ -13,10 +13,19 @@ export function PropertyMap({ location, title }: { location: string; title: stri
 
     const initMap = async () => {
       try {
-        // Geocode location using Nominatim (Free OpenStreetMap API)
-        const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
-        const geoData = await geoRes.json();
+        let geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
+        let geoData = await geoRes.json();
         
+        // Fallback: If exact location not found, try the right-most part (City/State)
+        if (!geoData || geoData.length === 0) {
+           const parts = location.split(',');
+           if (parts.length > 1) {
+              const fallbackLoc = parts.slice(1).join(',').trim();
+              geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fallbackLoc)}`);
+              geoData = await geoRes.json();
+           }
+        }
+
         if (!geoData || geoData.length === 0) {
            setError(true);
            setLoading(false);
@@ -90,6 +99,17 @@ export function PropertyMap({ location, title }: { location: string; title: stri
            </div>
         </div>
       )}
+      
+      {/* Directions Button - Uses free Google Maps directions link logic */}
+      <a 
+        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute bottom-4 right-4 z-[1000] bg-white text-gray-800 border border-gray-100 px-5 py-2.5 rounded-full shadow-lg text-sm font-bold flex items-center gap-2 hover:bg-green hover:text-white transition-all"
+        aria-label={`Get directions to ${location}`}
+      >
+        🗺️ Get Directions
+      </a>
     </div>
   );
 }

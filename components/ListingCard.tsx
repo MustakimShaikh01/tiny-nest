@@ -32,7 +32,7 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
     e.stopPropagation();
     const url = `${window.location.origin}/listings/${(listing.id || listing._id)}`;
     navigator.clipboard.writeText(url);
-    alert('Listing URL copied to clipboard! Share the tiny living joy.');
+    alert('Link copied to clipboard');
   };
   
   const isImageUrl = listing.img && (listing.img.startsWith('http') || listing.img.startsWith('/'));

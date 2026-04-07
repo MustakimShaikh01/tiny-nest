@@ -202,7 +202,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
               <ul className="space-y-4">
                 <li>
                   <a
-                    href="https://docs.google.com/document/d/1tiny_buyers_checklist_2026/view"
+                    href="https://drive.google.com/file/d/1SWqzToHyludoVLrV2U90fCo17Axj9gRk/view"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-3 text-green font-bold hover:underline"
@@ -214,7 +214,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
                 </li>
                 <li>
                   <a
-                    href="https://docs.google.com/spreadsheets/d/1tiny_zoning_laws_2026/view"
+                    href="https://drive.google.com/file/d/1qr_BeiaLUEn0xj-29EeHZRACqODZ73a_/view"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-3 text-green font-bold hover:underline"
