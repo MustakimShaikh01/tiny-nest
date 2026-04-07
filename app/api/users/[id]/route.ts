@@ -3,13 +3,6 @@ import { getDb, saveDb } from '../../../../lib/db';
 import { decrypt } from '../../../../lib/auth';
 import { cookies } from 'next/headers';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const db = await getDb();
-  const listing = db.listings.find((l: any) => l.id === params.id);
-  if (!listing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
-  return NextResponse.json({ listing });
-}
-
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
     const cookieStore = await cookies();
@@ -17,38 +10,35 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     if (!sessionToken) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     
     const payload = await decrypt(sessionToken.value);
-    const user = payload.user;
-
-    const data = await request.json();
-    
-    // Security: Only admins can perform raw modifications, except soft-deletions which are restricted
-    if (data.status && user.role !== 'admin' && data.status !== 'deleted') {
+    if (payload.user.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const data = await request.json();
+
     try {
       const models = require('../../../../lib/models');
-      const Listing = models.Listing;
-      if (Listing) {
-         const updated = await Listing.findByIdAndUpdate(params.id, data, { new: true });
-         if (updated) return NextResponse.json({ listing: updated });
+      const User = models.User;
+      if (User) {
+         const updated = await User.findByIdAndUpdate(params.id, data, { new: true });
+         if (updated) return NextResponse.json({ success: true, user: updated });
       }
     } catch(e) { /* ignore mongo err */ }
 
-    // Fallback JSON Update
+    // JSON Fallback
     const db = await getDb();
-    const listingIndex = db.listings.findIndex((l: any) => String(l.id) === params.id || String(l._id) === params.id);
+    const userIndex = db.users.findIndex((u: any) => String(u._id) === params.id || String(u.id) === params.id);
     
-    if (listingIndex === -1) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
+    if (userIndex === -1) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    db.listings[listingIndex] = {
-      ...db.listings[listingIndex],
+    db.users[userIndex] = {
+      ...db.users[userIndex],
       ...data,
       updatedAt: new Date().toISOString()
     };
     
     await saveDb(db);
-    return NextResponse.json({ listing: db.listings[listingIndex] });
+    return NextResponse.json({ success: true, user: db.users[userIndex] });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
@@ -65,24 +55,23 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Try MongoDB
     try {
       const models = require('../../../../lib/models');
-      const Listing = models.Listing;
-      if (Listing) {
-        // Soft delete
-        const updated = await Listing.findByIdAndUpdate(params.id, { status: 'deleted' }, { new: true });
-        if (updated) return NextResponse.json({ success: true, softDeleted: true });
+      const User = models.User;
+      if (User) {
+         // Soft delete
+         const updated = await User.findByIdAndUpdate(params.id, { status: 'deleted' }, { new: true });
+         if (updated) return NextResponse.json({ success: true, softDeleted: true });
       }
     } catch(e) { /* ignore mongo err */ }
 
-    // Fallback JSON Update
+    // JSON Fallback
     const db = await getDb();
-    const listingIndex = db.listings.findIndex((l: any) => String(l.id) === params.id || String(l._id) === params.id);
+    const userIndex = db.users.findIndex((u: any) => String(u._id) === params.id || String(u.id) === params.id);
     
-    if (listingIndex === -1) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
+    if (userIndex === -1) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    db.listings[listingIndex].status = 'deleted';
+    db.users[userIndex].status = 'deleted';
     await saveDb(db);
     
     return NextResponse.json({ success: true, softDeleted: true });

@@ -12,6 +12,10 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ name: '' });
   const [updating, setUpdating] = useState(false);
+  const [pwdMode, setPwdMode] = useState(false);
+  const [pwdData, setPwdData] = useState({ newPassword: '', confirmPassword: '' });
+  const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdError, setPwdError] = useState('');
   const router = useRouter();
 
   const [myListings, setMyListings] = useState<any[]>([]);
@@ -55,6 +59,39 @@ export default function ProfilePage() {
       console.error(err);
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwdError('');
+    if (pwdData.newPassword !== pwdData.confirmPassword) {
+      setPwdError("Passwords do not match");
+      return;
+    }
+    if (pwdData.newPassword.length < 6) {
+      setPwdError("Password must be at least 6 characters");
+      return;
+    }
+    setPwdLoading(true);
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email, newPassword: pwdData.newPassword })
+      });
+      if (res.ok) {
+        setPwdMode(false);
+        setPwdData({ newPassword: '', confirmPassword: '' });
+        alert("Password updated successfully!");
+      } else {
+        const d = await res.json();
+        setPwdError(d.error || 'Failed to update password');
+      }
+    } catch(err) {
+      setPwdError('Error updating password');
+    } finally {
+      setPwdLoading(false);
     }
   };
 
@@ -158,16 +195,51 @@ export default function ProfilePage() {
                        </div>
                     </div>
 
-                    <div className="p-8 bg-gray-50 rounded-tiny border border-gray-100">
-                       <h3 className="text-sm font-bold text-charcoal uppercase tracking-widest mb-4">Security</h3>
-                       <p className="text-gray-500 text-sm mb-6 leading-relaxed">Your account is secured with end-to-end multi-layer encryption.</p>
-                       <button 
-                         onClick={() => alert("A secure password reset link has been sent to your registered email.")} 
-                         className="text-xs font-bold text-green hover:underline uppercase tracking-widest"
-                       >
-                         Change Password
-                       </button>
-                    </div>
+                    {pwdMode ? (
+                      <form onSubmit={handlePasswordUpdate} className="p-8 bg-white rounded-tiny border border-gray-200 mt-6 animate-fade-in shadow-xl">
+                         <h3 className="text-sm font-bold text-charcoal uppercase tracking-widest mb-6">Update Password</h3>
+                         <div className="space-y-4 mb-6">
+                            <div>
+                               <label className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-2">New Password</label>
+                               <input 
+                                 type="password" 
+                                 required
+                                 value={pwdData.newPassword}
+                                 onChange={e => setPwdData({...pwdData, newPassword: e.target.value})}
+                                 className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-lg font-medium focus:bg-white focus:border-green outline-none" 
+                                 placeholder="••••••••"
+                               />
+                            </div>
+                            <div>
+                               <label className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-2">Confirm New Password</label>
+                               <input 
+                                 type="password" 
+                                 required
+                                 value={pwdData.confirmPassword}
+                                 onChange={e => setPwdData({...pwdData, confirmPassword: e.target.value})}
+                                 className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-lg font-medium focus:bg-white focus:border-green outline-none" 
+                                 placeholder="••••••••"
+                               />
+                            </div>
+                         </div>
+                         {pwdError && <p className="text-red-500 text-xs font-bold mb-4">{pwdError}</p>}
+                         <div className="flex gap-3">
+                            <button type="submit" disabled={pwdLoading} className="btn btn-primary btn-sm flex-1">{pwdLoading ? 'Updating...' : 'Save Password'}</button>
+                            <button type="button" onClick={() => { setPwdMode(false); setPwdError(''); }} className="btn bg-gray-100 text-charcoal btn-sm">Cancel</button>
+                         </div>
+                      </form>
+                    ) : (
+                      <div className="p-8 bg-gray-50 rounded-tiny border border-gray-100 mt-6">
+                         <h3 className="text-sm font-bold text-charcoal uppercase tracking-widest mb-4">Security</h3>
+                         <p className="text-gray-500 text-sm mb-6 leading-relaxed">Your account is secured with end-to-end multi-layer encryption.</p>
+                         <button 
+                           onClick={() => setPwdMode(true)} 
+                           className="text-xs font-bold text-green hover:underline uppercase tracking-widest"
+                         >
+                           Change Password
+                         </button>
+                      </div>
+                    )}
                  </div>
                )}
             </div>
