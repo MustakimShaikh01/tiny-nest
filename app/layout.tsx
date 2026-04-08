@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { DM_Sans, Playfair_Display } from 'next/font/google'
+import './globals.css'
 import { ChatBot } from '../components/ChatBot'
 import { CookieConsent } from '../components/CookieConsent'
 
