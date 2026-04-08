@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
 import { useRouter } from 'next/navigation';
@@ -11,8 +11,29 @@ export default function ListHomePage() {
   const [success, setSuccess] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (!data.user) {
+          router.push('/login');
+          return;
+        }
+        setUser(data.user);
+      } catch (err) {
+         router.push('/login');
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+    fetchUser();
+  }, [router]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -101,9 +122,13 @@ export default function ListHomePage() {
     );
   }
 
+  if (authLoading) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-green" /></div>;
+  }
+
   return (
     <main className="min-h-screen bg-gray-50">
-      <Nav user={null} />
+      <Nav user={user} />
 
       <div className="max-w-4xl mx-auto px-4 py-20">
         <div className="mb-14 text-center">
