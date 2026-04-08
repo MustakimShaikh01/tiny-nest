@@ -33,9 +33,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     };
   }
 
-  const title = `${listing.title} – ${listing.type === 'sale' ? 'For Sale' : 'For Rent'} in ${listing.location} | TinyNest`;
-  const description = `${listing.title} – ${listing.sqft} sqft, ${listing.beds} bed tiny home ${listing.type === 'sale' ? 'for sale' : 'for rent'} in ${listing.location}. $${listing.price.toLocaleString()}${listing.type === 'rent' ? '/mo' : ''}. ${listing.description?.slice(0, 100)}`;
-  const canonical = `${siteUrl}/listings/${listing.id}`;
+  const title = listing.metaTitle || `${listing.title} – ${listing.type === 'sale' ? 'For Sale' : 'For Rent'} in ${listing.location} | TinyNest`;
+  const description = listing.metaDesc || `${listing.title} – ${listing.sqft} sqft, ${listing.beds} bed tiny home ${listing.type === 'sale' ? 'for sale' : 'for rent'} in ${listing.location}. $${listing.price.toLocaleString()}${listing.type === 'rent' ? '/mo' : ''}. ${listing.description?.slice(0, 100)}`;
+  const canonical = listing.slug ? `${siteUrl}/listings/${listing.slug}` : `${siteUrl}/listings/${listing.id}`;
 
   return {
     title,
@@ -81,7 +81,14 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
     image: listing.images?.length
       ? listing.images.map((img: string) => (img.startsWith('http') ? img : `${siteUrl}${img}`))
       : [listing.img?.startsWith('http') ? listing.img : `${siteUrl}${listing.img}`],
-    address: {
+    address: listing.address?.street ? {
+      '@type': 'PostalAddress',
+      streetAddress: listing.address.street,
+      addressLocality: listing.address.city,
+      addressRegion: listing.address.state,
+      postalCode: listing.address.zip,
+      addressCountry: listing.address.country || 'US',
+    } : {
       '@type': 'PostalAddress',
       addressLocality: listing.location?.split(',')[0]?.trim(),
       addressRegion: listing.location?.split(',')[1]?.trim(),
@@ -101,8 +108,9 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
             price: listing.price,
             priceCurrency: 'USD',
             availability: 'https://schema.org/InStock',
+            itemCondition: listing.condition === 'New' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
             seller: {
-              '@type': 'Person',
+              '@type': 'RealEstateAgent',
               name: listing.sellerName,
             },
           },
@@ -216,7 +224,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                 <div className="space-y-1">
                   <dt className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Condition</dt>
                   <dd className="flex items-center gap-2 text-charcoal font-bold">
-                    <ShieldCheck className="w-4 h-4 text-green" aria-hidden="true" /> Like New
+                    <ShieldCheck className="w-4 h-4 text-green" aria-hidden="true" /> {listing.condition || 'Like New'}
                   </dd>
                 </div>
               </dl>
