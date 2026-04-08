@@ -1,6 +1,6 @@
 {
-  "/listings/page": "app/listings/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/listings/[id]/page": "app/listings/[id]/page.js",
-  "/api/messages/route": "app/api/messages/route.js"
+  "/page": "app/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/auth/google/route": "app/api/auth/google/route.js",
+  "/login/page": "app/login/page.js"
 }

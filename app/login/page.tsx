@@ -127,7 +127,7 @@ export default function LoginPage() {
              <div className="grid grid-cols-2 gap-4 mb-2">
                 <button 
                   type="button"
-                  onClick={() => alert("OAuth integration requires Google Developer Console API keys. This is a UI placeholder.")}
+                  onClick={() => window.location.href = '/api/auth/google'}
                   className="flex items-center justify-center gap-2 p-4 border border-gray-200 rounded-[1rem] hover:bg-gray-50 transition-colors font-bold text-[11px] uppercase tracking-[0.1em] text-gray-600 shadow-sm"
                 >
                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-4 h-4" /> Google

@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/admin/page": [
+    "/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/page.js"
+      "static/chunks/app/login/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -11,15 +11,15 @@
       "static/css/css-app_globals_css-node_modules_next_font_google_target_css-node_modules_next_font_google_ta-77a3b2.css",
       "static/chunks/app/layout.js"
     ],
-    "/listings/[id]/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/listings/[id]/page.js"
+      "static/chunks/app/page.js"
     ],
-    "/listings/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/listings/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }
