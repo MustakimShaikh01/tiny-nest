@@ -345,11 +345,11 @@ function MessagesContent() {
   return (
     <main className="h-screen flex flex-col bg-[#f0f2f5] overflow-hidden">
       {/* Keeping top Nav, but preventing the page itself from scrolling */}
-      <div className="flex-shrink-0 z-10 shadow-sm relative">
+      <div className="flex-shrink-0 z-50 shadow-sm relative">
          <Nav user={currentUser} />
       </div>
 
-      <div className="flex-1 flex w-full max-w-[1600px] mx-auto overflow-hidden bg-white shadow-sm sm:mt-4 sm:mb-4 sm:rounded-md sm:border border-gray-200 min-h-0">
+      <div className="flex-1 flex w-full max-w-[1600px] mx-auto overflow-hidden bg-white shadow-sm sm:mt-4 sm:mb-4 sm:rounded-md sm:border border-gray-200 min-h-0 relative z-0">
         
         {/* ─── Sidebar ──────────────────────────── */}
         <aside className="w-full sm:w-80 md:w-[400px] border-r border-gray-200 flex flex-col bg-white flex-shrink-0 h-full">
