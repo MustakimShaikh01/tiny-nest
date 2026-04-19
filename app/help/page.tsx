@@ -3,6 +3,7 @@ import Footer from '../../components/Footer';
 import { getSession } from '../../lib/auth';
 import { HelpCircle, Home, CreditCard, Rocket, ChevronRight, Search, BookOpen, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
+import SupportForm from '../../components/SupportForm';
 
 const helpArticles = [
   {
@@ -156,11 +157,25 @@ export default async function HelpPage() {
           ))}
         </div>
 
+        {/* Contact Support CTA */}
+        <div className="mb-16 bg-gradient-to-r from-green to-green-dark rounded-3xl p-10 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Can't find what you're looking for?</h2>
+            <p className="text-white/70 text-sm">Our support team is available 24/7. Submit an inquiry and we'll get back within 24 hours.</p>
+          </div>
+          <SupportForm userEmail={user?.email} userName={user?.name} />
+        </div>
+
         {/* Quick Links */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-charcoal mb-8 text-center">Quick Links</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {quickLinks.map((link) => (
+            {[
+              { title: 'Browse Listings', href: '/listings', icon: Search, desc: 'Find your perfect tiny home' },
+              { title: 'Read Our Blog', href: '/blogs', icon: BookOpen, desc: 'Tips and inspiration' },
+              { title: 'Communities', href: '/community', icon: MessageSquare, desc: 'Connect with tiny home owners' },
+              { title: 'Privacy & Security', href: '/privacy', icon: Shield, desc: 'How we protect you' },
+            ].map((link) => (
               <Link key={link.href} href={link.href} className="bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all p-6 group text-center">
                 <div className="w-12 h-12 bg-green-pale rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform text-green">
                   <link.icon className="w-5 h-5" />

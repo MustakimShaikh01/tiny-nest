@@ -5,12 +5,13 @@ import { getDb } from '../../../lib/db';
 import { getSession } from '../../../lib/auth';
 import { notFound } from 'next/navigation';
 import {
-  MapPin, Bed, Maximize, Calendar, Share2, Heart,
-  MessageCircle, ShieldCheck, CheckCircle2, ArrowLeft, ArrowRight
+  MapPin, Bed, ShowerHead, Maximize, Calendar, Share2, Heart,
+  MessageCircle, ShieldCheck, CheckCircle2, ArrowLeft, ArrowRight, Home, Ruler
 } from 'lucide-react';
 import Link from 'next/link';
-import { PropertyMap } from '../../../components/PropertyMap';
+import PropertyMap from '../../../components/PropertyMap';
 import { ListingActions } from '../../../components/ListingActions';
+import { ListingCard } from '../../../components/ListingCard';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
 
@@ -70,6 +71,12 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
 
   const session = await getSession();
   const user = session?.user;
+
+  // Get similar homes
+  const db = await getDb();
+  const similarListings = (db.listings || [])
+    .filter((l: any) => l.status === 'approved' && String(l.id) !== String(params.id))
+    .slice(0, 3);
 
   // JSON-LD: RealEstateListing / Product schema
   const listingSchema = {
@@ -202,7 +209,13 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
               </div>
 
               {/* Key Facts */}
-              <dl className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100">
+              <dl className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-gray-50 p-8 md:p-10 rounded-[2.5rem] border border-gray-100">
+                <div className="space-y-1">
+                  <dt className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Category</dt>
+                  <dd className="flex items-center gap-2 text-charcoal font-bold">
+                    <Home className="w-4 h-4 text-green" aria-hidden="true" /> {listing.category || 'Tiny House'}
+                  </dd>
+                </div>
                 <div className="space-y-1">
                   <dt className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Square Feet</dt>
                   <dd className="flex items-center gap-2 text-charcoal font-bold">
@@ -213,6 +226,12 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                   <dt className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Bedrooms</dt>
                   <dd className="flex items-center gap-2 text-charcoal font-bold">
                     <Bed className="w-4 h-4 text-green" aria-hidden="true" /> {listing.beds} bed{listing.beds !== 1 ? 's' : ''}
+                  </dd>
+                </div>
+                <div className="space-y-1">
+                  <dt className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Bathrooms</dt>
+                  <dd className="flex items-center gap-2 text-charcoal font-bold">
+                    <ShowerHead className="w-4 h-4 text-green" aria-hidden="true" /> {listing.baths || 1} bath{listing.baths !== 1 ? 's' : ''}
                   </dd>
                 </div>
                 <div className="space-y-1">
@@ -227,6 +246,14 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                     <ShieldCheck className="w-4 h-4 text-green" aria-hidden="true" /> {listing.condition || 'Like New'}
                   </dd>
                 </div>
+                {listing.dimensions && (
+                   <div className="space-y-1">
+                     <dt className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Dimensions</dt>
+                     <dd className="flex items-center gap-2 text-charcoal font-bold">
+                       <Ruler className="w-4 h-4 text-green" aria-hidden="true" /> {listing.dimensions}
+                     </dd>
+                   </div>
+                )}
               </dl>
 
               {/* Description */}
@@ -251,8 +278,13 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
 
               {/* Map Section */}
               <div className="space-y-6 pt-12 border-t border-gray-100">
-                <h2 className="font-serif text-3xl font-bold text-charcoal">Location</h2>
-                <PropertyMap location={listing.location} title={listing.title} />
+                <div className="flex items-center justify-between">
+                  <h2 className="font-serif text-3xl font-bold text-charcoal">Location</h2>
+                  <div className="text-xs font-bold text-green uppercase tracking-widest bg-green-pale/30 px-3 py-1 rounded-full">Explore Area</div>
+                </div>
+                <div className="w-full h-[450px] rounded-[2rem] overflow-hidden border border-gray-100 shadow-tiny-sm">
+                  <PropertyMap location={listing.location} title={listing.title} />
+                </div>
               </div>
             </div>
 
@@ -295,6 +327,18 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
               </div>
             </aside>
           </div>
+
+          {/* Similar Listings / Auto Suggestions */}
+          {similarListings.length > 0 && (
+            <div className="mt-24 pt-16 border-t border-gray-100">
+              <h2 className="font-serif text-3xl font-bold text-charcoal mb-8">Similar Homes You Might Like</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {similarListings.map((l: any) => (
+                  <ListingCard key={l.id || l._id} listing={l} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <Footer />

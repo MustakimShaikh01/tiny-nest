@@ -1,18 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Heart, MapPin, Ruler, Bed, ShowerHead, Eye, MessageSquare, Plus, Check } from 'lucide-react';
 
-export function ListingCard({ listing, showActions = false, onApprove, onReject }: { listing: any; showActions?: boolean; onApprove?: () => void; onReject?: () => void }) {
-  const [isFavorite, setIsFavorite] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
-      return favorites.includes((listing.id || listing._id));
-    }
-    return false;
-  });
+export function ListingCard({ 
+  listing, 
+  showActions = false, 
+  onApprove, 
+  onReject,
+  horizontal = false 
+}: { 
+  listing: any; 
+  showActions?: boolean; 
+  onApprove?: () => void; 
+  onReject?: () => void;
+  horizontal?: boolean;
+}) {
+  // Start false on server, read localStorage after mount to avoid hydration mismatch
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+    setIsFavorite(favorites.includes(listing.id || listing._id));
+  }, [listing.id, listing._id]);
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -40,8 +54,8 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
   const isImageUrl = listing.img && (listing.img.startsWith('http') || listing.img.startsWith('/'));
 
   return (
-    <div className="group bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all duration-300 relative overflow-hidden flex flex-col">
-      <div className="relative h-64 overflow-hidden block">
+    <div className={`group bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all duration-300 relative overflow-hidden flex ${horizontal ? 'flex-row h-48' : 'flex-col min-h-[400px]'}`}>
+      <div className={`relative overflow-hidden block ${horizontal ? 'w-48 h-full' : 'h-64'}`}>
         <Link href={`/listings/${(listing.id || listing._id)}`} className="absolute inset-0 bg-gray-100 transition-colors duration-500 flex items-center justify-center">
            {isImageUrl ? (
              <img 
@@ -94,12 +108,12 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
       <div className="p-6 flex-1 flex flex-col">
         <div className="mb-6">
           <div className="flex items-baseline gap-1 mb-2">
-            <span className="font-serif text-2xl font-bold text-green">
-              {listing.type === 'rent' ? `$${listing.price.toLocaleString()}/mo` : `$${listing.price.toLocaleString()}`}
+            <span className={`${horizontal ? 'text-lg' : 'text-2xl'} font-serif font-bold text-green`}>
+              {listing.type === 'rent' ? `$${listing.price?.toLocaleString()}/mo` : `$${listing.price?.toLocaleString()}`}
             </span>
           </div>
           <Link href={`/listings/${(listing.id || listing._id)}`} className="block">
-            <h3 className="text-xl font-bold text-charcoal mb-2 line-clamp-1 group-hover:text-green transition-colors leading-tight">
+            <h3 className={`${horizontal ? 'text-base' : 'text-xl'} font-bold text-charcoal mb-2 line-clamp-1 group-hover:text-green transition-colors leading-tight`}>
               {listing.title}
             </h3>
           </Link>
@@ -109,18 +123,18 @@ export function ListingCard({ listing, showActions = false, onApprove, onReject 
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 py-4 border-y border-gray-50 mb-6 text-gray-400 font-bold text-[10px] uppercase tracking-widest">
+        <div className={`grid grid-cols-3 gap-2 py-4 border-y border-gray-50 ${horizontal ? 'mb-2' : 'mb-6'} text-gray-400 font-bold text-[10px] uppercase tracking-widest`}>
           <div className="flex flex-col items-center gap-1">
             <Ruler className="w-4 h-4 text-gray-300" />
-            <span>{listing.sqft} FT²</span>
+            <span className="truncate max-w-full">{listing.sqft} FT²</span>
           </div>
           <div className="flex flex-col items-center gap-1 border-x border-gray-50">
             <Bed className="w-4 h-4 text-gray-300" />
-            <span>{listing.beds === 0 ? 'STUDIO' : `${listing.beds} BED`}</span>
+            <span className="truncate max-w-full">{listing.beds === 0 ? 'STUDIO' : `${listing.beds} BED`}</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <ShowerHead className="w-4 h-4 text-gray-300" />
-            <span>{listing.baths} BATH</span>
+            <span className="truncate max-w-full">{listing.baths} BATH</span>
           </div>
         </div>
 

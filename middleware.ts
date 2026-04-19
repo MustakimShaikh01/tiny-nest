@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+import { jwtVerify } from 'jose';
+
 const rateLimitMap = new Map();
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || request.ip || 'unknown';
   
   // Basic security headers
@@ -11,6 +13,7 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https: wss: ws:; form-action 'self'; frame-src 'self' https://accounts.google.com;");
   // API Security System (Only runs on API paths)
   if (request.nextUrl.pathname.startsWith('/api/')) {
     const now = Date.now();
@@ -57,6 +60,18 @@ export function middleware(request: NextRequest) {
     const sessionCookie = request.cookies.get('session');
     if (!sessionCookie) {
       // Reject and bounce directly to the login gate for any protected UI access attempting bypass
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    try {
+      // Verify JWT signature to ensure it is authentic and hasn't expired.
+      // We import jwtVerify dynamically or directly use jose.
+      const secretKey = process.env.JWT_SECRET || 'tinynest-secret-key-donotuseinprod';
+      const key = new TextEncoder().encode(secretKey);
+      await jwtVerify(sessionCookie.value, key);
+    } catch (e) {
+      // If signature is invalid or token expired, redirect to login
+      console.warn(`[SECURITY] Invalid JWT token detected from IP: ${ip}`);
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }

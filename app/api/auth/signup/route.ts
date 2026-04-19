@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '../../../../lib/db';
 import { User } from '../../../../lib/models';
 import { encrypt } from '../../../../lib/auth';
+import { hashPassword } from '../../../../lib/hash';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     const newUser = new User({
       name,
       email,
-      password, // In a real app, hash this!
+      password: hashPassword(password),
       role: role || 'buyer'
     });
 

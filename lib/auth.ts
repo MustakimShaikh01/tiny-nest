@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
-const secretKey = 'tinynest-secret-key-donotuseinprod';
+const secretKey = process.env.JWT_SECRET || 'tinynest-secret-key-donotuseinprod';
 const key = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: any) {

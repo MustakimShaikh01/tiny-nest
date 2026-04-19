@@ -1,102 +1,93 @@
 import { NextResponse } from 'next/server';
-import { connectDB, getDb, saveDb, generateId } from '../../../../../lib/db';
+import { connectDB } from '../../../../../lib/db';
+import { User } from '../../../../../lib/models';
 import { encrypt } from '../../../../../lib/auth';
 import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get('code');
+
+  // Base URL detected automatically from the request — works on localhost AND production
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin;
+
+  if (!code) {
+    return NextResponse.redirect(`${baseUrl}/login?error=OAuth+failed`);
+  }
+
   try {
-    const { searchParams, origin } = new URL(request.url);
-    const code = searchParams.get('code');
-    
-    if (!code) {
-      return NextResponse.redirect(`${origin}/login?error=Google authentication failed or was cancelled.`);
-    }
-
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = `${origin}/api/auth/google/callback`;
-
-    // 1. Exchange authorization code for access token
-    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    // 1. Exchange code for tokens
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
         code,
-        client_id: clientId!,
-        client_secret: clientSecret!,
-        redirect_uri: redirectUri,
         grant_type: 'authorization_code',
+        // callback URI must match what Google has registered AND what we sent in the initial redirect
+        redirect_uri: `${baseUrl}/api/auth/google/callback`,
       }),
     });
 
-    const tokenData = await tokenResponse.json();
-    if (tokenData.error) throw new Error(tokenData.error_description || 'Failed to exchange token');
+    const tokens = await tokenRes.json();
+    if (tokens.error) {
+      console.error('[Google OAuth] Token error:', tokens);
+      throw new Error(tokens.error_description || tokens.error);
+    }
 
-    // 2. Fetch user profile from Google using the access token
-    const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    // 2. Get user profile
+    const profileRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
     });
+    const profile = await profileRes.json();
 
-    const googleUser = await userResponse.json();
-    if (!googleUser.email) throw new Error('No email returned from Google');
+    if (!profile.email) throw new Error('No email returned from Google');
 
-    // 3. System database logic: Check if user exists or create new
+    // 3. Find or create user
     await connectDB();
-    const db = await getDb();
-    
-    let user;
-    let fallbackUsed = false;
-    
-    try {
-      const { User } = require('../../../../../lib/models');
-      user = await User.findOne({ email: googleUser.email }).lean();
-      
-      if (!user) {
-        // Create new user in Mongo
-        const newUser = new User({
-          name: googleUser.name,
-          email: googleUser.email,
-          password: generateId(), // OAuth users don't need a traditional password, generate random hash
-          role: 'buyer', // Default to buyer
-        });
-        await newUser.save();
-        user = { _id: newUser._id, name: newUser.name, email: newUser.email, role: 'buyer' };
-      }
-    } catch (e) {
-      fallbackUsed = true;
-      user = db.users.find((u: any) => u.email === googleUser.email);
-      
-      if (!user) {
-        user = {
-          id: generateId(),
-          name: googleUser.name,
-          email: googleUser.email,
-          password: generateId(),
-          role: 'buyer',
-          joined: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-        };
-        db.users.push(user);
-        await saveDb(db);
-      }
+    let user = await User.findOne({ $or: [{ googleId: profile.sub }, { email: profile.email }] });
+
+    if (!user) {
+      user = await User.create({
+        name: profile.name || profile.email.split('@')[0],
+        email: profile.email,
+        googleId: profile.sub,
+        avatar: profile.picture || '',
+        role: 'buyer',
+        status: 'active',
+      });
+    } else {
+      // Link Google ID if signed up with email before
+      if (!user.googleId) { user.googleId = profile.sub; }
+      if (!user.avatar && profile.picture) { user.avatar = profile.picture; }
+      await user.save();
     }
 
-    // 4. Generate Session
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const sessionToken = await encrypt({ 
-      user: { id: user._id || user.id, name: user.name, email: user.email, role: user.role } 
+    // 4. Create session JWT cookie
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const sessionToken = await encrypt({
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar || '',
+      },
     });
-    
-    (await cookies()).set('session', sessionToken, { expires, httpOnly: true });
 
-    // 5. Redirect based on role
-    if (user.role === 'admin') {
-      return NextResponse.redirect(`${origin}/admin`);
-    }
-    return NextResponse.redirect(`${origin}/profile`);
+    const cookieStore = await cookies();
+    cookieStore.set('session', sessionToken, {
+      expires,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
 
+    return NextResponse.redirect(`${baseUrl}/profile`);
   } catch (error: any) {
-    console.error('[GOOGLE OAUTH ERROR]:', error);
-    const origin = new URL(request.url).origin;
-    return NextResponse.redirect(`${origin}/login?error=Google login failed.`);
+    console.error('[Google OAuth Callback] Error:', error.message);
+    return NextResponse.redirect(`${baseUrl}/login?error=${encodeURIComponent('Google login failed: ' + error.message)}`);
   }
 }

@@ -3,6 +3,7 @@ import { DM_Sans, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { ChatBot } from '../components/ChatBot'
 import { CookieConsent } from '../components/CookieConsent'
+import PushNotificationBanner from '../components/PushNotificationBanner'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -108,11 +109,21 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        {/* Leaflet map — loaded globally so all map components share one instance */}
+        <link rel="stylesheet" href="/leaflet.css" />
+        <link rel="stylesheet" href="/MarkerCluster.css" />
+        <link rel="stylesheet" href="/MarkerCluster.Default.css" />
+        {/* Scripts must be in order: leaflet first, then markercluster */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="/leaflet.js" />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="/leaflet.markercluster.js" />
       </head>
       <body className={`${dmSans.variable} ${playfairDisplay.variable} font-sans antialiased`}>
         {children}
         <ChatBot />
         <CookieConsent />
+        <PushNotificationBanner />
       </body>
     </html>
   )

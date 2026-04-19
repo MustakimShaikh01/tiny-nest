@@ -2,264 +2,298 @@ import type { Metadata } from 'next';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 import Link from 'next/link';
-import { ArrowRight, Star, MapPin, Search } from 'lucide-react';
+import { ArrowRight, Star, MapPin, Search, Home as HomeIcon, CheckCircle2, Shield, ChevronDown } from 'lucide-react';
 import { getDb } from '../lib/db';
 import { getSession } from '../lib/auth';
+import { BlogCard } from '../components/BlogCard';
+import PropertyMap from '../components/PropertyMap';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
 
 export const metadata: Metadata = {
-  title: 'TinyNest – Tiny Houses for Sale & Rent | #1 Tiny Home Marketplace USA',
-  description:
-    'TinyNest is the #1 tiny house marketplace. Buy, sell, and rent tiny homes across the USA. Browse 12,400+ verified listings today.',
-  alternates: {
-    canonical: siteUrl,
-  },
-  openGraph: {
-    title: 'TinyNest – Tiny Houses for Sale & Rent | #1 Tiny Home Marketplace',
-    description: 'Browse 12,400+ tiny home listings. Buy, sell, or rent verified tiny houses across America.',
-    url: siteUrl,
-    type: 'website',
-  },
-};
-
-async function getListings() {
-  const db = await getDb();
-  return db.listings.filter((l: any) => l.status === 'approved').slice(0, 3);
-}
-
-async function getBlogs() {
-  const db = await getDb();
-  return db.blogs.slice(0, 3);
-}
-
-// JSON-LD Structured Data
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'TinyNest',
-  url: siteUrl,
-  logo: `${siteUrl}/logo.png`,
-  description: 'The #1 tiny house marketplace in the USA. Buy, sell, and rent tiny homes.',
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: '+1-555-000-8469',
-    contactType: 'customer service',
-    areaServed: 'US',
-    availableLanguage: 'English',
-  },
-  sameAs: [
-    'https://www.facebook.com/tinynest',
-    'https://www.instagram.com/tinynest',
-    'https://twitter.com/tinynest',
-    'https://www.youtube.com/tinynest',
-  ],
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Asheville',
-    addressRegion: 'NC',
-    addressCountry: 'US',
-  },
-};
-
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'TinyNest',
-  url: siteUrl,
-  description: 'The #1 tiny house marketplace. Buy, rent or sell tiny homes across the USA.',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${siteUrl}/listings?q={search_term_string}`,
-    },
-    'query-input': 'required name=search_term_string',
-  },
-};
-
-const realEstateAgentSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'RealEstateAgent',
-  name: 'TinyNest Marketplace',
-  url: siteUrl,
-  description: 'Connecting tiny house buyers and sellers across the United States.',
-  areaServed: {
-    '@type': 'Country',
-    name: 'United States',
-  },
-  makesOffer: {
-    '@type': 'Offer',
-    itemOffered: {
-      '@type': 'Service',
-      name: 'Tiny Home Listing and Search',
-    },
-  },
+  title: 'TinyNest – #1 Tiny House Marketplace | Buy, Sell & Rent Tiny Homes',
+  description: 'Browse the largest collection of tiny house listings. Buy, sell, or rent verified sustainable homes, cabins, and container homes across the USA.',
+  alternates: { canonical: siteUrl },
 };
 
 export default async function Home() {
-  const listings = await getListings();
-  const blogs = await getBlogs();
+  const db = await getDb();
   const session = await getSession();
+
+  const allListings = (db?.listings || []).filter((l: any) => l.status === 'approved');
+  const featuredListings = allListings.slice(0, 3);
+  const recentListings = allListings.slice(3, 9);
+  const blogs = (db?.blogs || []).slice(0, 3);
   const user = session?.user;
 
+  const categories = [
+    { label: 'Tiny Houses', emoji: '🏠', href: '/listings?category=tiny-house', count: allListings.filter((l:any) => l.category === 'Tiny House').length || '12+' },
+    { label: 'Cabins', emoji: '🌲', href: '/listings?category=cabin', count: allListings.filter((l:any) => l.category === 'Cabin').length || '8+' },
+    { label: 'Container Homes', emoji: '📦', href: '/listings?category=container', count: allListings.filter((l:any) => l.category === 'Container').length || '5+' },
+    { label: 'RVs & WHOWs', emoji: '🚌', href: '/listings?category=rv', count: allListings.filter((l:any) => l.category === 'RV').length || '10+' },
+    { label: 'Off-Grid Homes', emoji: '⚡', href: '/listings?type=sale', count: '15+' },
+    { label: 'For Rent', emoji: '🔑', href: '/listings?type=rent', count: allListings.filter((l:any) => l.type === 'rent').length || '7+' },
+  ];
+
+  const locations = [
+    { city: 'Austin, TX', img: 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?auto=format&fit=crop&q=80&w=400' },
+    { city: 'Portland, OR', img: 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?auto=format&fit=crop&q=80&w=400' },
+    { city: 'Asheville, NC', img: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&q=80&w=400' },
+    { city: 'Denver, CO', img: 'https://images.unsplash.com/photo-1619468129361-605ebea04b44?auto=format&fit=crop&q=80&w=400' },
+    { city: 'Sedona, AZ', img: 'https://images.unsplash.com/photo-1598755257130-c2157eb6c3c0?auto=format&fit=crop&q=80&w=400' },
+    { city: 'Nashville, TN', img: 'https://images.unsplash.com/photo-1601933513793-45d33b5e3e48?auto=format&fit=crop&q=80&w=400' },
+  ];
+
+  const faqs = [
+    { q: 'How do I list my tiny house?', a: 'Simply click "Add Listing", complete the step-by-step form with photos and details, and our team reviews your listing within 24 hours.' },
+    { q: 'Is TinyNest free to use?', a: 'Browsing and contacting sellers is completely free. We charge a small success fee only when your listing gets approved.' },
+    { q: 'How do I contact a seller?', a: 'Once you find a listing you love, click "Contact Seller" to send a direct, encrypted message through our secure messenger.' },
+    { q: 'Are listings verified?', a: 'Yes. Every listing is reviewed by our moderation team before it goes live. Sellers must provide accurate photos and details.' },
+    { q: 'Can I negotiate the price?', a: 'Absolutely. All negotiations happen directly between buyer and seller via our encrypted messaging system.' },
+    { q: 'What types of homes are listed?', a: 'Tiny houses, container homes, park models, RVs, cabins, yurts, and more. If it is a small, sustainable home — you\'ll find it here.' },
+  ];
+
   return (
-    <>
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateAgentSchema) }}
-      />
+    <main className="min-h-screen bg-white flex flex-col">
+      <Nav user={user} />
 
-      <main className="min-h-screen bg-white">
-        <Nav user={user} />
-
-        {/* Hero Section */}
-        <section
-          aria-label="Hero – Find Your Tiny Home"
-          className="relative min-h-[580px] flex items-center overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #1A3D2B 0%, #2D6A4F 50%, #40916C 100%)' }}
-        >
-          {/* SVG Mesh Pattern */}
-          <div
-            className="absolute inset-0 opacity-5 pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
+      {/* ── 1. HERO + SEARCH ─────────────────────────────────────── */}
+      <section className="relative min-h-[80vh] flex items-center bg-charcoal overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1449156001437-37c645dce501?auto=format&fit=crop&q=80&w=2000"
+            className="w-full h-full object-cover opacity-40"
+            alt="Tiny home in nature"
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-charcoal/90 via-charcoal/60 to-transparent" />
+        </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-20 lg:py-32">
-            <div className="hero-badge inline-flex items-center gap-2 bg-white/10 text-white px-4 py-1.5 rounded-full text-xs font-bold border border-white/20 mb-8 backdrop-blur-sm">
-              🏡 #1 Tiny House Marketplace in the USA
-            </div>
-
-            <h1 className="font-serif text-white text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 max-w-4xl tracking-tight">
-              Find Your Perfect <span className="text-[#95D5B2] italic">Tiny Home</span> &amp; Live Large
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-24">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center gap-2 text-green-pale font-bold text-xs tracking-widest uppercase mb-6 bg-green/20 border border-green/30 px-4 py-2 rounded-full">
+              🏡 #1 Tiny House Marketplace in USA
+            </span>
+            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-[1.08] tracking-tight">
+              Find Your Perfect <span className="text-green-pale italic">Tiny Home.</span>
             </h1>
-
-            <p className="text-white/80 text-lg md:text-xl font-medium mb-12 max-w-2xl leading-relaxed">
-              Browse thousands of tiny houses for sale and rent across America. Join a community of 50,000+
-              tiny home enthusiasts.
+            <p className="text-white/70 text-lg md:text-xl font-medium mb-10 max-w-2xl leading-relaxed">
+              Browse {allListings.length}+ verified tiny houses for sale and rent by owners and professional builders across North America.
             </p>
 
-            <form action="/listings" method="GET" className="search-box bg-white p-2 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex flex-wrap gap-2 max-w-2xl" role="search" aria-label="Search tiny homes">
-              <div className="flex-1 min-w-[200px] flex items-center px-4 py-3 bg-[#F8FAF9] rounded-xl border border-transparent focus-within:border-green transition-all">
-                <Search className="w-4 h-4 text-gray-400 mr-2" aria-hidden="true" />
+            {/* Search Bar */}
+            <div className="bg-white p-2 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-2 max-w-2xl">
+              <div className="flex-[2] relative flex items-center group">
+                <MapPin className="absolute left-5 text-gray-400 group-focus-within:text-green w-5 h-5 transition-colors" />
                 <input
-                  id="hero-search"
-                  name="q"
-                  type="search"
-                  placeholder="Search by city, state, or keyword..."
-                  className="bg-transparent border-none outline-none w-full text-sm font-medium text-charcoal"
-                  aria-label="Search listings by city, state or keyword"
+                  type="text"
+                  placeholder="Enter city, state, or zip code..."
+                  className="w-full h-14 bg-transparent pl-13 pr-4 text-charcoal font-bold placeholder:text-gray-300 focus:outline-none pl-12"
                 />
               </div>
-              <select name="type" id="hero-type" className="px-4 py-3 bg-[#F8FAF9] rounded-xl border border-transparent outline-none text-sm font-bold text-charcoal" aria-label="Filter by sale or rent">
-                <option value="all">Buy or Rent</option>
-                <option value="sale">For Sale</option>
-                <option value="rent">For Rent</option>
-              </select>
-              <button type="submit" id="hero-search-btn" className="btn btn-primary px-10 py-3 text-sm font-bold shadow-xl">
-                Search
-              </button>
-            </form>
+              <div className="h-10 w-px bg-gray-100 self-center hidden md:block" />
+              <Link
+                href="/listings"
+                className="flex-1 h-14 bg-green text-white font-bold rounded-xl hover:bg-green-dark transition-all flex items-center justify-center gap-2 shadow-lg uppercase tracking-widest text-xs min-w-[140px]"
+              >
+                <Search className="w-4 h-4" /> Search Homes
+              </Link>
+            </div>
 
-            <div className="flex gap-10 mt-12 overflow-x-auto pb-4 scrollbar-hide" aria-label="Marketplace statistics">
-              <div className="flex-shrink-0">
-                <div className="font-serif text-3xl font-bold text-white mb-1">12,400+</div>
-                <div className="text-xs font-bold text-white/60 uppercase tracking-widest">Active Listings</div>
-              </div>
-              <div className="flex-shrink-0">
-                <div className="font-serif text-3xl font-bold text-white mb-1">50K+</div>
-                <div className="text-xs font-bold text-white/60 uppercase tracking-widest">Homes Sold</div>
-              </div>
-              <div className="flex-shrink-0">
-                <div className="font-serif text-3xl font-bold text-white mb-1">15M</div>
-                <div className="text-xs font-bold text-white/60 uppercase tracking-widest">Monthly Visitors</div>
-              </div>
+            <div className="flex flex-wrap items-center gap-6 mt-6 px-2">
+              {[
+                { label: 'Buy A Home', href: '/listings?type=sale', color: 'bg-green' },
+                { label: 'Rent A Home', href: '/listings?type=rent', color: 'bg-amber-400' },
+                { label: 'Sell Your Home', href: '/list-home', color: 'bg-blue-400' },
+              ].map(item => (
+                <Link key={item.label} href={item.href} className="text-white/80 hover:text-white flex items-center gap-2 text-sm font-bold transition-colors">
+                  <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* Quick Category Links – Internal SEO Linking */}
-        <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Browse by category">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Scroll Hint */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/30 flex flex-col items-center gap-1 animate-bounce">
+          <ChevronDown className="w-5 h-5" />
+        </div>
+      </section>
+
+      {/* ── 2. TRUST BAR ───────────────────────────────────────────── */}
+      <section className="py-5 border-b border-gray-100 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-center md:justify-between gap-6 text-center">
             {[
-              { label: 'Tiny Houses for Sale', icon: '🏡', href: '/listings?type=sale', color: 'bg-green-pale', title: 'View all tiny houses listed for sale' },
-              { label: 'Tiny Houses for Rent', icon: '🔑', href: '/listings?type=rent', color: 'bg-earth/10', title: 'Browse tiny homes available for rent' },
-              { label: 'On Wheels (THOW)', icon: '🚐', href: '/listings?q=wheels', color: 'bg-blue-50', title: 'Find tiny houses on wheels' },
-              { label: 'Communities', icon: '🏘️', href: '/listings?q=community', color: 'bg-amber-50', title: 'Explore tiny house communities' },
-            ].map((c) => (
-              <Link
-                key={c.href}
-                href={c.href}
-                title={c.title}
-                className="group bg-white p-8 rounded-3xl border border-gray-100 shadow-tiny-sm hover:shadow-tiny hover:-translate-y-1 transition-all text-center"
-              >
-                <div className={`w-16 h-16 ${c.color} rounded-2xl flex items-center justify-center text-3xl mb-4 mx-auto group-hover:scale-110 transition-transform`} aria-hidden="true">
-                  {c.icon}
+              { value: '12,400+', label: 'Verified Listings' },
+              { value: '4.9★', label: 'Average Rating' },
+              { value: '100%', label: 'Free to Browse' },
+              { value: '24h', label: 'Listing Review' },
+              { value: '50+', label: 'US States Covered' },
+            ].map((stat, i) => (
+              <div key={i} className="flex items-center gap-3">
+                {i > 0 && <div className="w-px h-8 bg-gray-200 hidden md:block" />}
+                <div>
+                  <div className="text-xl font-bold text-charcoal font-serif">{stat.value}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{stat.label}</div>
                 </div>
-                <div className="font-bold text-charcoal text-sm">{c.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. FEATURED LISTINGS (3 only) ──────────────────────────── */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">🔥 Featured</span>
+              <h2 className="text-4xl font-serif font-bold text-charcoal tracking-tight">Featured Homes</h2>
+            </div>
+            <Link href="/listings" className="group flex items-center gap-2 text-sm font-bold text-charcoal hover:text-green transition-colors">
+              View All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {featuredListings.map((item: any) => (
+              <Link key={item.id} href={`/listings/${item.id}`} className="group block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-tiny-sm hover:shadow-tiny hover:-translate-y-2 transition-all duration-500">
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <img src={item.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={item.title} />
+                  <div className="absolute top-4 left-4">
+                    <span className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full text-white ${item.type === 'sale' ? 'bg-green' : 'bg-amber-500'}`}>
+                      {item.type === 'sale' ? 'For Sale' : 'For Rent'}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-green uppercase tracking-widest mb-2">
+                    <MapPin className="w-3 h-3" /> {item.location}
+                  </div>
+                  <h3 className="text-lg font-bold text-charcoal mb-4 group-hover:text-green transition-colors leading-tight">{item.title}</h3>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                    <div className="text-2xl font-serif font-bold text-charcoal">${item.price?.toLocaleString()}</div>
+                    <div className="text-xs text-gray-400 font-bold">{item.beds} Bed · {item.sqft} sqft</div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+            {featuredListings.length === 0 && (
+              <div className="col-span-3 text-center py-20 text-gray-400">No approved listings yet.</div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4. CATEGORIES ──────────────────────────────────────────── */}
+      <section className="py-24 bg-gray-50 border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">Shop by Type</span>
+            <h2 className="text-4xl font-serif font-bold text-charcoal tracking-tight">Browse by Category</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categories.map((cat, i) => (
+              <Link key={i} href={cat.href} className="group bg-white rounded-2xl p-6 text-center border border-gray-100 hover:border-green hover:shadow-tiny transition-all">
+                <div className="text-4xl mb-3">{cat.emoji}</div>
+                <div className="font-bold text-sm text-charcoal group-hover:text-green transition-colors">{cat.label}</div>
+                <div className="text-[10px] font-bold text-gray-400 mt-1">{cat.count} homes</div>
               </Link>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Featured Listings */}
-        <section className="py-24 bg-gray-50/50" aria-label="Featured tiny home listings">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-end mb-16">
-              <div>
-                <h2 className="font-serif text-4xl font-bold text-charcoal tracking-tight mb-4">Newly Listed Homes</h2>
-                <p className="text-gray-500 font-medium">Handpicked properties verified by our tiny home experts.</p>
+      {/* ── 5. LOCATIONS ───────────────────────────────────────────── */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">Explore</span>
+            <h2 className="text-4xl font-serif font-bold text-charcoal tracking-tight">Popular Locations</h2>
+            <p className="text-gray-500 mt-3 text-sm font-medium">Discover tiny homes in the most sought-after cities across the US</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {locations.map((loc, i) => (
+              <Link key={i} href={`/listings?location=${encodeURIComponent(loc.city)}`} className="group relative rounded-2xl overflow-hidden aspect-[3/4] block">
+                <img src={loc.img} alt={loc.city} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="flex items-center gap-1 text-white font-bold text-sm">
+                    <MapPin className="w-3.5 h-3.5 text-green-pale" />
+                    <span>{loc.city}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Mini City-wise Map */}
+          <div className="mt-14 rounded-3xl overflow-hidden border border-gray-200 shadow-lg" style={{ height: '400px' }}>
+            <PropertyMap listings={allListings} />
+          </div>
+          <div className="text-center mt-5">
+            <Link href="/listings" className="inline-flex items-center gap-2 text-green font-bold text-sm hover:underline">
+              View full interactive map <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. WHY US ──────────────────────────────────────────────── */}
+      <section className="py-24 bg-charcoal text-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <span className="text-green-pale font-bold text-xs tracking-widest uppercase mb-3 block">Our Promise</span>
+            <h2 className="text-4xl font-serif font-bold tracking-tight">Why Choose TinyNest?</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: '✅', title: 'Verified Listings', desc: 'Every listing is manually reviewed by our team for accuracy and legitimacy.' },
+              { icon: '🔒', title: 'Secure Messaging', desc: 'Direct, end-to-end encrypted communication between buyers and sellers.' },
+              { icon: '💸', title: 'No Hidden Fees', desc: 'Completely free to browse, search, and contact sellers on TinyNest.' },
+              { icon: '🌿', title: 'Sustainable Focus', desc: 'We champion eco-friendly tiny living and off-grid communities across the US.' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all">
+                <div className="text-4xl mb-5">{item.icon}</div>
+                <h3 className="font-bold text-lg mb-3">{item.title}</h3>
+                <p className="text-white/50 text-sm font-medium leading-relaxed">{item.desc}</p>
               </div>
-              <Link href="/listings" className="text-green font-bold flex items-center gap-2 hover:gap-3 transition-all">
-                View All <ArrowRight className="w-5 h-5" />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 7. RECENT LISTINGS ─────────────────────────────────────── */}
+      {recentListings.length > 0 && (
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">New Arrivals</span>
+                <h2 className="text-4xl font-serif font-bold text-charcoal tracking-tight">Recent Listings</h2>
+              </div>
+              <Link href="/listings" className="group flex items-center gap-2 text-sm font-bold text-charcoal hover:text-green transition-colors">
+                All Listings <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {listings.map((item: any) => (
-                <Link
-                  key={item.id}
-                  href={`/listings/${item.id}`}
-                  className="bg-white rounded-3xl overflow-hidden shadow-tiny-sm hover:shadow-tiny transition-all group block"
-                  title={`${item.title} – ${item.type === 'sale' ? 'For Sale' : 'For Rent'} in ${item.location}`}
-                >
-                  <div className="aspect-[4/3] overflow-hidden relative">
-                    <img
-                      src={item.img}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      alt={`${item.title} – Tiny home in ${item.location}`}
-                      loading="lazy"
-                      width={800}
-                      height={600}
-                    />
-                    <div className="absolute top-6 left-6 flex gap-2">
-                      <span className="px-4 py-2 bg-white/90 backdrop-blur-md rounded-full text-xs font-bold text-charcoal shadow-sm">
-                        ${item.price.toLocaleString()}
-                      </span>
-                      <span className="px-4 py-2 bg-green/90 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-widest">
-                        {item.type}
-                      </span>
-                    </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recentListings.map((item: any) => (
+                <Link key={item.id} href={`/listings/${item.id}`} className="group flex bg-white rounded-2xl border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all overflow-hidden">
+                  <div className="w-36 h-36 flex-shrink-0 overflow-hidden">
+                    <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   </div>
-                  <div className="p-8">
-                    <div className="flex items-center gap-2 text-green text-[10px] font-bold uppercase tracking-widest mb-3">
-                      <MapPin className="w-3 h-3" aria-hidden="true" /> {item.location}
+                  <div className="p-4 flex flex-col justify-between flex-1 min-w-0">
+                    <div>
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-green uppercase tracking-widest mb-1">
+                        <MapPin className="w-3 h-3" /> {item.location}
+                      </div>
+                      <h3 className="font-bold text-charcoal text-sm line-clamp-2 group-hover:text-green transition-colors">{item.title}</h3>
                     </div>
-                    <h3 className="text-xl font-bold text-charcoal mb-4 group-hover:text-green transition-colors leading-tight">{item.title}</h3>
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-50 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                      <span>{item.beds} bed{item.beds !== 1 ? 's' : ''}</span>
-                      <span>{item.sqft} sqft</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-green font-serif">${item.price?.toLocaleString()}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${item.type === 'sale' ? 'bg-green-pale text-green' : 'bg-amber-50 text-amber-600'}`}>
+                        {item.type === 'sale' ? 'Sale' : 'Rent'}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -267,144 +301,80 @@ export default async function Home() {
             </div>
           </div>
         </section>
+      )}
 
-        {/* Resources Section – Google Docs & PDF Links for SEO */}
-        <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Tiny house resources and guides">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="font-serif text-3xl font-bold text-charcoal tracking-tight mb-4">Free Tiny House Resources</h2>
-            <p className="text-gray-500 font-medium">Download our expert guides to help you buy, sell, or live in a tiny home.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: '📄',
-                title: "Buyer's Checklist 2026",
-                description: 'A complete 50-point checklist for first-time tiny home buyers covering zoning, financing, and inspections.',
-                href: 'https://drive.google.com/file/d/1SWqzToHyludoVLrV2U90fCo17Axj9gRk/view',
-                label: 'Download PDF Guide',
-                type: 'PDF',
-                color: 'bg-blue-50 border-blue-100',
-              },
-              {
-                icon: '⚖️',
-                title: 'Zoning Laws by State (2026)',
-                description: 'State-by-state breakdown of tiny house zoning laws, minimum sq ft requirements, and THOW regulations.',
-                href: 'https://drive.google.com/file/d/1qr_BeiaLUEn0xj-29EeHZRACqODZ73a_/view',
-                label: 'Open in Google Sheets',
-                type: 'Google Sheets',
-                color: 'bg-green-50 border-green-100',
-              },
-              {
-                icon: '💰',
-                title: 'Tiny House Financing Guide',
-                description: 'How to finance a tiny home: RV loans, personal loans, FHA alternatives, and builder financing compared.',
-                href: 'https://docs.google.com/document/d/1tiny_financing_guide_2026/view',
-                label: 'Read Full Guide',
-                type: 'Google Doc',
-                color: 'bg-amber-50 border-amber-100',
-              },
-            ].map((resource) => (
-              <a
-                key={resource.title}
-                href={resource.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group p-8 rounded-3xl border ${resource.color} hover:shadow-tiny hover:-translate-y-1 transition-all block`}
-                title={resource.title}
-                aria-label={`${resource.title} – ${resource.label}`}
-              >
-                <div className="text-4xl mb-4">{resource.icon}</div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-4 border border-gray-100">
-                  {resource.type}
-                </div>
-                <h3 className="font-bold text-charcoal text-lg mb-2 group-hover:text-green transition-colors">{resource.title}</h3>
-                <p className="text-sm text-gray-500 font-medium leading-relaxed mb-5">{resource.description}</p>
-                <span className="inline-flex items-center gap-2 text-green font-bold text-sm group-hover:gap-3 transition-all">
-                  {resource.label} <ArrowRight className="w-4 h-4" />
-                </span>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* Hero CTA */}
-        <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Sell your tiny home">
-          <div className="bg-charcoal rounded-3xl p-12 md:p-24 text-center relative overflow-hidden group shadow-2xl">
-            <div className="absolute inset-0 bg-green/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="relative z-10 max-w-3xl mx-auto">
-              <h2 className="font-serif text-4xl md:text-5xl font-bold text-white tracking-tight mb-8">
-                Ready to Sell Your Tiny Home?
-              </h2>
-              <p className="text-gray-400 text-lg md:text-xl font-medium mb-12 leading-relaxed">
-                List your tiny house for free and reach millions of potential buyers. No hidden fees, no lead
-                charges—just you and your next buyer.
-              </p>
-              {!user ? (
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <Link
-                    href="/signup"
-                    id="cta-list-home"
-                    className="btn btn-primary btn-lg w-full sm:w-auto px-12 py-5 text-sm font-bold shadow-2xl"
-                  >
-                    List Your Home Free
-                  </Link>
-                  <Link href="/signup" className="text-white font-bold hover:underline transition-all">
-                    Create Free Account
-                  </Link>
-                </div>
-              ) : (
-                <Link
-                  href="/my-listings"
-                  id="cta-manage-listings"
-                  className="btn btn-white btn-lg w-full sm:w-auto px-12 py-5 text-sm font-bold shadow-2xl"
-                  style={{ background: 'white', color: '#1A1A1A' }}
-                >
-                  Manage Your Listings
-                </Link>
-              )}
-              <div className="mt-12 pt-12 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-8 text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">
-                ★ TRUSTED BY 50,000+ TINY HOME ENTHUSIASTS
+      {/* ── 8. BLOG (3 posts) ──────────────────────────────────────── */}
+      {blogs.length > 0 && (
+        <section className="py-24 bg-gray-50 border-y border-gray-100">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">TinyNest Journal</span>
+                <h2 className="text-4xl font-serif font-bold text-charcoal tracking-tight">Latest Articles</h2>
               </div>
+              <Link href="/blogs" className="group flex items-center gap-2 text-sm font-bold text-charcoal hover:text-green transition-colors">
+                All Articles <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {blogs.map((blog: any) => (
+                <BlogCard key={blog.id} blog={blog} />
+              ))}
             </div>
           </div>
         </section>
+      )}
 
-        {/* Blog Section */}
-        <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Latest tiny house blog posts">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="font-serif text-4xl font-bold text-charcoal tracking-tight mb-4">The Tiny Life Blog</h2>
-            <p className="text-gray-500 font-medium leading-relaxed italic">
-              Tips, inspiration, and expert advice on downsizing and living big in a tiny home.
-            </p>
+      {/* ── 9. CTA ─────────────────────────────────────────────────── */}
+      <section className="py-24 bg-gradient-to-br from-green via-green-dark to-green">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="text-5xl mb-6">🏡</div>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 tracking-tight">
+            Ready to Sell Your Tiny House?
+          </h2>
+          <p className="text-white/70 text-lg font-medium mb-10 max-w-xl mx-auto leading-relaxed">
+            List your property today and connect with thousands of serious buyers across the USA. It's free to get started.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/list-home" className="px-10 py-4 bg-white text-green font-bold rounded-2xl hover:shadow-2xl transition-all text-sm uppercase tracking-widest hover:-translate-y-1">
+              List Your Home Free
+            </Link>
+            <Link href="/listings" className="px-10 py-4 border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-sm uppercase tracking-widest">
+              Browse Homes
+            </Link>
           </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {blogs.map((post: any) => (
-              <Link
-                key={post.id}
-                href={`/blogs/${post.id}`}
-                className="group relative block overflow-hidden rounded-3xl border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all"
-                title={post.title}
-              >
-                <div className="aspect-video bg-gray-50 flex items-center justify-center group-hover:bg-green-pale transition-colors overflow-hidden">
-                  <span className="text-6xl group-hover:scale-125 transition-transform duration-500" role="img" aria-label={post.category}>{post.emoji}</span>
+      {/* ── 10. FAQ ────────────────────────────────────────────────── */}
+      <section className="py-24 bg-white" id="faq">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">Got Questions?</span>
+            <h2 className="text-4xl font-serif font-bold text-charcoal tracking-tight">Frequently Asked Questions</h2>
+          </div>
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <details key={i} className="group bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden">
+                <summary className="flex items-center justify-between cursor-pointer px-6 py-5 font-bold text-charcoal text-sm list-none hover:text-green transition-colors">
+                  {faq.q}
+                  <ChevronDown className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-4" />
+                </summary>
+                <div className="px-6 pb-5 text-sm text-gray-500 font-medium leading-relaxed">
+                  {faq.a}
                 </div>
-                <div className="p-8 bg-white">
-                  <div className="text-[10px] font-bold text-green uppercase tracking-[0.2em] mb-4">{post.category}</div>
-                  <h3 className="text-xl font-bold text-charcoal mb-4 group-hover:text-green transition-colors leading-tight">{post.title}</h3>
-                  <div className="flex items-center gap-4 text-xs font-bold text-gray-400">
-                    <span>{post.date}</span>
-                    <span className="w-1 h-1 bg-gray-200 rounded-full" aria-hidden="true"></span>
-                    <span>{post.readTime}</span>
-                  </div>
-                </div>
-              </Link>
+              </details>
             ))}
           </div>
-        </section>
+          <div className="text-center mt-10">
+            <Link href="/help" className="text-green font-bold text-sm hover:underline">
+              View All Help Articles →
+            </Link>
+          </div>
+        </div>
+      </section>
 
-        <Footer />
-      </main>
-    </>
+      <Footer />
+    </main>
   );
 }

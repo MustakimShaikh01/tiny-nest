@@ -19,6 +19,7 @@ export default async function AdminPage() {
     listings: db.listings,
     messages: db.messages,
     blogs: db.blogs || [],
+    communities: db.communities || [],
     pendingListings,
     session,
   };

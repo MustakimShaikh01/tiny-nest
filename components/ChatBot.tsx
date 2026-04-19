@@ -44,15 +44,9 @@ export function ChatBot() {
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto layout open on home page
+  // Auto layout open disabled by default
   useEffect(() => {
-    if (pathname === '/' && !hasOpened) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-        setHasOpened(true);
-      }, 1500); // Pop up after 1.5 seconds on homepage
-      return () => clearTimeout(timer);
-    }
+    // Chatbot no longer opens by default on the home page
   }, [pathname, hasOpened]);
 
   // Scroll to bottom when messages change

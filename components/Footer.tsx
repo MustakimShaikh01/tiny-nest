@@ -25,7 +25,7 @@ const resources = [
   { name: 'Safety Center', href: '/help', external: false, icon: '🛡️' },
 ];
 
-export function Footer() {
+export default function Footer() {
   return (
     <footer className="relative bg-charcoal text-white pt-24 pb-12 overflow-hidden" role="contentinfo">
       {/* Decorative Gradient Overlay */}
@@ -193,4 +193,3 @@ export function Footer() {
     </footer>
   );
 }
-export default Footer;

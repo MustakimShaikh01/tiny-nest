@@ -352,7 +352,7 @@ function MessagesContent() {
       <div className="flex-1 flex w-full max-w-[1600px] mx-auto overflow-hidden bg-white shadow-sm sm:mt-4 sm:mb-4 sm:rounded-md sm:border border-gray-200 min-h-0 relative z-0">
         
         {/* ─── Sidebar ──────────────────────────── */}
-        <aside className="w-full sm:w-80 md:w-[400px] border-r border-gray-200 flex flex-col bg-white flex-shrink-0 h-full">
+        <aside className={`w-full sm:w-80 md:w-[400px] border-r border-gray-200 flex flex-col bg-white flex-shrink-0 h-full ${selectedConv ? 'hidden sm:flex' : 'flex'}`}>
           {/* Header */}
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center h-[60px] flex-shrink-0">
             <h1 className="text-[20px] font-semibold text-charcoal">Chats</h1>
@@ -428,8 +428,8 @@ function MessagesContent() {
           </div>
         </aside>
 
-        {/* ─── Chat Area ─────────────────────────── */}
-        <section className="flex-1 flex flex-col bg-[#efeae2] relative min-w-0 h-full">
+      {/* ─── Chat Area ─────────────────────────── */}
+        <section className={`flex-1 flex flex-col bg-[#efeae2] relative min-w-0 h-full ${selectedConv ? 'flex' : 'hidden sm:flex'}`}>
             {/* WhatsApp Web Classic Chat Background Image (CSS pattern equivalent via pseudo element) */}
             <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #d4d0ce 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
 
@@ -438,6 +438,14 @@ function MessagesContent() {
               {/* Chat Header */}
               <div className="px-4 py-2 bg-gray-50 border-b border-gray-200 flex items-center justify-between shadow-sm h-[60px] flex-shrink-0">
                 <div className="flex items-center gap-3 cursor-pointer">
+                  {/* Mobile back button */}
+                  <button
+                    className="sm:hidden p-1 text-gray-500 hover:text-green transition-colors"
+                    onClick={() => setSelectedConv(null)}
+                    aria-label="Back to conversations"
+                  >
+                    ←
+                  </button>
                   <Avatar
                     name={activeConv?.name || '?'}
                     size={10}
@@ -533,14 +541,14 @@ function MessagesContent() {
               </div>
 
               {/* Input Area */}
-              <div className="px-4 py-3 bg-[#f0f2f5] flex items-center gap-3 h-[62px] flex-shrink-0 z-20">
-                <form onSubmit={handleSend} className="flex-1 flex items-center gap-3 w-full h-full">
-                  <div className="flex-1 h-full relative">
+              <div className="px-4 py-3 bg-[#f0f2f5] flex items-center gap-3 min-h-[62px] flex-shrink-0 z-20">
+                <form onSubmit={handleSend} className="flex-1 flex items-center gap-3 w-full">
+                  <div className="flex-1 relative">
                       <input
                         id="message-input"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        className="w-full h-full bg-white px-4 rounded-lg border-transparent focus:outline-none text-[15px] shadow-sm placeholder:text-gray-500"
+                        className="w-full bg-white px-4 py-3 rounded-lg border-transparent focus:outline-none text-[15px] shadow-sm placeholder:text-gray-500"
                         placeholder="Type a message"
                         autoComplete="off"
                       />
@@ -563,7 +571,7 @@ function MessagesContent() {
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center px-4 bg-[#f0f2f5] z-10 border-b-[6px] border-b-green-500">
+            <div className="h-full flex-col items-center justify-center text-center px-4 bg-[#f0f2f5] z-10 border-b-[6px] border-b-green-500 hidden sm:flex">
               <div className="w-[320px] mb-8">
                   <div className="w-full aspect-square max-h-[250px] bg-slate-200 rounded-full mx-auto mb-6 flex items-center justify-center text-[80px] shadow-inner font-mono text-slate-300">
                       TN

@@ -9,7 +9,7 @@ import {
   Users, Home, MessageSquare, CheckCircle2, LayoutDashboard,
   List, UserCircle, BookOpen, Star, BarChart3, Eye, Edit, Trash2,
   Plus, Search, ChevronRight, Mail, Shield, Calendar, ArrowRight,
-  Menu, X, TrendingUp, Activity, Clock
+  Menu, X, TrendingUp, Activity, Clock, Globe
 } from 'lucide-react';
 
 const TABS = [
@@ -18,6 +18,7 @@ const TABS = [
   { id: 'users', label: 'Users', icon: Users },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'blog', label: 'Blog', icon: BookOpen },
+  { id: 'communities', label: 'Communities', icon: Globe },
   { id: 'featured', label: 'Featured', icon: Star },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
 ];
@@ -31,7 +32,7 @@ export default function AdminDashboard({ data }: { data: any }) {
     isOpen: false, title: '', text: '', onConfirm: () => {}
   });
 
-  let { users, listings, messages, blogs, pendingListings, session } = data;
+  let { users, listings, messages, blogs, communities, pendingListings, session } = data;
   
   // Enforce soft-deletion invisibility across the entire application interface for admins too
   users = users.filter((u: any) => u.status !== 'deleted');
@@ -160,6 +161,7 @@ export default function AdminDashboard({ data }: { data: any }) {
           {activeTab === 'messages' && <MessagesTab messages={messages} />}
           {activeTab === 'blog' && <BlogTab blogs={blogs} />}
           {activeTab === 'featured' && <FeaturedTab listings={approvedListings} />}
+          {activeTab === 'communities' && <CommunitiesTab communities={communities} confirmAction={confirmAction} />}
           {activeTab === 'analytics' && (
             <AnalyticsTab users={users} listings={listings} messages={messages} blogs={blogs} />
           )}
@@ -803,6 +805,129 @@ function AnalyticsTab({ users, listings, messages, blogs }: any) {
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+/* ============ COMMUNITIES TAB ============ */
+function CommunitiesTab({ communities, confirmAction }: any) {
+  const router = useRouter();
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  
+  const filtered = communities
+    .filter((c: any) => filter === 'all' || c.status === filter)
+    .filter((c: any) => !search || c.name?.toLowerCase().includes(search.toLowerCase()) || c.area?.toLowerCase().includes(search.toLowerCase()));
+
+  const handleStatusUpdate = async (id: string, status: string) => {
+    try {
+      await fetch(`/api/admin/communities/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      router.refresh();
+    } catch (err) { console.error(err); }
+  };
+
+  const handleDeleteCommunity = (id: string) => {
+    confirmAction(
+      "Delete Community",
+      "Are you sure you want to permanently delete this community? All posts and messages will remain but the community will be gone.",
+      async () => {
+        try {
+          await fetch(`/api/admin/communities/${id}`, { method: 'DELETE' });
+          router.refresh();
+        } catch (err) { console.error(err); }
+      },
+      true
+    );
+  };
+
+  return (
+    <div className="animate-fade-in space-y-6">
+      <div className="flex flex-wrap items-center gap-4 justify-between">
+        <div className="flex gap-2 flex-wrap">
+          {['all', 'approved', 'pending', 'rejected'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
+                filter === f ? 'bg-green text-white shadow-md' : 'bg-white text-gray-500 border border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              {f}
+              <span className="ml-2 opacity-60">
+                {f === 'all' ? communities.length : communities.filter((c: any) => c.status === f).length}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="relative flex items-center">
+          <Search className="absolute left-3 w-4 h-4 text-gray-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search communities..."
+            className="pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-lg font-medium focus:outline-none focus:border-green transition-colors"
+          />
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-gray-50 bg-gray-50/50">
+              <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Name</th>
+              <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Area</th>
+              <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Creator</th>
+              <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</th>
+              <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((community: any) => (
+              <tr key={community.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                <td className="px-6 py-4">
+                  <div className="font-bold text-charcoal text-sm">{community.name}</div>
+                  <div className="text-xs text-gray-400 truncate max-w-[200px]">{community.description}</div>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-500">{community.area}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">{community.creatorName}</td>
+                <td className="px-6 py-4">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                    community.status === 'approved' ? 'bg-green-pale text-green' :
+                    community.status === 'pending' ? 'bg-amber-50 text-amber-600' :
+                    'bg-red-50 text-red-600'
+                  }`}>{community.status}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex gap-2">
+                    {community.status === 'pending' && (
+                      <button onClick={() => handleStatusUpdate(community.id, 'approved')} className="p-2 bg-green-pale text-green rounded-lg hover:bg-green hover:text-white transition-all" title="Approve">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    {(community.status === 'pending' || community.status === 'approved') && (
+                      <button onClick={() => handleStatusUpdate(community.id, 'rejected')} className="p-2 bg-amber-50 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all" title="Reject">
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button onClick={() => handleDeleteCommunity(community.id)} className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete community">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <Link href={`/community/${community.id}`} className="p-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-all" title="View">
+                      <Eye className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {filtered.length === 0 && (
+          <div className="p-16 text-center text-gray-400 text-sm font-medium">No communities found.</div>
+        )}
       </div>
     </div>
   );

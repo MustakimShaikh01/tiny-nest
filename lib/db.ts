@@ -34,16 +34,24 @@ export function saveDb(data: any) {
 
 const DB_PATH = path.resolve(process.cwd(), 'db/db.json');
 
+let _dbCache: any = null;
+let _dbCacheTime = 0;
+
 export async function getDb() {
   if (mongoose && MONGODB_URI) {
+    const now = Date.now();
+    if (_dbCache && now - _dbCacheTime < 2000) {
+      return _dbCache; // Serve from fast memory cache if < 2 seconds old
+    }
     try {
       await connectDB();
-      const { User, Listing, Blog, Message } = require('./models');
-      const [usersRaw, listingsRaw, blogsRaw, messagesRaw] = await Promise.all([
+      const { User, Listing, Blog, Message, Community } = require('./models');
+      const [usersRaw, listingsRaw, blogsRaw, messagesRaw, communitiesRaw] = await Promise.all([
         User.find({}).lean(),
         Listing.find({}).lean(),
         Blog.find({}).lean(),
-        Message.find({}).lean()
+        Message.find({}).lean(),
+        Community.find({}).lean()
       ]);
       
       const normalize = (arr: any[]) => arr.map(item => ({ 
@@ -51,12 +59,16 @@ export async function getDb() {
         id: item.id || item._id?.toString() || item._id 
       }));
 
-      return JSON.parse(JSON.stringify({
+      // Cache it to prevent full DB dumps multiple times per page load
+      _dbCache = JSON.parse(JSON.stringify({
         users: normalize(usersRaw),
         listings: normalize(listingsRaw),
         blogs: normalize(blogsRaw),
-        messages: normalize(messagesRaw)
+        messages: normalize(messagesRaw),
+        communities: normalize(communitiesRaw)
       }));
+      _dbCacheTime = now;
+      return _dbCache;
     } catch (e) {
        console.error('Mongo load failed, falling back to JSON:', e);
     }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectDB, getDb } from '../../../../lib/db';
 import { encrypt } from '../../../../lib/auth';
+import { verifyPassword } from '../../../../lib/hash';
 import { cookies } from 'next/headers';
 
 // Memory store for tracking brute force attack attempts
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
        }
     }
     
-    if (!user || user.password !== password) {
+    if (!user || !verifyPassword(password, user.password)) {
       // Log Failure & Lockout tracking
       const current = loginAttempts.get(email) || { count: 0, lockedUntil: 0 };
       current.count += 1;

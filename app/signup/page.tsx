@@ -150,10 +150,34 @@ export default function SignupPage() {
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Join TinyNest <ArrowRight className="w-5 h-5 ml-2" /></>}
             </button>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center mt-6">
-              By joining, you agree to our Terms and Privacy Policy.
-            </p>
           </form>
+
+          <div className="mt-8 pt-8 border-t border-gray-100">
+             <div className="text-center mb-6">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 bg-white relative z-10">Or register with social</span>
+                <div className="h-px bg-gray-100 -mt-2"></div>
+             </div>
+             <div className="grid grid-cols-2 gap-4">
+                <button 
+                  type="button"
+                  onClick={() => window.location.href = '/api/auth/google'}
+                  className="flex items-center justify-center gap-2 p-3.5 border border-gray-200 rounded-[1rem] hover:bg-gray-50 transition-colors font-bold text-[11px] uppercase tracking-[0.1em] text-gray-600 shadow-sm"
+                >
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-4 h-4" /> Google
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => alert("OAuth integration requires Facebook Developer API keys. This is a UI placeholder.")}
+                  className="flex items-center justify-center gap-2 p-3.5 border border-gray-200 rounded-[1rem] hover:bg-gray-50 transition-colors font-bold text-[11px] uppercase tracking-[0.1em] text-gray-600 shadow-sm"
+                >
+                  <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-4 h-4" /> Facebook
+                </button>
+             </div>
+          </div>
+          
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center mt-8">
+            By joining, you agree to our Terms and Privacy Policy.
+          </p>
         </div>
       </div>
     </div>

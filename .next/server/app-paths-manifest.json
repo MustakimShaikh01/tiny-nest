@@ -1,7 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/list-home/page": "app/list-home/page.js",
-  "/api/upload/route": "app/api/upload/route.js",
-  "/api/auth/me/route": "app/api/auth/me/route.js",
-  "/api/messages/route": "app/api/messages/route.js"
+  "/listings/page": "app/listings/page.js",
+  "/api/messages/route": "app/api/messages/route.js",
+  "/community/page": "app/community/page.js",
+  "/list-home/page": "app/list-home/page.js"
 }
