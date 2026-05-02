@@ -31,7 +31,20 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       const Listing = models.Listing;
       if (Listing) {
          const updated = await Listing.findByIdAndUpdate(params.id, data, { new: true });
-         if (updated) return NextResponse.json({ listing: updated });
+         if (updated) {
+            if (data.status === 'approved') {
+               const { SiteNotification } = require('../../../../lib/models');
+               if (SiteNotification) {
+                  await SiteNotification.create({
+                     title: 'New Home Listed! 🏠',
+                     body: `${updated.title} just hit the market in ${updated.location}.`,
+                     url: `/listings/${updated.id}`,
+                     type: 'listing'
+                  });
+               }
+            }
+            return NextResponse.json({ listing: updated });
+         }
       }
     } catch(e) { /* ignore mongo err */ }
 

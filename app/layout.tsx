@@ -126,6 +126,17 @@ export default function RootLayout({
         <CookieConsent />
         <PushNotificationBanner />
         <NewsletterPopup />
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                console.log('SW success:', reg.scope);
+              }).catch(function(err) {
+                console.log('SW fail:', err);
+              });
+            });
+          }
+        `}} />
       </body>
     </html>
   )

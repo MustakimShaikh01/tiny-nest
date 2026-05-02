@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Send, CheckCircle2, X, Mail, MessageSquare, Hash, Loader2 } from 'lucide-react';
 
 interface SupportFormProps {
@@ -19,6 +19,16 @@ export default function SupportForm({ userEmail = '', userName = '' }: SupportFo
     subject: '',
     message: '',
   });
+
+  useEffect(() => {
+    if (!userEmail || !userName) {
+      fetch('/api/auth/session').then(res => res.json()).then(data => {
+        if (data?.user) {
+          setForm(f => ({ ...f, name: f.name || data.user.name, email: f.email || data.user.email }));
+        }
+      }).catch(() => {});
+    }
+  }, [userEmail, userName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +105,34 @@ export default function SupportForm({ userEmail = '', userName = '' }: SupportFo
                 </div>
               ) : (
                 /* Form */
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {!userName && (
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Full Name</label>
+                      <input
+                        required
+                        value={form.name}
+                        onChange={e => setForm({ ...form, name: e.target.value })}
+                        placeholder="Your name"
+                        className="w-full px-5 py-3.5 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all font-sans"
+                      />
+                    </div>
+                  )}
+
+                  {!userEmail && (
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
+                      <input
+                        type="email"
+                        required
+                        value={form.email}
+                        onChange={e => setForm({ ...form, email: e.target.value })}
+                        placeholder="your@email.com"
+                        className="w-full px-5 py-3.5 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all font-sans"
+                      />
+                    </div>
+                  )}
+
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Subject</label>
                     <input
@@ -103,7 +140,7 @@ export default function SupportForm({ userEmail = '', userName = '' }: SupportFo
                       value={form.subject}
                       onChange={e => setForm({ ...form, subject: e.target.value })}
                       placeholder="Enter subject"
-                      className="w-full px-5 py-4 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all"
+                      className="w-full px-5 py-3.5 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all font-sans"
                     />
                   </div>
 
@@ -111,18 +148,18 @@ export default function SupportForm({ userEmail = '', userName = '' }: SupportFo
                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Write Message</label>
                     <textarea
                       required
-                      rows={6}
+                      rows={4}
                       value={form.message}
                       onChange={e => setForm({ ...form, message: e.target.value })}
                       placeholder="Type your message here..."
-                      className="w-full px-5 py-4 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all resize-none"
+                      className="w-full px-5 py-3.5 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all resize-none font-sans"
                     />
                   </div>
 
                   <div className="pt-2">
                     <button
                       type="submit"
-                      disabled={loading || !form.subject || !form.message || !form.email}
+                      disabled={loading || !form.subject || !form.message || !form.email || !form.name}
                       className="w-full flex items-center justify-center gap-2 py-4 bg-green text-white font-bold rounded-xl hover:bg-green-dark transition-all shadow-xl shadow-green/10 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-xs"
                     >
                       {loading ? (
@@ -136,8 +173,8 @@ export default function SupportForm({ userEmail = '', userName = '' }: SupportFo
                     </button>
                   </div>
 
-                  <p className="text-center text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-                    Confirmation will be sent to {form.email}
+                  <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    We will respond to {form.email || 'your email'} shortly.
                   </p>
                 </form>
               )}

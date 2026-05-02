@@ -9,7 +9,7 @@ import {
   Users, Home, MessageSquare, CheckCircle2, LayoutDashboard,
   List, UserCircle, BookOpen, Star, BarChart3, Eye, Edit, Trash2,
   Plus, Search, ChevronRight, Mail, Shield, Calendar, ArrowRight,
-  Menu, X, TrendingUp, Activity, Clock, Globe
+  Menu, X, TrendingUp, Activity, Clock, Globe, HelpCircle
 } from 'lucide-react';
 
 const TABS = [
@@ -19,6 +19,7 @@ const TABS = [
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'blog', label: 'Blog', icon: BookOpen },
   { id: 'communities', label: 'Communities', icon: Globe },
+  { id: 'support', label: 'Support', icon: HelpCircle },
   { id: 'featured', label: 'Featured', icon: Star },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
 ];
@@ -32,7 +33,7 @@ export default function AdminDashboard({ data }: { data: any }) {
     isOpen: false, title: '', text: '', onConfirm: () => {}
   });
 
-  let { users, listings, messages, blogs, communities, pendingListings, session } = data;
+  let { users, listings, messages, blogs, communities, support, pendingListings, session } = data;
   
   // Enforce soft-deletion invisibility across the entire application interface for admins too
   users = users.filter((u: any) => u.status !== 'deleted');
@@ -162,6 +163,7 @@ export default function AdminDashboard({ data }: { data: any }) {
           {activeTab === 'blog' && <BlogTab blogs={blogs} />}
           {activeTab === 'featured' && <FeaturedTab listings={approvedListings} />}
           {activeTab === 'communities' && <CommunitiesTab communities={communities} confirmAction={confirmAction} />}
+          {activeTab === 'support' && <SupportTab support={support || []} confirmAction={confirmAction} />}
           {activeTab === 'analytics' && (
             <AnalyticsTab users={users} listings={listings} messages={messages} blogs={blogs} />
           )}
@@ -928,6 +930,128 @@ function CommunitiesTab({ communities, confirmAction }: any) {
         {filtered.length === 0 && (
           <div className="p-16 text-center text-gray-400 text-sm font-medium">No communities found.</div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ============ SUPPORT TAB ============ */
+function SupportTab({ support, confirmAction }: any) {
+  const router = useRouter();
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+
+  const filtered = (support || [])
+    .filter((s: any) => filter === 'all' || s.status === filter)
+    .filter((s: any) => !search || 
+        s.subject?.toLowerCase().includes(search.toLowerCase()) || 
+        s.email?.toLowerCase().includes(search.toLowerCase()) || 
+        s.supportId?.includes(search)
+    );
+
+  const handleStatusUpdate = async (id: string, status: string) => {
+    try {
+      const res = await fetch(`/api/admin/support/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        router.refresh();
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  return (
+    <div className="animate-fade-in space-y-6">
+      <div className="flex flex-wrap items-center gap-4 justify-between">
+        <div className="flex gap-2 flex-wrap">
+          {['all', 'open', 'in-progress', 'resolved'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
+                filter === f ? 'bg-green text-white shadow-md' : 'bg-white text-gray-500 border border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              {f}
+              <span className="ml-2 opacity-60">
+                {f === 'all' ? support.length : support.filter((s: any) => s.status === f).length}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="relative flex items-center">
+          <Search className="absolute left-3 w-4 h-4 text-gray-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search inquiries..."
+            className="pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-lg font-medium focus:outline-none focus:border-green transition-colors"
+          />
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-50 bg-gray-50/50">
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">ID</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">User</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Subject</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Message</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((s: any) => (
+                <tr key={s._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 font-mono text-xs font-bold text-gray-400">#{s.supportId}</td>
+                  <td className="px-6 py-4">
+                    <div className="font-bold text-charcoal text-sm">{s.name || 'Anonymous'}</div>
+                    <div className="text-xs text-gray-400">{s.email}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-bold text-charcoal max-w-[150px] truncate" title={s.subject}>{s.subject}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-500 max-w-xs truncate" title={s.message}>{s.message}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                      s.status === 'open' ? 'bg-amber-50 text-amber-600' :
+                      s.status === 'in-progress' ? 'bg-blue-50 text-blue-600' :
+                      'bg-green-pale text-green'
+                    }`}>
+                      {s.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                       <select 
+                         value={s.status}
+                         onChange={(e) => handleStatusUpdate(s._id || s.id, e.target.value)}
+                         className="text-[10px] font-bold uppercase tracking-widest bg-gray-50 border border-gray-100 rounded-lg px-2 py-1.5 outline-none cursor-pointer hover:border-green transition-colors"
+                       >
+                         <option value="open">Open</option>
+                         <option value="in-progress">In Progress</option>
+                         <option value="resolved">Resolved</option>
+                       </select>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {filtered.length === 0 && (
+            <div className="p-20 text-center">
+              <HelpCircle className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <p className="text-gray-400 text-sm font-medium">No support inquiries found.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

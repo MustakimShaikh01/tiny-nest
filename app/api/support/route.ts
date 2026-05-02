@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { connectDB } from '../../../lib/db';
+import { Support } from '../../../lib/models';
 
 function generateSupportId() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -28,6 +30,7 @@ async function sendMail(opts: {
 
 export async function POST(req: NextRequest) {
   try {
+    await connectDB();
     const { name, email, subject, message } = await req.json();
 
     if (!email || !subject || !message) {
@@ -35,6 +38,17 @@ export async function POST(req: NextRequest) {
     }
 
     const supportId = generateSupportId();
+    
+    // Save to Database
+    await Support.create({
+      supportId,
+      name,
+      email,
+      subject,
+      message,
+      status: 'open'
+    });
+
     const supportEmail = 'support@tinylivingmarket.com';
 
     const smtpHost = process.env.SMTP_HOST;

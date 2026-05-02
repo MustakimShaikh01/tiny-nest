@@ -107,31 +107,40 @@ function MessagesContent() {
         const data = await res.json();
         if (data.messages) {
           setMessages((prev) => {
-             const prevIds = new Set(prev.map(m => m._id));
-             const newMsgs = data.messages.filter((m: any) => !prevIds.has(m._id));
-             if (newMsgs.length === 0) return prev;
-             
-             // If any new message is for the currently open chat, mark it read in the DB
-             let markedRead = false;
-             newMsgs.forEach((m: any) => {
-               if (selectedConv && (m.from === selectedConv || m.to === selectedConv)) {
-                  if (m.to === currentUser?.email && m.status === 'unread') {
-                      fetch('/api/messages', {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: m._id, status: 'read' }),
-                      }).catch(() => {});
-                      m.status = 'read'; // update local object too
-                      markedRead = true;
+             const prevMap = new Map(prev.map(m => [m._id, m]));
+             let hasChanged = false;
+
+             data.messages.forEach((m: any) => {
+               const existing = prevMap.get(m._id);
+               if (!existing) {
+                  // New message
+                  prevMap.set(m._id, m);
+                  hasChanged = true;
+
+                  // Auto-read if newly received msg is in open chat
+                  if (selectedConv && (m.from === selectedConv || m.to === selectedConv)) {
+                     if (m.to === currentUser?.email && m.status === 'unread') {
+                         fetch('/api/messages', {
+                           method: 'PATCH',
+                           headers: { 'Content-Type': 'application/json' },
+                           body: JSON.stringify({ id: m._id, status: 'read' }),
+                         }).catch(() => {});
+                         m.status = 'read';
+                     }
                   }
+               } else if (existing.status !== m.status) {
+                  // Message status updated (e.g. read by partner)
+                  prevMap.set(m._id, m); // Update with new status
+                  hasChanged = true;
                }
              });
 
-             if (markedRead) {
-                window.dispatchEvent(new Event('messagesUpdated'));
-             }
+             if (!hasChanged) return prev;
+              
+             // Push update to Nav unread count
+             window.dispatchEvent(new Event('messagesUpdated'));
 
-             return [...prev, ...newMsgs].sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+             return Array.from(prevMap.values()).sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           });
         }
       } catch (err) {

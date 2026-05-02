@@ -128,16 +128,44 @@ const CommunityMessageSchema = mongoose ? new mongoose.Schema({
   text: { type: String, required: true }
 }, { timestamps: true }) : null;
 
+const SupportSchema = mongoose ? new mongoose.Schema({
+  supportId: { type: String, required: true },
+  name: { type: String },
+  email: { type: String, required: true },
+  subject: { type: String, required: true },
+  message: { type: String, required: true },
+  status: { type: String, enum: ['open', 'in-progress', 'resolved'], default: 'open' },
+}, { timestamps: true }) : null;
+
+const PushSubscriptionSchema = mongoose ? new mongoose.Schema({
+  endpoint: { type: String, required: true, unique: true },
+  keys: {
+    p256dh: { type: String, required: true },
+    auth: { type: String, required: true }
+  },
+  userEmail: { type: String }, // Optional: link to a user
+}, { timestamps: true }) : null;
+
+const SiteNotificationSchema = mongoose ? new mongoose.Schema({
+  title: { type: String, required: true },
+  body: { type: String, required: true },
+  url: { type: String, default: '/' },
+  type: { type: String, enum: ['listing', 'blog', 'community', 'general'], default: 'general' },
+  targetEmails: [String], // Empty = for all
+}, { timestamps: true }) : null;
+
 const mockModel = (name: string) => {
   const mock = function(this: any, data: any) {
     Object.assign(this, data);
     this.save = async () => this;
     return this;
   };
-  (mock as any).find = () => ({ sort: () => ({ lean: async () => [] }), lean: async () => [] });
+  (mock as any).find = () => ({ sort: () => ({ limit: () => ({ lean: async () => [] }), lean: async () => [] }), lean: async () => [] });
   (mock as any).findOne = () => ({ lean: async () => null });
   (mock as any).findOneAndUpdate = () => ({ lean: async () => null });
   (mock as any).countDocuments = async () => 0;
+  (mock as any).findById = () => ({ lean: async () => null });
+  (mock as any).findByIdAndUpdate = () => ({ lean: async () => null });
   return mock;
 };
 
@@ -148,3 +176,6 @@ export const Message = mongoose ? (mongoose.models.Message || mongoose.model('Me
 export const Community = mongoose ? (mongoose.models.Community || mongoose.model('Community', CommunitySchema)) : mockModel('Community') as any;
 export const CommunityPost = mongoose ? (mongoose.models.CommunityPost || mongoose.model('CommunityPost', CommunityPostSchema)) : mockModel('CommunityPost') as any;
 export const CommunityMessage = mongoose ? (mongoose.models.CommunityMessage || mongoose.model('CommunityMessage', CommunityMessageSchema)) : mockModel('CommunityMessage') as any;
+export const Support = mongoose ? (mongoose.models.Support || mongoose.model('Support', SupportSchema)) : mockModel('Support') as any;
+export const PushSubscriptionModel = mongoose ? (mongoose.models.PushSubscription || mongoose.model('PushSubscription', PushSubscriptionSchema)) : mockModel('PushSubscription') as any;
+export const SiteNotification = mongoose ? (mongoose.models.SiteNotification || mongoose.model('SiteNotification', SiteNotificationSchema)) : mockModel('SiteNotification') as any;

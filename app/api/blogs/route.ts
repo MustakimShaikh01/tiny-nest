@@ -30,6 +30,19 @@ export async function POST(request: Request) {
     
     db.blogs.push(newBlog);
     await saveDb(db);
+
+    // Trigger SiteNotification
+    try {
+      const { SiteNotification } = require('../../../lib/models');
+      if (SiteNotification) {
+        await SiteNotification.create({
+          title: 'New Blog Post! 📝',
+          body: `${newBlog.title} - Read now for the latest tiny home trends.`,
+          url: `/blogs/${newBlog.slug || newBlog.id}`,
+          type: 'blog'
+        });
+      }
+    } catch (err) { console.error('Notification trigger failed:', err); }
     
     return NextResponse.json({ blog: newBlog });
   } catch (error) {

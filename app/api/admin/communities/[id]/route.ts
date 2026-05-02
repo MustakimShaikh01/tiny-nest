@@ -29,6 +29,20 @@ export async function PATCH(
       return NextResponse.json({ error: 'Community not found' }, { status: 404 });
     }
 
+    if (status === 'approved') {
+      try {
+        const { SiteNotification } = require('../../../../../lib/models');
+        if (SiteNotification) {
+          await SiteNotification.create({
+            title: 'New Community Alert! 🤝',
+            body: `The ${community.name} community has just been approved! Join the conversation now.`,
+            url: `/community/${community.id}`,
+            type: 'community'
+          });
+        }
+      } catch (err) { console.error('Notification failed:', err); }
+    }
+
     return NextResponse.json(community);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
