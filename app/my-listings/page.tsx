@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { MapPin, Plus, CheckCircle2, Loader2, Shield, Eye, Clock, Home } from 'lucide-react';
 
-export default function MyListingsPage() {
+function MyListingsContent() {
   const [user, setUser] = useState<any>(null);
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -186,3 +186,18 @@ export default function MyListingsPage() {
     </main>
   );
 }
+
+import { Suspense } from 'react';
+
+export default function MyListingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-10 h-10 animate-spin text-green" />
+      </div>
+    }>
+      <MyListingsContent />
+    </Suspense>
+  );
+}
+
