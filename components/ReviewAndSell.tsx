@@ -155,68 +155,56 @@ export default function ReviewAndSell({ user, onComplete }: { user: any, onCompl
                 ))}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Included Amenities</label>
-                     <div className="flex flex-wrap gap-2 h-64 overflow-y-auto p-2 border border-gray-100 rounded-2xl bg-white shadow-inner custom-scrollbar">
-                       {[
-                         // Layout & Storage
-                         'Loft', 'Single-Level', 'Split-Level', 'Studio', 'Expandable', 'Foldable Furniture', 'Built-In Storage', 'Hidden Storage',
-                         // Outdoor & Exterior
-                         'Balcony', 'Deck', 'Porch', 'Rooftop Terrace', 'Skylight', 'French Doors', 'Sliding Glass Door', 'Awning',
-                         // Windows & Ventilation
-                         'Large Windows', 'Panoramic Windows', 'Double-Glazed', 'Cross Ventilation', 'Ceiling Fan', 'Mosquito Screens',
-                         // Kitchen
-                         'Compact Kitchen', 'Modular Kitchen', 'Pantry Storage', 'Induction Cooktop', 'Gas Cooktop', 'Foldable Dining',
-                         // Bathroom & Plumbing
-                         'Attached Bathroom', 'Dry Bathroom', 'Wet Bathroom', 'Shower Cabin', 'Composting Toilet', 'Water Heater Ready', 'Pre-Plumbed', 'Grey Water Line', 'Black Water Line', 'Septic Tank Ready',
-                         // Electrical & HVAC
-                         'Pre-Wired', 'Concealed Wiring', 'LED Lights', 'Inverter Ready', 'Solar Ready', 'Generator Ready', 'Mini Split AC', 'Window AC', 'Heat Pump', 'Solar Heating', 'Insulation (Full)',
-                         // Structure & Materials
-                         'Steel Frame', 'Lightweight Frame', 'Portable Structure', 'Trailer-Mounted', 'Weatherproof', 'Wooden Finish', 'Vinyl Flooring', 'PVC Panels',
-                         // Off-Grid & Safety
-                         'Solar Power', 'Battery Backup', 'Rainwater Harvesting', 'Off-Grid Ready', 'Internet Ready', 'Fire Alarm', 'Smoke Detector', 'Security Lock'
-                       ].map(amenity => {
-                       const isSelected = formData.amenities.split(',').map((s: string) => s.trim()).includes(amenity);
+                <div className="space-y-4 md:col-span-2">
+                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Features & Amenities</label>
+                   <div className="h-[420px] overflow-y-auto p-4 border border-gray-100 rounded-2xl bg-gray-50 custom-scrollbar space-y-5">
+                     {[
+                       { heading: 'Layout', items: ['Loft','Single-Level Layout','Split-Level Layout','Studio Layout','Open Plan Living','Expandable Section','Fold-Out Section','Multi-Use Space','Foldable Furniture','Built-In Storage','Under-Stair Storage','Hidden Storage','None','Other'] },
+                       { heading: 'Outdoor / Exterior', items: ['Balcony','Deck','Porch','Rooftop Terrace','Skylight','French Doors','Sliding Glass Door','Awning','Canopy','Outdoor Stairs'] },
+                       { heading: 'Windows / Ventilation', items: ['Large Windows','Panoramic Windows','Double-Glazed Windows','uPVC Windows','Aluminum Windows','Cross Ventilation','Ventilation Fan','Roof Vent','Ceiling Fan','Mosquito Screens'] },
+                       { heading: 'Kitchen', items: ['Compact Kitchen','Modular Kitchen','Pantry Storage','Sink Installed','Countertop','Induction Cooktop','Gas Cooktop','Microwave Space','Refrigerator Space','Overhead Cabinets','Foldable Dining Counter','Chimney / Exhaust'] },
+                       { heading: 'Bathroom', items: ['Attached Bathroom','Common Bathroom','Wet Bathroom','Dry Bathroom','Shower Area','Shower Cabin','Western Toilet','Squat Toilet','Wall-Hung Toilet','Composting Toilet','Wash Basin','Vanity Unit','Water Heater Ready','Exhaust Fan'] },
+                       { heading: 'Plumbing', items: ['Plumbing Ready','Pre-Plumbed','Water Supply Inlet','Drainage Outlet','Kitchen Plumbing','Bathroom Plumbing','Grey Water Line','Black Water Line','Septic Tank Ready','Water Tank Connection','Hot Water Line'] },
+                       { heading: 'Electrical', items: ['Electrical Ready','Pre-Wired','Concealed Wiring','Surface Wiring','LED Lights Installed','Switchboard Installed','Power Sockets','USB Charging','Points','AC Point','Inverter Ready','Solar Ready','Generator Ready','Other'] },
+                       { heading: 'Heating / Cooling', items: ['Mini Split AC','Window AC','Portable AC','Ceiling Fan','Exhaust Fan','Heat Pump','Electric Heater','Gas Heater','Solar Heating','Roof Insulation','Wall Insulation','Floor Insulation'] },
+                       { heading: 'Structure / Build', items: ['Steel Frame','Lightweight Frame','Portable Structure','Foldable Structure','Expandable Structure','Trailer-Mounted','Crane Liftable','Weatherproof Exterior','Rust-Resistant Body','Fire-Resistant Panels','Soundproof Panels','Others'] },
+                       { heading: 'Interior Finish', items: ['Wooden Finish','Vinyl Flooring','Laminate Flooring','Tile Flooring','PVC Panels','Wall Cladding','False Ceiling','Recessed Lighting','Minimalist Interior','Premium Interior Finish','Others'] },
+                       { heading: 'Utilities / Off-Grid', items: ['Solar Power','Battery Backup','Water Tank','Rainwater Harvesting','Off-Grid Ready','Grid Connected','Internet Ready','Satellite Ready','Septic Ready','Greywater System'] },
+                       { heading: 'Mobility / Installation', items: ['Portable','Mobile','Relocatable','Quick Install','Ready to Move In','Trailer Compatible','Foldable','Expandable','Minimal Foundation','No Heavy Foundation'] },
+                       { heading: 'Safety', items: ['Fire Alarm','Smoke Detector','Carbon Monoxide Detector','Emergency Exit','Security Lock','Window Locks','Anti-Slip Flooring','Electrical Safety System'] },
+                     ].map(({ heading, items }) => {
+                       const selectedList = formData.amenities.split(',').map((s: string) => s.trim()).filter(Boolean);
                        return (
-                         <button
-                           key={amenity}
-                           type="button"
-                           onClick={() => {
-                             const current = formData.amenities.split(',').map((s: string) => s.trim()).filter(Boolean);
-                             const updated = isSelected 
-                               ? current.filter((a: string) => a !== amenity)
-                               : [...current, amenity];
-                             setFormData({ ...formData, amenities: updated.join(', ') });
-                           }}
-                           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                             isSelected ? 'bg-green border-green text-white shadow-green-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-green/30'
-                           }`}
-                         >
-                           {amenity}
-                         </button>
+                         <div key={heading}>
+                           <div className="text-xs font-bold text-charcoal uppercase tracking-widest mb-2 pb-1 border-b border-gray-200">{heading}</div>
+                           <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5">
+                             {items.map(amenity => {
+                               const isChecked = selectedList.includes(amenity);
+                               return (
+                                 <label key={amenity} className="flex items-center gap-2 cursor-pointer group">
+                                   <input
+                                     type="checkbox"
+                                     checked={isChecked}
+                                     onChange={() => {
+                                       const current = formData.amenities.split(',').map((s: string) => s.trim()).filter(Boolean);
+                                       const updated = isChecked
+                                         ? current.filter((a: string) => a !== amenity)
+                                         : [...current, amenity];
+                                       setFormData({ ...formData, amenities: updated.join(', ') });
+                                     }}
+                                     className="w-3.5 h-3.5 rounded accent-green flex-shrink-0"
+                                   />
+                                   <span className={`text-xs font-medium transition-colors ${isChecked ? 'text-green' : 'text-gray-500 group-hover:text-charcoal'}`}>{amenity}</span>
+                                 </label>
+                               );
+                             })}
+                           </div>
+                         </div>
                        );
                      })}
                    </div>
-                   <div className="relative">
-                      <Plus className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-4 h-4" />
-                      <input 
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            const val = (e.target as HTMLInputElement).value.trim();
-                            if (val) {
-                              const current = formData.amenities.split(',').map((s: string) => s.trim()).filter(Boolean);
-                              if (!current.includes(val)) {
-                                setFormData({ ...formData, amenities: [...current, val].join(', ') });
-                              }
-                              (e.target as HTMLInputElement).value = '';
-                            }
-                          }
-                        }}
-                        placeholder="Add custom amenity..." 
-                        className="w-full pl-11 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-green/20 outline-none font-medium transition-all text-sm" 
-                      />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300 uppercase tracking-widest pointer-events-none">Hit Enter</span>
+                   <div className="text-xs text-gray-400 font-medium">
+                     {formData.amenities.split(',').filter((s: string) => s.trim()).length} amenities selected
                    </div>
                 </div>
                 <div className="space-y-2">

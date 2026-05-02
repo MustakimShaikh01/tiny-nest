@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { MapPin, Plus, CheckCircle2, Loader2, Shield, Eye, Clock, Home } from 'lucide-react';
 
 export default function MyListingsPage() {
@@ -14,23 +14,36 @@ export default function MyListingsPage() {
   const [filter, setFilter] = useState('all');
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const sellerQuery = searchParams.get('seller');
+
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('/api/auth/me');
-      const data = await res.json();
-      if (!data.user) {
+      let currentUser = null;
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        currentUser = data.user;
+        setUser(currentUser);
+      } catch (err) {}
+
+      // If no seller query and no user, go login
+      if (!sellerQuery && !currentUser) {
         router.push('/login');
         return;
       }
-      setUser(data.user);
 
       const listRes = await fetch('/api/listings?status=all');
       const listData = await listRes.json();
-      setListings(listData.listings.filter((l: any) => l.seller === data.user.email));
+      const allListings = listData.listings || [];
+      
+      // If seller param exists, show that seller's listings, else own
+      const targetSeller = sellerQuery || currentUser?.email;
+      setListings(allListings.filter((l: any) => l.seller === targetSeller));
       setLoading(false);
     };
     fetchData();
-  }, [router]);
+  }, [router, sellerQuery]);
 
   const filtered = filter === 'all' ? listings : listings.filter((l: any) => l.status === filter);
 
@@ -50,15 +63,17 @@ export default function MyListingsPage() {
         {/* Header */}
         <div className="flex items-start justify-between mb-12 flex-wrap gap-4">
           <div>
-            <span className="text-green font-bold text-xs tracking-widest uppercase block mb-2">My Account</span>
-            <h1 className="font-serif text-4xl font-bold text-charcoal tracking-tight">My Listings</h1>
+            <span className="text-green font-bold text-xs tracking-widest uppercase block mb-2">{sellerQuery ? 'User Profile' : 'My Account'}</span>
+            <h1 className="font-serif text-4xl font-bold text-charcoal tracking-tight">{sellerQuery ? 'Seller Portfolio' : 'My Listings'}</h1>
             <p className="text-gray-400 font-medium mt-2">
-              {listings.length} {listings.length === 1 ? 'property' : 'properties'} listed
+              {sellerQuery ? `Viewing listings for ${sellerQuery}` : `${listings.length} ${listings.length === 1 ? 'property' : 'properties'} listed`}
             </p>
           </div>
-          <Link href="/list-home" className="btn btn-primary flex items-center gap-2 shadow-lg hover:-translate-y-0.5 transition-all">
-            <Plus className="w-4 h-4" /> List a New Home
-          </Link>
+          {!sellerQuery && (
+            <Link href="/list-home" className="btn btn-primary flex items-center gap-2 shadow-lg hover:-translate-y-0.5 transition-all">
+              <Plus className="w-4 h-4" /> List a New Home
+            </Link>
+          )}
         </div>
 
         {/* Filter Tabs */}

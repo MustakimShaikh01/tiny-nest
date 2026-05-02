@@ -21,17 +21,29 @@ export default function Nav({ user }: { user: any }) {
     
     // Fetch unread count if user is logged in
     if (user) {
-      fetch('/api/messages')
-        .then(res => res.json())
-        .then(data => {
+      const fetchCount = async () => {
+        try {
+          const res = await fetch('/api/messages');
+          const data = await res.json();
           if (data.messages) {
-            const count = data.messages.filter((m: any) => m.to === user.email && m.status === 'unread').length;
-            setUnreadCount(count);
+             const count = data.messages.filter((m: any) => m.to === user.email && m.status === 'unread').length;
+             setUnreadCount(count);
           }
-        })
-        .catch(err => console.error('Failed to fetch unread count:', err));
-    }
+        } catch (err) {}
+      };
 
+      fetchCount();
+      const interval = setInterval(fetchCount, 15000); 
+
+      // Listen for manual trigger from Messages page
+      window.addEventListener('messagesUpdated', fetchCount);
+
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener('messagesUpdated', fetchCount);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
     return () => window.removeEventListener('scroll', handleScroll);
   }, [user]);
 
@@ -61,7 +73,7 @@ export default function Nav({ user }: { user: any }) {
           <Link href="/listings" className="px-4 py-2 rounded-tiny-sm text-[13px] text-gray-500 hover:text-green transition-colors uppercase">Browse Homes</Link>
           <Link href={user ? "/community" : "/login?redirect=/community"} className="px-4 py-2 rounded-tiny-sm text-[13px] text-gray-500 hover:text-green transition-colors uppercase">Communities</Link>
           <Link href="/blogs" className="px-4 py-2 rounded-tiny-sm text-[13px] text-gray-500 hover:text-green transition-colors uppercase">Blog</Link>
-          <Link href="/#how-it-works" className="px-4 py-2 rounded-tiny-sm text-[13px] text-gray-500 hover:text-green transition-colors uppercase">How It Works</Link>
+          <Link href="/help#how-to-start" className="px-4 py-2 rounded-tiny-sm text-[13px] text-gray-500 hover:text-green transition-colors uppercase">How It Works</Link>
           <div className="relative group/more">
              <button className="px-4 py-2 rounded-tiny-sm text-[13px] text-gray-500 hover:text-green transition-colors uppercase flex items-center gap-1 ring-offset-2 focus:ring-2 focus:ring-green-pale">
                More <ChevronDown className="w-3 h-3" />
@@ -88,10 +100,10 @@ export default function Nav({ user }: { user: any }) {
           )}
           {user ? (
             <div className="flex items-center gap-3">
-              <Link href="/messages" className="hidden sm:flex p-2 text-gray-400 hover:text-green relative">
+              <Link href="/messages" className="flex p-2 text-gray-400 hover:text-green relative">
                  <MessageSquare className="w-5 h-5" />
                  {unreadCount > 0 && (
-                   <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold">
+                   <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm">
                      {unreadCount}
                    </span>
                  )}
@@ -115,8 +127,8 @@ export default function Nav({ user }: { user: any }) {
                       <div className="text-xs text-gray-400 font-medium truncate">{user.email}</div>
                     </div>
                     {[
-                      { href: '/profile', icon: User, label: 'My Library' },
-                      { href: '/my-listings', icon: List, label: 'My Properties' },
+                      { href: '/profile', icon: User, label: 'My Profile' },
+                      { href: '/my-listings', icon: List, label: 'My Listings' },
                       { href: '/profile#favorites', icon: Heart, label: 'Favorites' },
                       ...(user.role === 'admin' ? [{ href: '/admin', icon: Shield, label: 'Admin Dashboard' }] : [])
                     ].map(item => (
@@ -135,7 +147,7 @@ export default function Nav({ user }: { user: any }) {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              {pathname !== '/list-home' && (
+              {!isAuthPage && pathname !== '/list-home' && (
                 <>
                   <Link href="/login" className="px-5 py-2 text-[13px] font-bold text-gray-500 hover:text-green transition-colors">LOG IN</Link>
                   <Link href="/signup" className="hidden sm:inline-flex bg-green text-white px-6 py-2 rounded-full text-[13px] font-bold shadow-lg hover:shadow-green-sm transition-all active:scale-95">SIGN UP</Link>
@@ -153,11 +165,11 @@ export default function Nav({ user }: { user: any }) {
       {mobileMenu && (
         <div className="md:hidden bg-white/95 backdrop-blur-md border-b absolute top-full w-full left-0 p-6 space-y-4 shadow-2xl animate-in slide-in-from-top duration-300">
           <Link href="/list-home" onClick={() => setMobileMenu(false)} className="block text-sm font-bold text-gray-500 hover:text-green uppercase">Sell</Link>
-          <Link href="/listings" onClick={() => setMobileMenu(false)} className="block text-sm font-bold text-gray-500 hover:text-green uppercase">Buy</Link>
+          <Link href="/listings" onClick={() => setMobileMenu(false)} className="block text-sm font-bold text-gray-500 hover:text-green uppercase">Browse Homes</Link>
           <Link href="/#how-it-works" onClick={() => setMobileMenu(false)} className="block text-sm font-bold text-gray-500 hover:text-green uppercase">How It Works</Link>
           <div className="h-px bg-gray-100 w-full"></div>
           <Link href="/blogs" onClick={() => setMobileMenu(false)} className="block text-sm font-bold text-gray-500 hover:text-green uppercase">Blog</Link>
-          <Link href="/community" onClick={() => setMobileMenu(false)} className="block text-sm font-bold text-gray-500 hover:text-green uppercase">Communities</Link>
+          <Link href={user ? "/community" : "/login?redirect=/community"} onClick={() => setMobileMenu(false)} className="block text-sm font-bold text-gray-500 hover:text-green uppercase">Communities</Link>
           {user?.role === 'admin' && (
             <Link
               href="/admin"

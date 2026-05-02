@@ -527,8 +527,8 @@ function UsersTab({ users, listings, confirmAction }: any) {
                       }`}>{u.role}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-xs text-charcoal font-bold">{u.status === 'blocked' ? 'Offline' : 'Online Today'}</div>
-                      <div className="text-[10px] text-gray-400 uppercase tracking-widest">{(u.name.length * 3) + 2} logins</div>
+                       <div className="text-xs text-charcoal font-bold">{u.status === 'blocked' ? 'Offline' : 'Active'}</div>
+                       <div className="text-[10px] text-gray-400 uppercase tracking-widest">{listings.filter((l: any) => l.seller === u.email).length} listings</div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
@@ -537,9 +537,9 @@ function UsersTab({ users, listings, confirmAction }: any) {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button onClick={() => setSelectedUser(u)} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-all" title="View details">
+                        <Link href={`/my-listings?seller=${encodeURIComponent(u.email)}`} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-all" title="View seller profile & listings">
                            <Eye className="w-4 h-4" />
-                        </button>
+                        </Link>
                         {u.status === 'blocked' ? (
                           <button onClick={() => handleUserAction(u.id || u._id, 'unblock')} className="p-1.5 bg-green-100 text-green-600 rounded-lg hover:bg-green hover:text-white transition-all" title="Unblock User">
                              <CheckCircle2 className="w-4 h-4" />
@@ -646,7 +646,7 @@ function BlogTab({ blogs }: any) {
             <p className="text-sm text-gray-500 font-medium mb-4 line-clamp-2">{blog.excerpt}</p>
             <div className="flex items-center justify-between text-xs text-gray-400">
               <span>{blog.date} · {blog.readTime}</span>
-              <Link href="/admin/blog/editor" className="text-green font-bold hover:underline flex items-center gap-1">
+              <Link href={`/admin/blog/editor?id=${blog.id}`} className="text-green font-bold hover:underline flex items-center gap-1">
                 Edit <Edit className="w-3.5 h-3.5" />
               </Link>
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, CheckCircle2, X, Mail, MessageSquare, Hash } from 'lucide-react';
+import { Send, CheckCircle2, X, Mail, MessageSquare, Hash, Loader2 } from 'lucide-react';
 
 interface SupportFormProps {
   userEmail?: string;
@@ -61,15 +61,15 @@ export default function SupportForm({ userEmail = '', userName = '' }: SupportFo
 
       {/* Modal Overlay */}
       {open && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-scale-in">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-scale-in border border-gray-100">
             {/* Header */}
-            <div className="bg-gradient-to-r from-green to-green-dark px-8 py-6 flex items-center justify-between">
+            <div className="bg-white px-8 py-6 flex items-center justify-between border-b border-gray-100">
               <div>
-                <h2 className="text-white font-bold text-xl">Contact Support</h2>
-                <p className="text-white/70 text-sm mt-1">We typically reply within 24-48 hours</p>
+                <h2 className="text-charcoal font-bold text-xl uppercase tracking-tight">Contact Support</h2>
+                <p className="text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">Inquiry Form</p>
               </div>
-              <button onClick={handleClose} className="text-white/60 hover:text-white transition-colors p-1">
+              <button onClick={handleClose} className="text-gray-300 hover:text-charcoal transition-colors p-1">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -77,95 +77,67 @@ export default function SupportForm({ userEmail = '', userName = '' }: SupportFo
             <div className="p-8">
               {submitted ? (
                 /* Success State */
-                <div className="text-center py-8 animate-fade-in">
-                  <div className="w-20 h-20 bg-green-pale rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle2 className="w-10 h-10 text-green" />
+                <div className="text-center py-10 animate-fade-in">
+                  <div className="w-16 h-16 bg-green-pale rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 className="w-8 h-8 text-green" />
                   </div>
-                  <h3 className="text-2xl font-bold text-charcoal mb-3">Query Received!</h3>
-                  <p className="text-gray-500 mb-6 text-sm leading-relaxed">
-                    We've received your query and sent a confirmation to <strong>{form.email}</strong>
+                  <h3 className="text-2xl font-bold text-charcoal mb-2">Message Sent</h3>
+                  <p className="text-gray-500 mb-8 text-sm font-medium">
+                    We've received your query. A confirmation has been sent to your email.
                   </p>
-                  <div className="bg-green-pale/40 border border-green/20 rounded-2xl p-5 mb-8 text-left">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Hash className="w-4 h-4 text-green" />
-                      <span className="text-xs font-bold uppercase tracking-widest text-green">Your Support ID</span>
-                    </div>
-                    <div className="text-3xl font-bold text-charcoal">#{supportId}</div>
-                    <p className="text-xs text-gray-400 mt-2">Save this ID to track your inquiry</p>
+                  <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 mb-10">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Your Support ID</div>
+                    <div className="text-3xl font-bold text-charcoal tracking-tighter">#{supportId}</div>
                   </div>
-                  <button onClick={handleClose} className="btn btn-primary w-full justify-center">
-                    Done
+                  <button onClick={handleClose} className="w-full py-4 bg-charcoal text-white font-bold rounded-xl hover:bg-black transition-all uppercase tracking-widest text-xs">
+                    Close
                   </button>
                 </div>
               ) : (
                 /* Form */
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Your Name</label>
-                      <input
-                        value={form.name}
-                        onChange={e => setForm({ ...form, name: e.target.value })}
-                        placeholder="John Doe"
-                        className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none text-sm font-medium focus:ring-2 focus:ring-green/20 transition-all"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Email <span className="text-red-400">*</span></label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
-                        <input
-                          required
-                          type="email"
-                          value={form.email}
-                          onChange={e => setForm({ ...form, email: e.target.value })}
-                          placeholder="you@email.com"
-                          className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl outline-none text-sm font-medium focus:ring-2 focus:ring-green/20 transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Subject <span className="text-red-400">*</span></label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Subject</label>
                     <input
                       required
                       value={form.subject}
                       onChange={e => setForm({ ...form, subject: e.target.value })}
-                      placeholder="e.g. Issue with my listing approval"
-                      className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none text-sm font-medium focus:ring-2 focus:ring-green/20 transition-all"
+                      placeholder="Enter subject"
+                      className="w-full px-5 py-4 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Message <span className="text-red-400">*</span></label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Write Message</label>
                     <textarea
                       required
-                      rows={5}
+                      rows={6}
                       value={form.message}
                       onChange={e => setForm({ ...form, message: e.target.value })}
-                      placeholder="Describe your issue or question in detail..."
-                      className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none text-sm font-medium focus:ring-2 focus:ring-green/20 transition-all resize-none"
+                      placeholder="Type your message here..."
+                      className="w-full px-5 py-4 bg-gray-50 rounded-xl outline-none text-sm font-bold text-charcoal placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-green/10 border border-transparent focus:border-green/20 transition-all resize-none"
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading || !form.subject || !form.message || !form.email}
-                    className="w-full flex items-center justify-center gap-2 py-4 bg-green text-white font-bold rounded-xl hover:bg-green-dark transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        Submit Inquiry
-                      </>
-                    )}
-                  </button>
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={loading || !form.subject || !form.message || !form.email}
+                      className="w-full flex items-center justify-center gap-2 py-4 bg-green text-white font-bold rounded-xl hover:bg-green-dark transition-all shadow-xl shadow-green/10 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-xs"
+                    >
+                      {loading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          Submit Inquiry
+                        </>
+                      )}
+                    </button>
+                  </div>
 
-                  <p className="text-center text-xs text-gray-400">
-                    A unique Support ID and confirmation will be sent to your email
+                  <p className="text-center text-[10px] font-bold text-gray-300 uppercase tracking-widest">
+                    Confirmation will be sent to {form.email}
                   </p>
                 </form>
               )}

@@ -67,27 +67,16 @@ export async function POST(req: NextRequest) {
       // 2. Auto-reply to user
       await sendMail({
         ...baseOpts,
-        from: `"Team Tiny Living Market" <${smtpUser}>`,
+        from: `"The Tiny Living Market" <${supportEmail}>`,
         to: email,
         subject: `We received your query — Support ID #${supportId}`,
         html: `
-          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
-            <div style="background:#2D6A4F;color:white;padding:24px 32px;border-radius:12px 12px 0 0">
-              <h2 style="margin:0;font-size:22px">Tiny Living Market</h2>
-              <p style="margin:8px 0 0;opacity:.8;font-size:14px">Support Confirmation</p>
-            </div>
-            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;padding:32px">
-              <p>Hi ${name || 'there'},</p>
-              <p>We have received your query:</p>
-              <div style="background:#f0fdf4;border-left:4px solid #2D6A4F;padding:16px;margin:16px 0;border-radius:0 8px 8px 0">
-                <p style="margin:0;font-weight:bold;color:#1f2937">${subject}</p>
-                <p style="margin:8px 0 0;color:#374151;white-space:pre-wrap">${message}</p>
-              </div>
-              <p style="font-size:18px;font-weight:bold">Your Support ID: <span style="color:#2D6A4F">#${supportId}</span></p>
-              <p>Our team will get back to you within 24–48 business hours.</p>
-              <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0" />
-              <p style="margin:0;color:#6b7280;font-size:13px">Regards,<br><strong>Team Tiny Living Market</strong><br>${supportEmail}</p>
-            </div>
+          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
+            <p>Hi ${name || 'user'},</p>
+            <p>We have received your query: <strong>"${subject} & ${message}"</strong></p>
+            <p style="font-size:16px;font-weight:bold;">your support ID is #${supportId}</p>
+            <br />
+            <p>Regard<br><strong>The Tiny Living Market</strong></p>
           </div>
         `,
       });

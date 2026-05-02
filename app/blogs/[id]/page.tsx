@@ -167,6 +167,34 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
           </div>
 
+          {/* Table of Contents */}
+          {blog.content && (
+            <div className="mb-16 p-8 bg-gray-50 rounded-3xl border border-gray-100">
+               <h3 className="font-serif text-xl font-bold text-charcoal mb-6 flex items-center gap-2">
+                 <span className="w-8 h-8 bg-green text-white rounded-lg flex items-center justify-center text-sm font-bold shadow-lg shadow-green/20">ToC</span>
+                 Table of Contents
+               </h3>
+               <nav>
+                 <ul className="space-y-3">
+                   {blog.content.split('\n')
+                     .filter((line: string) => line.trim().startsWith('#') || line.trim().startsWith('##'))
+                     .map((line: string, i: number) => {
+                       const level = line.trim().startsWith('##') ? 2 : 1;
+                       const text = line.trim().replace(/^#+\s/, '');
+                       return (
+                         <li key={i} className={`flex items-start gap-3 ${level === 2 ? 'pl-8' : ''}`}>
+                           <span className="text-green font-bold opacity-30 mt-1">•</span>
+                           <a href={`#${text.toLowerCase().replace(/\s+/g, '-')}`} className="text-gray-500 hover:text-green font-medium transition-colors text-sm">
+                             {text}
+                           </a>
+                         </li>
+                       );
+                     })}
+                 </ul>
+               </nav>
+            </div>
+          )}
+
           <div
             className="prose prose-lg lg:prose-xl max-w-none prose-headings:font-serif prose-headings:font-bold prose-p:font-medium prose-p:text-gray-500 prose-p:leading-relaxed"
             itemProp="articleBody"

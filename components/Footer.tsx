@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Home, Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, FileText, ExternalLink } from 'lucide-react';
+import SupportForm from './SupportForm';
 
 // Resource links for SEO (Google Docs, PDFs)
 const resources = [
@@ -48,42 +49,23 @@ export default function Footer() {
             {/* Social Links */}
             <nav aria-label="Social media links">
               <div className="flex gap-4">
-                <a
-                  href="https://www.facebook.com/tinynest"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="TinyNest on Facebook"
-                  className="w-10 h-10 rounded-tiny-sm border border-white/10 flex items-center justify-center hover:bg-green hover:border-green hover:text-white transition-all duration-300 text-white/40"
-                >
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://www.instagram.com/tinynest"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="TinyNest on Instagram"
-                  className="w-10 h-10 rounded-tiny-sm border border-white/10 flex items-center justify-center hover:bg-green hover:border-green hover:text-white transition-all duration-300 text-white/40"
-                >
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://twitter.com/tinynest"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="TinyNest on Twitter / X"
-                  className="w-10 h-10 rounded-tiny-sm border border-white/10 flex items-center justify-center hover:bg-green hover:border-green hover:text-white transition-all duration-300 text-white/40"
-                >
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://www.youtube.com/tinynest"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="TinyNest on YouTube"
-                  className="w-10 h-10 rounded-tiny-sm border border-white/10 flex items-center justify-center hover:bg-green hover:border-green hover:text-white transition-all duration-300 text-white/40"
-                >
-                  <Youtube className="w-5 h-5" />
-                </a>
+                {[
+                  { icon: Facebook, href: 'https://facebook.com/tinynest', label: 'Facebook' },
+                  { icon: Instagram, href: 'https://instagram.com/tinynest', label: 'Instagram' },
+                  { icon: Twitter, href: 'https://twitter.com/tinynest', label: 'Twitter' },
+                  { icon: Youtube, href: 'https://youtube.com/tinynest', label: 'YouTube' },
+                ].map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`TinyNest on ${social.label}`}
+                    className="w-10 h-10 rounded-tiny-sm border border-white/10 flex items-center justify-center hover:bg-green hover:border-green hover:text-white transition-all duration-300 text-white/40"
+                  >
+                    <social.icon className="w-5 h-5" />
+                  </a>
+                ))}
               </div>
             </nav>
           </div>
@@ -111,7 +93,7 @@ export default function Footer() {
               </ul>
             </nav>
 
-            {/* Resources – with Google Docs / PDF links */}
+            {/* Resources */}
             <nav aria-label="Resources and guides">
               <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-white/30 mb-8 py-1 border-white/5 inline-block border-b-2">
                 Free Resources
@@ -125,11 +107,10 @@ export default function Footer() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:text-green-light transition-colors text-sm inline-flex items-center gap-2 group"
-                        aria-label={`${resource.name} – opens in new tab`}
                       >
                         <span>{resource.icon}</span>
                         {resource.name}
-                        <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity" aria-hidden="true" />
+                        <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity" />
                       </a>
                     ) : (
                       <Link href={resource.href} className="hover:text-green-light transition-colors text-sm inline-flex items-center gap-2">
@@ -150,20 +131,15 @@ export default function Footer() {
               <address className="not-italic">
                 <ul className="space-y-5 font-semibold text-white/60 text-sm">
                   <li className="flex gap-4 group">
-                    <Mail className="w-5 h-5 text-green-light group-hover:scale-110 transition-transform flex-shrink-0" aria-hidden="true" />
-                    <a href="mailto:hello@tinynest.com" className="hover:text-white transition-colors">
-                      hello@tinynest.com
-                    </a>
+                    <Mail className="w-5 h-5 text-green-light flex-shrink-0" />
+                    <a href="mailto:hello@tinynest.com" className="hover:text-white transition-colors">hello@tinynest.com</a>
                   </li>
                   <li className="flex gap-4 group">
-                    <Phone className="w-5 h-5 text-green-light group-hover:scale-110 transition-transform flex-shrink-0" aria-hidden="true" />
-                    <a href="tel:+15550008469" className="hover:text-white transition-colors">
-                      1 (555) 000-TINY
-                    </a>
+                    <Phone className="w-5 h-5 text-green-light flex-shrink-0" />
+                    <a href="tel:+15550008469" className="hover:text-white transition-colors">1 (555) 000-TINY</a>
                   </li>
-                  <li className="flex gap-4 group">
-                    <MapPin className="w-5 h-5 text-green-light group-hover:scale-110 transition-transform flex-shrink-0" aria-hidden="true" />
-                    <span className="hover:text-white transition-colors">Asheville, NC · Portland, OR</span>
+                  <li className="pt-4 border-t border-white/5">
+                    <SupportForm />
                   </li>
                 </ul>
               </address>

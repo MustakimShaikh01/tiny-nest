@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
 import { useRouter } from 'next/navigation';
-import { User, Mail, Shield, Calendar, Edit2, CheckCircle2, Loader2, Save, MapPin } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Edit2, CheckCircle2, Loader2, Save, MapPin, Camera, Heart, ArrowRight, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
@@ -19,6 +20,9 @@ export default function ProfilePage() {
   const router = useRouter();
 
   const [myListings, setMyListings] = useState<any[]>([]);
+  const [favorites, setFavorites] = useState<any[]>([]);
+  const [similarListings, setSimilarListings] = useState<any[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,12 +37,51 @@ export default function ProfilePage() {
       
       const listRes = await fetch('/api/listings?status=all');
       const listData = await listRes.json();
-      setMyListings(listData.listings.filter((l: any) => l.seller === data.user.email));
+      const allListings = listData.listings || [];
+      setMyListings(allListings.filter((l: any) => l.seller === data.user.email));
+      
+      // Load favorites from localStorage and fetch their data
+      const favIds: string[] = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+      const favListings = allListings.filter((l: any) => favIds.includes(String(l.id || l._id)));
+      setFavorites(favListings);
+      
+      // Suggest similar listings based on type/location of favorites
+      if (favListings.length > 0) {
+        const favTypes = Array.from(new Set(favListings.map((l: any) => l.type)));
+        const favLocations = Array.from(new Set(favListings.map((l: any) => l.location?.split(',')?.pop()?.trim()).filter(Boolean)));
+        const similar = allListings
+          .filter((l: any) => l.status === 'approved' && !favIds.includes(String(l.id || l._id)))
+          .filter((l: any) => favTypes.includes(l.type) || favLocations.some(loc => l.location?.includes(loc)))
+          .slice(0, 6);
+        setSimilarListings(similar);
+      }
       
       setLoading(false);
     };
     fetchUser();
   }, [router]);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.url) {
+        // Save photo to user profile
+        await fetch('/api/auth/me', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ photo: data.url }),
+        });
+        setUser((prev: any) => ({ ...prev, photo: data.url }));
+      }
+    } catch (err) { console.error(err); }
+    finally { setUploadingPhoto(false); }
+  };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,13 +146,20 @@ export default function ProfilePage() {
 
       <div className="max-w-4xl mx-auto px-4 py-20 flex-1 w-full">
          <div className="bg-white rounded-tiny border border-gray-100 shadow-tiny overflow-hidden flex flex-col md:flex-row">
-            {/* Sidebar/Image */}
+            {/* Avatar with photo upload */}
             <div className="md:w-1/3 bg-green p-12 flex flex-col items-center text-white text-center">
-               <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center font-serif font-bold text-5xl mb-6 shadow-2xl relative group">
-                  {user.name[0]}
-                  <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                    <Edit2 className="w-6 h-6" />
+               <div className="relative mb-6">
+                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center font-serif font-bold text-5xl shadow-2xl overflow-hidden border-4 border-white/30">
+                    {user.photo ? (
+                      <img src={user.photo} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>{user.name[0]}</span>
+                    )}
                   </div>
+                  <label className="absolute bottom-1 right-1 w-9 h-9 bg-white text-green rounded-full flex items-center justify-center cursor-pointer shadow-xl hover:scale-110 transition-transform" title="Upload photo">
+                    {uploadingPhoto ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                    <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+                  </label>
                </div>
                <h2 className="text-2xl font-bold mb-1">{user.name}</h2>
                <div className="text-green-pale font-bold text-xs uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full mb-8">
@@ -257,17 +307,17 @@ export default function ProfilePage() {
             </div>
             <div className="bg-white p-8 rounded-tiny border border-gray-100 shadow-tiny-sm text-center text-uppercase">
                <div className="text-3xl font-bold text-green mb-1">
-                 {typeof user.id === 'object' ? String(user.id).slice(-4) : user.id ? String(user.id).slice(-4) : (user._id ? String(user._id).slice(-4) : '...')}
+                 {user.id || user._id ? (typeof (user.id || user._id) === 'string' ? (user.id || user._id).slice(-4) : (user.id || user._id).toString().slice(-4)) : '....'}
                </div>
                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Member ID</div>
             </div>
          </div>
 
-         {/* My Properties */}
-         <div className="mt-16 space-y-10 mb-20">
-            <div className="flex items-center justify-between">
-               <h2 className="font-serif text-3xl font-bold text-charcoal tracking-tight">My Properties</h2>
-               <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{myListings.length} Total</span>
+          {/* My Listings */}
+          <div className="mt-16 space-y-10 mb-10" id="my-listings">
+             <div className="flex items-center justify-between">
+                <h2 className="font-serif text-3xl font-bold text-charcoal tracking-tight">My Listings</h2>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{myListings.length} Total</span>
             </div>
 
             {myListings.length > 0 ? (
@@ -308,8 +358,83 @@ export default function ProfilePage() {
                   <button onClick={() => router.push('/list-home')} className="text-green text-sm font-bold mt-4 hover:underline">List your first home</button>
                </div>
             )}
-         </div>
-      </div>
+          </div>
+
+          {/* ─── Favorites Section ─── */}
+          <div className="mt-16 mb-8" id="favorites">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <span className="text-green font-bold text-xs tracking-widest uppercase block mb-1">Saved</span>
+                <h2 className="font-serif text-3xl font-bold text-charcoal tracking-tight flex items-center gap-3">
+                  <Heart className="w-7 h-7 text-red-400 fill-red-400" /> Favorite Listings
+                </h2>
+              </div>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{favorites.length} Saved</span>
+            </div>
+
+            {favorites.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {favorites.map((listing: any) => (
+                  <Link key={listing.id} href={`/listings/${listing.id}`} className="group bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-0.5 transition-all flex">
+                    <div className="w-36 h-full flex-shrink-0 overflow-hidden">
+                      <img src={listing.img} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    <div className="p-4 flex flex-col justify-between flex-1">
+                      <div>
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-green uppercase tracking-widest mb-1">
+                          <MapPin className="w-3 h-3" /> {listing.location}
+                        </div>
+                        <h3 className="font-bold text-charcoal text-sm line-clamp-2 group-hover:text-green transition-colors">{listing.title}</h3>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-lg font-bold text-green font-serif">${listing.price?.toLocaleString()}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${listing.type === 'sale' ? 'bg-green-pale text-green' : 'bg-amber-50 text-amber-600'}`}>
+                          {listing.type === 'sale' ? 'Sale' : 'Rent'}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-dashed border-gray-200 rounded-2xl p-16 text-center">
+                <Heart className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-gray-400 mb-2">No favorites yet.</h3>
+                <p className="text-sm text-gray-300 mb-6">Browse listings and click the heart icon to save your favorites.</p>
+                <Link href="/listings" className="btn btn-primary px-8 py-3 text-sm">Browse Listings</Link>
+              </div>
+            )}
+
+            {/* Similar Listings Suggestions */}
+            {similarListings.length > 0 && (
+              <div className="mt-12">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-serif text-2xl font-bold text-charcoal">You Might Also Like</h3>
+                  <Link href="/listings" className="flex items-center gap-1 text-sm font-bold text-green hover:underline">View All <ArrowRight className="w-3.5 h-3.5" /></Link>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {similarListings.map((listing: any) => (
+                    <Link key={listing.id} href={`/listings/${listing.id}`} className="group bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-1 transition-all">
+                      <div className="aspect-[16/9] overflow-hidden">
+                        <img src={listing.img} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-green uppercase tracking-widest mb-1">
+                          <MapPin className="w-3 h-3" /> {listing.location}
+                        </div>
+                        <h4 className="font-bold text-charcoal text-sm mb-2 line-clamp-1 group-hover:text-green transition-colors">{listing.title}</h4>
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold text-green font-serif">${listing.price?.toLocaleString()}</span>
+                          <span className="text-xs text-gray-400">{listing.beds} bd · {listing.sqft} sqft</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+       </div>
 
       <Footer />
     </main>

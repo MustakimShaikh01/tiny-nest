@@ -4,6 +4,7 @@ import './globals.css'
 import { ChatBot } from '../components/ChatBot'
 import { CookieConsent } from '../components/CookieConsent'
 import PushNotificationBanner from '../components/PushNotificationBanner'
+import NewsletterPopup from '../components/NewsletterPopup'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -124,6 +125,7 @@ export default function RootLayout({
         <ChatBot />
         <CookieConsent />
         <PushNotificationBanner />
+        <NewsletterPopup />
       </body>
     </html>
   )

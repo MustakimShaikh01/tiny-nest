@@ -94,6 +94,67 @@ function MessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // ── Poll for new messages with smart triggers (Change 8)
+  useEffect(() => {
+    if (!currentUser) return;
+    
+    let isFetching = false;
+    const pollMessages = async () => {
+      if (document.visibilityState !== 'visible' || isFetching) return;
+      isFetching = true;
+      try {
+        const res = await fetch(`/api/messages?t=${Date.now()}`, { cache: 'no-store' });
+        const data = await res.json();
+        if (data.messages) {
+          setMessages((prev) => {
+             const prevIds = new Set(prev.map(m => m._id));
+             const newMsgs = data.messages.filter((m: any) => !prevIds.has(m._id));
+             if (newMsgs.length === 0) return prev;
+             
+             // If any new message is for the currently open chat, mark it read in the DB
+             let markedRead = false;
+             newMsgs.forEach((m: any) => {
+               if (selectedConv && (m.from === selectedConv || m.to === selectedConv)) {
+                  if (m.to === currentUser?.email && m.status === 'unread') {
+                      fetch('/api/messages', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: m._id, status: 'read' }),
+                      }).catch(() => {});
+                      m.status = 'read'; // update local object too
+                      markedRead = true;
+                  }
+               }
+             });
+
+             if (markedRead) {
+                window.dispatchEvent(new Event('messagesUpdated'));
+             }
+
+             return [...prev, ...newMsgs].sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          });
+        }
+      } catch (err) {
+        console.error('Polling error:', err);
+      } finally {
+        isFetching = false;
+      }
+    };
+
+    const id = setInterval(pollMessages, 2000);
+    
+    // Immediate fetch on focus or visibility change
+    const handleFocus = () => pollMessages();
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
+    };
+  }, [currentUser]);
+
   // ── Fetch initial data
   useEffect(() => {
     const fetchData = async () => {
@@ -119,17 +180,7 @@ function MessagesContent() {
       const toParam = searchParams.get('to');
       if (toParam) {
         setSelectedConv(toParam);
-      } else if (uniqueMessages.length > 0) {
-        const first = uniqueMessages[0];
-        const firstPartner = first.from === userData.user.email ? first.to : first.from;
-        
-        // Handle admin view edge case where from and to are both not current user
-        if (userData.user.role === 'admin' && first.from !== userData.user.email && first.to !== userData.user.email) {
-            const pair = [first.from, first.to].sort();
-            setSelectedConv(`${pair[0]}<->${pair[1]}`);
-        } else {
-            setSelectedConv(firstPartner);
-        }
+        markAsRead(toParam);
       }
     };
     fetchData();
@@ -183,18 +234,28 @@ function MessagesContent() {
     const unread = messages.filter(
       (m) => m.from === convEmail && m.to === currentUser?.email && m.status === 'unread'
     );
-    for (const msg of unread) {
-      try {
-        await fetch('/api/messages', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: msg._id, status: 'read' }),
-        });
-      } catch {}
+    if (unread.length === 0) return;
+
+    try {
+      await Promise.all(
+        unread.map((msg) =>
+          fetch('/api/messages', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: msg._id, status: 'read' }),
+          })
+        )
+      );
+      
+      setMessages((prev) =>
+        prev.map((m) => (m.from === convEmail && m.to === currentUser?.email ? { ...m, status: 'read' } : m))
+      );
+
+      // Dispatch event to update Nav unread count immediately
+      window.dispatchEvent(new Event('messagesUpdated'));
+    } catch (err) {
+      console.error('Failed to mark as read:', err);
     }
-    setMessages((prev) =>
-      prev.map((m) => (m.from === convEmail && m.to === currentUser?.email ? { ...m, status: 'read' } : m))
-    );
   };
 
   // ── Send message

@@ -129,25 +129,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-12 pt-8 border-t border-gray-100">
+          <div className="mt-10 pt-8 border-t border-gray-100">
              <div className="text-center mb-6">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 bg-white relative z-10">Staff & Admin Access</span>
-                <div className="h-px bg-gray-100 -mt-2"></div>
-             </div>
-             <div className="flex flex-col gap-4">
-                <button 
-                  type="button"
-                  onClick={() => window.location.href = '/api/auth/google'}
-                  className="flex items-center justify-center gap-2 p-4 border border-gray-200 rounded-[1rem] hover:bg-gray-50 transition-colors font-bold text-[11px] uppercase tracking-[0.1em] text-gray-600 shadow-sm"
-                >
-                  <GoogleIcon /> Admin Google Login
-                </button>
-             </div>
-          </div>
-          
-          <div className="mt-8 pt-8 border-t border-gray-100">
-             <div className="text-center mb-6">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 bg-white relative z-10">Or continue with social</span>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 bg-white relative z-10">Or sign in with</span>
                 <div className="h-px bg-gray-100 -mt-2"></div>
              </div>
              <div className="grid grid-cols-2 gap-4">

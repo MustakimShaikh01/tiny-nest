@@ -13,6 +13,7 @@ module.exports = {
           DEFAULT: '#2D6A4F',
           light: '#52B788',
           pale: '#D8F3DC',
+          dark: '#225C3E',
         },
         earth: {
           DEFAULT: '#8B5E3C',
@@ -39,4 +40,7 @@ module.exports = {
     },
   },
   plugins: [],
+  safelist: [
+    'w-10', 'h-10', 'w-11', 'h-11', 'w-12', 'h-12', 'w-16', 'h-16',
+  ],
 }

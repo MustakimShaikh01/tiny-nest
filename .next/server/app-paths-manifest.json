@@ -1,6 +1,14 @@
 {
-  "/listings/page": "app/listings/page.js",
   "/api/messages/route": "app/api/messages/route.js",
+  "/messages/page": "app/messages/page.js",
+  "/api/presence/route": "app/api/presence/route.js",
+  "/login/page": "app/login/page.js",
+  "/listings/page": "app/listings/page.js",
+  "/list-home/page": "app/list-home/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/geocode/route": "app/api/geocode/route.js",
   "/community/page": "app/community/page.js",
-  "/list-home/page": "app/list-home/page.js"
+  "/blogs/page": "app/blogs/page.js",
+  "/help/page": "app/help/page.js"
 }

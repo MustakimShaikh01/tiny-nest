@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Heart, MapPin, Ruler, Bed, ShowerHead, Eye, MessageSquare, Plus, Check } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Heart, MapPin, Ruler, Bed, ShowerHead, Eye, MessageSquare, Plus, Check, ArrowLeftRight } from 'lucide-react';
 
 export function ListingCard({ 
   listing, 
@@ -21,22 +22,28 @@ export function ListingCard({
   const [isFavorite, setIsFavorite] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [inCompare, setInCompare] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
+    const id = String(listing.id || listing._id);
     const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
-    setIsFavorite(favorites.includes(listing.id || listing._id));
+    setIsFavorite(favorites.includes(id));
+    const compare = JSON.parse(localStorage.getItem('tinynest_compare') || '[]');
+    setInCompare(compare.includes(id));
   }, [listing.id, listing._id]);
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const id = String(listing.id || listing._id);
     const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
     let updated;
     if (isFavorite) {
-      updated = favorites.filter((id: string) => id !== (listing.id || listing._id));
+      updated = favorites.filter((fid: string) => fid !== id);
     } else {
-      updated = [...favorites, (listing.id || listing._id)];
+      updated = [...favorites, id];
     }
     localStorage.setItem('tinynest_favorites', JSON.stringify(updated));
     setIsFavorite(!isFavorite);
@@ -45,10 +52,32 @@ export function ListingCard({
   const handleShare = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const url = `${window.location.origin}/listings/${(listing.id || listing._id)}`;
+    const id = String(listing.id || listing._id);
+    const url = `${window.location.origin}/listings/${id}`;
     navigator.clipboard.writeText(url);
     setShowModal(true);
     setTimeout(() => setShowModal(false), 2500);
+  };
+
+  const handleCompare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const id = String(listing.id || listing._id);
+    const compare: string[] = JSON.parse(localStorage.getItem('tinynest_compare') || '[]');
+    if (compare.includes(id)) {
+      const updated = compare.filter(i => i !== id);
+      localStorage.setItem('tinynest_compare', JSON.stringify(updated));
+      setInCompare(false);
+    } else {
+      if (compare.length >= 3) {
+        alert('You can compare up to 3 listings at a time. Remove one first.');
+        return;
+      }
+      compare.push(id);
+      localStorage.setItem('tinynest_compare', JSON.stringify(compare));
+      setInCompare(true);
+      router.push('/compare');
+    }
   };
   
   const isImageUrl = listing.img && (listing.img.startsWith('http') || listing.img.startsWith('/'));
@@ -90,10 +119,11 @@ export function ListingCard({
           </button>
           
           <button 
-            onClick={handleShare}
-            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-green hover:bg-green hover:text-white flex items-center justify-center transition-all duration-300 shadow-xl border border-white/20"
+            onClick={handleCompare}
+            className={`w-10 h-10 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-xl border border-white/20 ${inCompare ? 'bg-blue-500 text-white' : 'bg-white/90 text-green hover:bg-green hover:text-white'}`}
+            title={inCompare ? 'Remove from compare' : 'Add to compare'}
           >
-            <Plus className="w-4 h-4" />
+            {inCompare ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           </button>
           
           <Link 

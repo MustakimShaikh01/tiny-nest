@@ -12,7 +12,10 @@ export default async function CommunityDetailPage({ params }: { params: { id: st
   await connectDB();
   const community = await Community.findById(params.id).lean();
   
-  if (!community || community.status !== 'approved') {
+  // Admins can view regardless of status for moderation
+  const isAdmin = session?.user?.role === 'admin';
+  
+  if (!community || (community.status !== 'approved' && !isAdmin)) {
     notFound();
   }
 
