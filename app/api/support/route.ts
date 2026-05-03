@@ -85,12 +85,12 @@ export async function POST(req: NextRequest) {
         to: email,
         subject: `We received your query — Support ID #${supportId}`,
         html: `
-          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
+          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;line-height:1.6;">
             <p>Hi ${name || 'user'},</p>
-            <p>We have received your query: <strong>"${subject} & ${message}"</strong></p>
-            <p style="font-size:16px;font-weight:bold;">your support ID is #${supportId}</p>
+            <p>We have received your query <strong>“ ${subject} & ${message} ”</strong></p>
+            <p style="font-size:18px;font-weight:bold;color:#2D6A4F;">your support ID: #${supportId}</p>
             <br />
-            <p>Regard<br><strong>The Tiny Living Market</strong></p>
+            <p>Regard,<br><strong>Support</strong></p>
           </div>
         `,
       });

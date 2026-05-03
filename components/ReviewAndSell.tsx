@@ -157,7 +157,7 @@ export default function ReviewAndSell({ user, onComplete }: { user: any, onCompl
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4 md:col-span-2">
                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Features & Amenities</label>
-                   <div className="h-[420px] overflow-y-auto p-4 border border-gray-100 rounded-2xl bg-gray-50 custom-scrollbar space-y-5">
+                   <div className="h-[480px] overflow-y-auto p-6 md:p-8 border border-gray-100 rounded-3xl bg-gray-50/50 custom-scrollbar space-y-10">
                      {[
                        { heading: 'Layout', items: ['Loft','Single-Level Layout','Split-Level Layout','Studio Layout','Open Plan Living','Expandable Section','Fold-Out Section','Multi-Use Space','Foldable Furniture','Built-In Storage','Under-Stair Storage','Hidden Storage','None','Other'] },
                        { heading: 'Outdoor / Exterior', items: ['Balcony','Deck','Porch','Rooftop Terrace','Skylight','French Doors','Sliding Glass Door','Awning','Canopy','Outdoor Stairs'] },

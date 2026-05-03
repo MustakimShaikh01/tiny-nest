@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { CommunityModeration } from './CommunityModeration';
 import Link from 'next/link';
 import { ModerationList } from './ModerationList';
 import { ListingCard } from './ListingCard';
@@ -19,6 +20,7 @@ const TABS = [
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'blog', label: 'Blog', icon: BookOpen },
   { id: 'communities', label: 'Communities', icon: Globe },
+  { id: 'posts', label: 'Posts', icon: MessageSquare },
   { id: 'support', label: 'Support', icon: HelpCircle },
   { id: 'featured', label: 'Featured', icon: Star },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -161,6 +163,7 @@ export default function AdminDashboard({ data }: { data: any }) {
           {activeTab === 'users' && <UsersTab users={users} listings={listings} confirmAction={confirmAction} />}
           {activeTab === 'messages' && <MessagesTab messages={messages} />}
           {activeTab === 'blog' && <BlogTab blogs={blogs} />}
+          {activeTab === 'posts' && <CommunityModeration />}
           {activeTab === 'featured' && <FeaturedTab listings={approvedListings} />}
           {activeTab === 'communities' && <CommunitiesTab communities={communities} confirmAction={confirmAction} />}
           {activeTab === 'support' && <SupportTab support={support || []} confirmAction={confirmAction} />}
@@ -395,7 +398,7 @@ function ListingsTab({ listings, confirmAction }: any) {
                     <button onClick={() => handleDeleteListing(listing.id)} className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete listing completely">
                       <Trash2 className="w-4 h-4" />
                     </button>
-                    <Link href={`/listings/${listing.id}`} className="p-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-all" title="View">
+                    <Link href={`/listings/${listing._id || listing.id}`} className="p-2 bg-gray-100 text-gray-400 hover:text-green rounded-lg hover:bg-gray-50 transition-all" title="View Listing">
                       <Eye className="w-4 h-4" />
                     </Link>
                   </div>
@@ -918,7 +921,7 @@ function CommunitiesTab({ communities, confirmAction }: any) {
                     <button onClick={() => handleDeleteCommunity(community.id)} className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete community">
                       <Trash2 className="w-4 h-4" />
                     </button>
-                    <Link href={`/community/${community.id}`} className="p-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-all" title="View">
+                    <Link href={`/community/${community._id || community.id}`} className="p-2 bg-gray-100 text-gray-400 hover:text-green rounded-lg hover:bg-gray-50 transition-all" title="View Community Board">
                       <Eye className="w-4 h-4" />
                     </Link>
                   </div>

@@ -293,7 +293,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
               <div className="bg-charcoal text-white p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                 <div className="absolute inset-0 bg-green/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative z-10">
-                  <div className="flex items-center gap-4 mb-8 pb-8 border-b border-white/10">
+                  <Link href={`/profile/${encodeURIComponent(listing.seller)}`} className="flex items-center gap-4 mb-8 pb-8 border-b border-white/10 hover:opacity-80 transition-opacity">
                     <div className="w-14 h-14 rounded-full bg-green text-white flex items-center justify-center font-serif text-2xl font-bold" aria-hidden="true">
                       {listing.sellerName[0]}
                     </div>
@@ -303,7 +303,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                         {listing.sellerName} <CheckCircle2 className="w-4 h-4 text-green" aria-label="Verified seller" />
                       </div>
                     </div>
-                  </div>
+                  </Link>
 
                   <ListingActions listingId={listing.id} sellerEmail={listing.seller} listingTitle={listing.title} />
                 </div>

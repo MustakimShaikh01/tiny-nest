@@ -252,6 +252,57 @@ function EditorContent() {
                 </div>
               </section>
 
+              {/* SEO Score & Analysis */}
+              <section className="bg-white rounded-2xl p-5 border border-green/10 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-green">SEO Analysis</h3>
+                   <div className={`px-2 py-1 rounded-md text-[10px] font-black ${
+                     (wordCount > 500 && focusKeyword && metaDesc) ? 'bg-green text-white' : 'bg-amber-400 text-white'
+                   }`}>
+                     {Math.min(100, 
+                        (title.length > 30 ? 25 : 0) + 
+                        (metaDesc.length > 50 ? 25 : 0) + 
+                        (content.includes('##') ? 25 : 0) + 
+                        (wordCount > 400 ? 25 : 0)
+                     )}% SCORE
+                   </div>
+                </div>
+                <div className="space-y-3">
+                   {[
+                     { label: 'Title length', ok: title.length > 40 && title.length < 70 },
+                     { label: 'Meta description', ok: metaDesc.length > 80 },
+                     { label: 'Focus keyword usage', ok: focusKeyword && content.toLowerCase().includes(focusKeyword.toLowerCase()) },
+                     { label: 'Subheadings (H2)', ok: content.includes('##') },
+                     { label: 'Word count (>500)', ok: wordCount > 500 },
+                   ].map(item => (
+                     <div key={item.label} className="flex items-center justify-between text-[11px] font-bold">
+                        <span className={item.ok ? 'text-charcoal' : 'text-gray-300'}>{item.label}</span>
+                        <div className={`w-3 h-3 rounded-full ${item.ok ? 'bg-green' : 'bg-gray-100'}`} />
+                     </div>
+                   ))}
+                </div>
+              </section>
+
+              {/* Table of Contents Preview */}
+              <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Table of Contents</h3>
+                <div className="space-y-2 border-l-2 border-gray-50 pl-4 max-h-40 overflow-y-auto custom-scrollbar">
+                  {content.split('\n')
+                    .filter(line => line.startsWith('#'))
+                    .map((line, idx) => {
+                      const level = line.match(/^#+/)?.[0].length || 1;
+                      const text = line.replace(/^#+\s*/, '');
+                      return (
+                         <div key={idx} style={{ paddingLeft: `${(level - 1) * 12}px` }} className="text-[11px] font-bold text-gray-500 truncate">
+                           {text}
+                         </div>
+                      );
+                    })
+                  }
+                  {!content.includes('#') && <div className="text-[11px] text-gray-300 italic">No headings detected. Use # or ## to create structure.</div>}
+                </div>
+              </section>
+
               {/* SEO SETTINGS */}
               <section>
                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 mb-4 flex items-center gap-2">

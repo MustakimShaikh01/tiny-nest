@@ -98,7 +98,7 @@ export default function Nav({ user }: { user: any }) {
               <Shield className="w-3.5 h-3.5 text-green-400" /> Admin Panel
             </Link>
           )}
-          {user ? (
+          {user && user.email ? (
             <div className="flex items-center gap-3">
               <Link href="/messages" className="flex p-2 text-gray-400 hover:text-green relative">
                  <MessageSquare className="w-5 h-5" />
@@ -129,7 +129,7 @@ export default function Nav({ user }: { user: any }) {
                     {[
                       { href: '/profile', icon: User, label: 'My Profile' },
                       { href: '/my-listings', icon: List, label: 'My Listings' },
-                      { href: '/profile#favorites', icon: Heart, label: 'Favorites' },
+                      { href: '/favorites', icon: Heart, label: 'Favorites' },
                       ...(user.role === 'admin' ? [{ href: '/admin', icon: Shield, label: 'Admin Dashboard' }] : [])
                     ].map(item => (
                       <Link key={item.label} href={item.href} onClick={() => setProfileDropdown(false)} className="flex items-center gap-3 px-5 py-2.5 text-[13px] font-bold text-gray-500 hover:bg-green-pale hover:text-green transition-colors">
