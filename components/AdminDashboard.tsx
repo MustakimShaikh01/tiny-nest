@@ -36,11 +36,15 @@ export default function AdminDashboard({ data }: { data: any }) {
   });
 
   let { users, listings, messages, blogs, communities, support, pendingListings, session } = data;
-  
-  // Enforce soft-deletion invisibility across the entire application interface for admins too
-  users = users.filter((u: any) => u.status !== 'deleted');
-  listings = listings.filter((l: any) => l.status !== 'deleted');
-  pendingListings = pendingListings.filter((l: any) => l.status !== 'deleted');
+
+  // Safe fallbacks — prevent .filter() crash if any array is missing from props
+  users = (users || []).filter((u: any) => u.status !== 'deleted');
+  listings = (listings || []).filter((l: any) => l.status !== 'deleted');
+  pendingListings = (pendingListings || []).filter((l: any) => l.status !== 'deleted');
+  messages = messages || [];
+  blogs = blogs || [];
+  communities = communities || [];
+  support = support || [];
 
   const router = useRouter();
 

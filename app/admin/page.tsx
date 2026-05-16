@@ -22,9 +22,12 @@ export default async function AdminPage() {
   const communities = await Community.find().lean();
   const support = await Support.find().sort({ createdAt: -1 }).lean();
 
+  const pendingListings = listings.filter((l: any) => l.status === 'pending');
+
   const data = JSON.parse(JSON.stringify({
     users,
     listings,
+    pendingListings,
     messages,
     blogs,
     communities,
