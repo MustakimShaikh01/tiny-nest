@@ -3,7 +3,7 @@ import Nav from '../../../components/Nav';
 import Footer from '../../../components/Footer';
 import { getDb } from '../../../lib/db';
 import { getSession } from '../../../lib/auth';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import {
   MapPin, Bed, ShowerHead, Maximize, Calendar, Share2, Heart,
   MessageCircle, ShieldCheck, CheckCircle2, ArrowLeft, ArrowRight, Home, Ruler
@@ -85,6 +85,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
   const listing = await getListing(params.id);
   if (!listing) notFound();
+
+  if (listing.slug && String(params.id) !== String(listing.slug)) {
+    redirect(`/listings/${listing.slug}`);
+  }
 
   const session = await getSession();
   const user = session?.user;

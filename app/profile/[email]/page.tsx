@@ -97,8 +97,8 @@ export default function PublicProfilePage({ params }: { params: { email: string 
 
                {listings.length > 0 ? (
                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {listings.map((listing: any) => (
-                      <Link key={listing._id || listing.id} href={`/listings/${listing._id || listing.id}`} className="group bg-white rounded-3xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-1 transition-all">
+                     {listings.map((listing: any) => (
+                       <Link key={listing.slug || listing.id || listing._id} href={`/listings/${listing.slug || listing.id || listing._id}`} className="group bg-white rounded-3xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-1 transition-all">
                         <div className="aspect-[16/10] overflow-hidden relative">
                           <img src={listing.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={listing.title} />
                            <div className="absolute top-4 left-4">

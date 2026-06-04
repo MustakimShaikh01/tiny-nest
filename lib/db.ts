@@ -2,6 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import { initialData } from './initialData';
 
+const sanitizeSlug = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9-\s]/g, '') // remove special characters except spaces/hyphens
+    .trim()
+    .replace(/\s+/g, '-') // replace spaces with hyphens
+    .replace(/-+/g, '-') // replace multiple hyphens with single hyphen
+    .slice(0, 60);
+};
+
 // Dynamic Import Fallback for missing mongoose
 let mongoose: any = null;
 try {
@@ -53,6 +63,22 @@ export async function getDb() {
         Message.find({}).lean(),
         Community.find({}).lean()
       ]);
+
+      // Populate missing slugs in MongoDB
+      for (const item of listingsRaw) {
+        if (!item.slug) {
+          const generated = sanitizeSlug(item.title || 'listing');
+          item.slug = generated;
+          await Listing.updateOne({ _id: item._id }, { $set: { slug: generated } });
+        }
+      }
+      for (const item of blogsRaw) {
+        if (!item.slug) {
+          const generated = sanitizeSlug(item.title || 'blog');
+          item.slug = generated;
+          await Blog.updateOne({ _id: item._id }, { $set: { slug: generated } });
+        }
+      }
       
       const normalize = (arr: any[]) => arr.map(item => ({ 
         ...item, 
@@ -82,6 +108,22 @@ export async function getDb() {
   }
   
   const data = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+  let updatedJson = false;
+  for (const item of data.listings || []) {
+    if (!item.slug) {
+      item.slug = sanitizeSlug(item.title || 'listing');
+      updatedJson = true;
+    }
+  }
+  for (const item of data.blogs || []) {
+    if (!item.slug) {
+      item.slug = sanitizeSlug(item.title || 'blog');
+      updatedJson = true;
+    }
+  }
+  if (updatedJson) {
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  }
   return data;
 }
 

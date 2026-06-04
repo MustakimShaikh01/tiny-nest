@@ -3,7 +3,7 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
 export function BlogCard({ blog }: { blog: any }) {
   return (
-    <Link href={`/blogs/${blog.id}`} className="group bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all duration-300 flex flex-col h-full overflow-hidden">
+    <Link href={`/blogs/${blog.slug || blog.id || blog._id}`} className="group bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all duration-300 flex flex-col h-full overflow-hidden">
       <div className="relative h-48 bg-green-pale flex items-center justify-center overflow-hidden">
         <span className="text-6xl group-hover:scale-110 transition-transform duration-500">{blog.emoji}</span>
         <div className="absolute top-4 left-4">

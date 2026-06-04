@@ -150,7 +150,7 @@ function MyListingsContent() {
                       <span>{listing.sqft} sqft</span>
                     </div>
                     <Link
-                      href={`/listings/${listing.id}`}
+                      href={`/listings/${listing.slug || listing.id || listing._id}`}
                       className="flex items-center gap-1.5 text-xs font-bold text-green hover:underline"
                     >
                       <Eye className="w-3.5 h-3.5" /> View Listing

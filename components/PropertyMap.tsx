@@ -141,7 +141,7 @@ export default function PropertyMap({ listings, location, title, height = '420px
               html: `<div style="background:#2D6A4F;color:#fff;padding:5px 11px;border-radius:20px;font-weight:800;font-size:12px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);border:2px solid rgba(255,255,255,.5);position:relative">${price}<div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #2D6A4F"></div></div>`,
               iconSize: [72, 32], iconAnchor: [36, 32],
             });
-            const id = item.id || item._id;
+            const id = item.slug || item.id || item._id;
             cluster.addLayer(
               L.marker([item.lat, item.lng], { icon }).bindPopup(
                 `<div style="width:210px;font-family:inherit">

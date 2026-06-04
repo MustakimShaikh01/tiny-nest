@@ -109,7 +109,7 @@ export default function ComparePage() {
                       </div>
                       <div className="p-6">
                         <h3 className="font-serif font-bold text-charcoal text-lg line-clamp-2 mb-3">{l.title}</h3>
-                        <Link href={`/listings/${l.id}`} className="inline-flex items-center gap-2 text-xs text-white bg-charcoal px-5 py-2.5 rounded-full font-bold hover:bg-green transition-colors">
+                        <Link href={`/listings/${l.slug || l.id || l._id}`} className="inline-flex items-center gap-2 text-xs text-white bg-charcoal px-5 py-2.5 rounded-full font-bold hover:bg-green transition-colors">
                           View Listing →
                         </Link>
                       </div>

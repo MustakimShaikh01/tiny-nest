@@ -123,7 +123,7 @@ export default function FavoritesPage() {
                        <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
                        <span>{listing.sqft} sqft</span>
                     </div>
-                    <Link href={`/listings/${listing._id || listing.id}`} className="text-green font-bold text-xs uppercase tracking-widest hover:underline flex items-center gap-1">
+                    <Link href={`/listings/${listing.slug || listing.id || listing._id}`} className="text-green font-bold text-xs uppercase tracking-widest hover:underline flex items-center gap-1">
                       View <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>
@@ -158,7 +158,7 @@ export default function FavoritesPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {similarListings.map((listing: any) => (
-              <Link key={listing._id || listing.id} href={`/listings/${listing._id || listing.id}`} className="group bg-white rounded-3xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny transition-all">
+              <Link key={listing.slug || listing.id || listing._id} href={`/listings/${listing.slug || listing.id || listing._id}`} className="group bg-white rounded-3xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny transition-all">
                 <div className="aspect-[16/9] overflow-hidden">
                   <img src={listing.img} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>

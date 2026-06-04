@@ -157,7 +157,7 @@ export default async function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredListings.map((item: any) => (
-              <Link key={item.id} href={`/listings/${item.id}`} className="group block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-tiny-sm hover:shadow-tiny hover:-translate-y-2 transition-all duration-500">
+              <Link key={item.id} href={`/listings/${item.slug || item.id || item._id}`} className="group block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-tiny-sm hover:shadow-tiny hover:-translate-y-2 transition-all duration-500">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img src={item.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={item.title} />
                   <div className="absolute top-4 left-4">
@@ -278,7 +278,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {recentListings.map((item: any) => (
-                <Link key={item.id} href={`/listings/${item.id}`} className="group flex bg-white rounded-2xl border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all overflow-hidden">
+                <Link key={item.id} href={`/listings/${item.slug || item.id || item._id}`} className="group flex bg-white rounded-2xl border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all overflow-hidden">
                   <div className="w-36 h-36 flex-shrink-0 overflow-hidden">
                     <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   </div>

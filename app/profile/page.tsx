@@ -374,8 +374,8 @@ export default function ProfilePage() {
 
             {favorites.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {favorites.map((listing: any) => (
-                  <Link key={listing.id} href={`/listings/${listing.id}`} className="group bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-0.5 transition-all flex">
+                 {favorites.map((listing: any) => (
+                   <Link key={listing.slug || listing.id || listing._id} href={`/listings/${listing.slug || listing.id || listing._id}`} className="group bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-0.5 transition-all flex">
                     <div className="w-36 h-full flex-shrink-0 overflow-hidden">
                       <img src={listing.img} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
@@ -414,7 +414,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {similarListings.map((listing: any) => (
-                    <Link key={listing.id} href={`/listings/${listing.id}`} className="group bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-1 transition-all">
+                    <Link key={listing.slug || listing.id || listing._id} href={`/listings/${listing.slug || listing.id || listing._id}`} className="group bg-white rounded-2xl border border-gray-100 shadow-tiny-sm overflow-hidden hover:shadow-tiny hover:-translate-y-1 transition-all">
                       <div className="aspect-[16/9] overflow-hidden">
                         <img src={listing.img} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       </div>

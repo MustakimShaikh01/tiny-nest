@@ -85,7 +85,7 @@ export function ListingCard({
   return (
     <div className={`group bg-white rounded-tiny border border-gray-100 shadow-tiny-sm hover:shadow-tiny transition-all duration-300 relative overflow-hidden flex ${horizontal ? 'flex-row h-48' : 'flex-col min-h-[400px]'}`}>
       <div className={`relative overflow-hidden block ${horizontal ? 'w-48 h-full' : 'h-64'}`}>
-        <Link href={`/listings/${(listing.id || listing._id)}`} className="absolute inset-0 bg-gray-100 transition-colors duration-500 flex items-center justify-center">
+        <Link href={`/listings/${(listing.slug || listing.id || listing._id)}`} className="absolute inset-0 bg-gray-100 transition-colors duration-500 flex items-center justify-center">
            {isImageUrl ? (
              <img 
                src={listing.img} 
@@ -142,7 +142,7 @@ export function ListingCard({
               {listing.type === 'rent' ? `$${listing.price?.toLocaleString()}/mo` : `$${listing.price?.toLocaleString()}`}
             </span>
           </div>
-          <Link href={`/listings/${(listing.id || listing._id)}`} className="block">
+          <Link href={`/listings/${(listing.slug || listing.id || listing._id)}`} className="block">
             <h3 className={`${horizontal ? 'text-base' : 'text-xl'} font-bold text-charcoal mb-2 line-clamp-1 group-hover:text-green transition-colors leading-tight`}>
               {listing.title}
             </h3>

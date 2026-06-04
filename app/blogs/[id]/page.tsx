@@ -5,7 +5,7 @@ import { getSession } from '../../../lib/auth';
 import { getDb } from '../../../lib/db';
 import { Calendar, Clock, ArrowRight, User, Share2 } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
 
@@ -75,6 +75,10 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
   const blog = await getBlog(params.id);
 
   if (!blog) notFound();
+
+  if (blog.slug && String(params.id) !== String(blog.slug)) {
+    redirect(`/blogs/${blog.slug}`);
+  }
 
   // JSON-LD: BlogPosting / Article schema
   const articleSchema = {
