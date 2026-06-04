@@ -11,7 +11,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
 
 async function getBlog(id: string) {
   const db = await getDb();
-  return db.blogs.find((b: any) => b.id === id);
+  return db.blogs.find((b: any) =>
+    String(b.id) === String(id) ||
+    String(b._id) === String(id) ||
+    (b.slug && String(b.slug) === String(id))
+  );
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -26,12 +30,28 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
   const title = `${blog.title} | TinyNest Blog`;
   const description = blog.excerpt || blog.content?.slice(0, 155) || 'Read expert tiny house tips and advice on TinyNest.';
-  const canonical = `${siteUrl}/blogs/${blog.id}`;
+  
+  // Custom canonical URL override, or slug, or fallback to ID
+  const canonical = blog.canonicalUrl || (blog.slug ? `${siteUrl}/blogs/${blog.slug}` : `${siteUrl}/blogs/${blog.id}`);
+
+  // Parse robots meta string into index/follow booleans
+  const robotsSetting = blog.robotsMeta || 'index, follow';
+  const robots = {
+    index: robotsSetting.includes('index') && !robotsSetting.includes('noindex'),
+    follow: robotsSetting.includes('follow') && !robotsSetting.includes('nofollow'),
+  };
+
+  // Optional hreflang
+  const languages = blog.hreflang ? { [blog.hreflang]: canonical } : undefined;
 
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { 
+      canonical,
+      ...(languages && { languages })
+    },
+    robots,
     openGraph: {
       title,
       description,

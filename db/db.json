@@ -24,7 +24,7 @@
       "id": "admin",
       "name": "Admin User",
       "email": "admin@tinynest.com",
-      "password": "adminpassword",
+      "password": "Admin@1234",
       "role": "admin",
       "joined": "Jan 2026",
       "listings": 0,

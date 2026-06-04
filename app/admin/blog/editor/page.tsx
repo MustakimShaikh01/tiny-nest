@@ -19,6 +19,7 @@ function EditorContent() {
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
+  const [slugManual, setSlugManual] = useState(false);
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('Lifestyle');
@@ -47,6 +48,7 @@ function EditorContent() {
             const b = data.blog;
             setTitle(b.title || '');
             setSlug(b.slug || '');
+            setSlugManual(true);
             setExcerpt(b.excerpt || '');
             setContent(b.content || '');
             setCategory(b.category || 'Lifestyle');
@@ -66,10 +68,16 @@ function EditorContent() {
 
   // Auto-generate slug from title
   useEffect(() => {
-    if (!blogId && title) {
-      setSlug(title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'));
+    if (!blogId && title && !slugManual) {
+      setSlug(title
+        .toLowerCase()
+        .replace(/[^a-z0-9-\s]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 60));
     }
-  }, [title, blogId]);
+  }, [title, blogId, slugManual]);
 
   const wordCount = content.split(/\s+/).filter(Boolean).length;
 
@@ -309,15 +317,7 @@ function EditorContent() {
                    <Globe className="w-3 h-3" /> SEO Configuration
                 </h3>
                 <div className="space-y-4">
-                  <div>
-                    <label className="text-[11px] font-bold text-gray-500 block mb-2">Slug</label>
-                    <input
-                      type="text"
-                      value={slug}
-                      onChange={(e) => setSlug(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-xs font-mono text-charcoal outline-none focus:border-green"
-                    />
-                  </div>
+
                   <div>
                     <label className="text-[11px] font-bold text-gray-500 block mb-2">Meta Title</label>
                     <input
@@ -375,13 +375,35 @@ function EditorContent() {
             {!preview ? (
               <div className="space-y-12">
                 {/* Title Input */}
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="The Title Of Your Masterpiece..."
-                  className="w-full text-5xl font-serif font-bold text-charcoal placeholder:text-gray-100 border-none outline-none bg-transparent leading-tight"
-                />
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="The Title Of Your Masterpiece..."
+                    className="w-full text-5xl font-serif font-bold text-charcoal placeholder:text-gray-100 border-none outline-none bg-transparent leading-tight"
+                  />
+                  <div className="flex items-center gap-1 text-sm text-gray-400 mt-2 font-medium">
+                    <span className="font-semibold text-gray-500">Permalink:</span>
+                    <span>/blogs/</span>
+                    <input
+                      type="text"
+                      value={slug}
+                      onChange={(e) => {
+                        const val = e.target.value
+                          .toLowerCase()
+                          .replace(/[^a-z0-9-\s]/g, '')
+                          .replace(/\s+/g, '-')
+                          .replace(/-+/g, '-')
+                          .slice(0, 60);
+                        setSlug(val);
+                        setSlugManual(true);
+                      }}
+                      className="border-b border-dashed border-gray-300 focus:border-green outline-none bg-transparent px-1 font-mono text-xs text-charcoal max-w-md w-full"
+                      placeholder="permalink-slug"
+                    />
+                  </div>
+                </div>
 
                 {/* Excerpt Input */}
                 <textarea

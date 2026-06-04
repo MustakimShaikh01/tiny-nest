@@ -390,16 +390,16 @@ function ListingsTab({ listings, confirmAction }: any) {
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
                     {listing.status === 'pending' && (
-                      <button onClick={() => handleStatusUpdate(listing.id, 'approved')} className="p-2 bg-green-pale text-green rounded-lg hover:bg-green hover:text-white transition-all" title="Approve">
+                      <button onClick={() => handleStatusUpdate(listing.id || listing._id, 'approved')} className="p-2 bg-green-pale text-green rounded-lg hover:bg-green hover:text-white transition-all" title="Approve">
                         <CheckCircle2 className="w-4 h-4" />
                       </button>
                     )}
                     {(listing.status === 'pending' || listing.status === 'approved') && (
-                      <button onClick={() => handleStatusUpdate(listing.id, 'rejected')} className="p-2 bg-amber-50 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all" title="Reject">
+                      <button onClick={() => handleStatusUpdate(listing.id || listing._id, 'rejected')} className="p-2 bg-amber-50 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all" title="Reject">
                         <X className="w-4 h-4" />
                       </button>
                     )}
-                    <button onClick={() => handleDeleteListing(listing.id)} className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete listing completely">
+                    <button onClick={() => handleDeleteListing(listing.id || listing._id)} className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete listing completely">
                       <Trash2 className="w-4 h-4" />
                     </button>
                     <Link href={`/listings/${listing._id || listing.id}`} className="p-2 bg-gray-100 text-gray-400 hover:text-green rounded-lg hover:bg-gray-50 transition-all" title="View Listing">
@@ -913,16 +913,16 @@ function CommunitiesTab({ communities, confirmAction }: any) {
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
                     {community.status === 'pending' && (
-                      <button onClick={() => handleStatusUpdate(community.id, 'approved')} className="p-2 bg-green-pale text-green rounded-lg hover:bg-green hover:text-white transition-all" title="Approve">
+                      <button onClick={() => handleStatusUpdate(community.id || community._id, 'approved')} className="p-2 bg-green-pale text-green rounded-lg hover:bg-green hover:text-white transition-all" title="Approve">
                         <CheckCircle2 className="w-4 h-4" />
                       </button>
                     )}
                     {(community.status === 'pending' || community.status === 'approved') && (
-                      <button onClick={() => handleStatusUpdate(community.id, 'rejected')} className="p-2 bg-amber-50 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all" title="Reject">
+                      <button onClick={() => handleStatusUpdate(community.id || community._id, 'rejected')} className="p-2 bg-amber-50 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all" title="Reject">
                         <X className="w-4 h-4" />
                       </button>
                     )}
-                    <button onClick={() => handleDeleteCommunity(community.id)} className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete community">
+                    <button onClick={() => handleDeleteCommunity(community.id || community._id)} className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete community">
                       <Trash2 className="w-4 h-4" />
                     </button>
                     <Link href={`/community/${community._id || community.id}`} className="p-2 bg-gray-100 text-gray-400 hover:text-green rounded-lg hover:bg-gray-50 transition-all" title="View Community Board">

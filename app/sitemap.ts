@@ -58,21 +58,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Dynamic listing pages
-  const approvedListings = (db.listings || []).filter((l: any) => l.status === 'approved');
-  const listingUrls: MetadataRoute.Sitemap = approvedListings.map((listing: any) => ({
-    url: `${siteUrl}/listings/${listing.id}`,
-    lastModified: listing.updatedAt ? new Date(listing.updatedAt) : new Date(listing.createdAt || Date.now()),
-    changeFrequency: 'weekly' as const,
-    priority: 0.85,
-  }));
+  const indexableListings = (db.listings || []).filter((l: any) => 
+    l.status === 'approved' && (!l.robotsMeta || !l.robotsMeta.includes('noindex'))
+  );
+  
+  const listingUrls: MetadataRoute.Sitemap = indexableListings.map((listing: any) => {
+    const url = listing.canonicalUrl || (listing.slug ? `${siteUrl}/listings/${listing.slug}` : `${siteUrl}/listings/${listing.id}`);
+    return {
+      url,
+      lastModified: listing.updatedAt ? new Date(listing.updatedAt) : new Date(listing.createdAt || Date.now()),
+      changeFrequency: 'weekly' as const,
+      priority: 0.85,
+    };
+  });
 
   // Dynamic blog pages
-  const blogUrls: MetadataRoute.Sitemap = (db.blogs || []).map((blog: any) => ({
-    url: `${siteUrl}/blogs/${blog.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
+  const indexableBlogs = (db.blogs || []).filter((b: any) => 
+    !b.robotsMeta || !b.robotsMeta.includes('noindex')
+  );
+
+  const blogUrls: MetadataRoute.Sitemap = indexableBlogs.map((blog: any) => {
+    const url = blog.canonicalUrl || (blog.slug ? `${siteUrl}/blogs/${blog.slug}` : `${siteUrl}/blogs/${blog.id}`);
+    return {
+      url,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    };
+  });
 
   return [...staticPages, ...listingUrls, ...blogUrls];
 }

@@ -8,10 +8,21 @@ import {
   Layout, Tag, Info, Camera, Send
 } from 'lucide-react';
 
+const sanitizeSlug = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9-\s]/g, '') // remove special characters except spaces/hyphens
+    .trim()
+    .replace(/\s+/g, '-')        // replace spaces with hyphens
+    .replace(/-+/g, '-')         // replace multiple hyphens with single hyphen
+    .slice(0, 60);               // length limit (~60 chars)
+};
+
 export default function ReviewAndSell({ user, onComplete }: { user: any, onComplete: (data: any) => void }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<any>({
     title: '',
+    slugManual: false,
     price: '',
     type: 'sale',
     street: '',
@@ -28,6 +39,11 @@ export default function ReviewAndSell({ user, onComplete }: { user: any, onCompl
     amenities: '',
     metaTitle: '',
     metaDesc: '',
+    slug: '',
+    focusKeyword: '',
+    canonicalUrl: '',
+    robotsMeta: 'index, follow',
+    hreflang: 'en',
     images: []
   });
   const [uploading, setUploading] = useState(false);
@@ -89,10 +105,34 @@ export default function ReviewAndSell({ user, onComplete }: { user: any, onCompl
                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Listing Title</label>
                   <input 
                     value={formData.title} 
-                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                    onChange={e => {
+                      const newTitle = e.target.value;
+                      setFormData((prev: any) => ({
+                        ...prev,
+                        title: newTitle,
+                        slug: prev.slugManual ? prev.slug : sanitizeSlug(newTitle)
+                      }));
+                    }}
                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-green/20 outline-none font-medium transition-all" 
                     placeholder="e.g. Minimalist Zen Cabin"
                   />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">URL Slug (SEO-friendly)</label>
+                  <input 
+                    value={formData.slug} 
+                    onChange={e => {
+                      const sanitized = sanitizeSlug(e.target.value);
+                      setFormData((prev: any) => ({
+                        ...prev,
+                        slug: sanitized,
+                        slugManual: true
+                      }));
+                    }}
+                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-green/20 outline-none font-medium transition-all font-mono text-sm" 
+                    placeholder="e.g. minimalist-zen-cabin"
+                  />
+                  <p className="text-[10px] text-gray-400 ml-1 mt-1">Unique, lowercase, hyphens only. Max 60 characters.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -265,7 +305,7 @@ export default function ReviewAndSell({ user, onComplete }: { user: any, onCompl
             <div className="animate-fade-in space-y-8">
               <div className="pb-6 border-b border-gray-50">
                 <h2 className="text-2xl font-bold text-charcoal">SEO & Optimization</h2>
-                <p className="text-gray-400 text-sm mt-1">Help Google find your listing.</p>
+                <p className="text-gray-400 text-sm mt-1">Help Google find your listing and control how it appears.</p>
               </div>
               <div className="space-y-6 max-w-2xl">
                  <div className="space-y-2">
@@ -275,6 +315,30 @@ export default function ReviewAndSell({ user, onComplete }: { user: any, onCompl
                  <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Meta Description</label>
                     <textarea value={formData.metaDesc} onChange={e => setFormData({ ...formData, metaDesc: e.target.value })} rows={3} className="w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none" placeholder="Catchy summary for search results..." />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Focus Keyword(s)</label>
+                    <input value={formData.focusKeyword} onChange={e => setFormData({ ...formData, focusKeyword: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none" placeholder="e.g. off grid tiny home, colorado cabin" />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Canonical URL (Override)</label>
+                    <input value={formData.canonicalUrl} onChange={e => setFormData({ ...formData, canonicalUrl: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none" placeholder="https://example.com/original-post" />
+                    <p className="text-[10px] text-gray-400 ml-1 mt-1">Only fill if this listing exists elsewhere and you want to point search engines there.</p>
+                 </div>
+                 <div className="grid grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Robots Meta</label>
+                      <select value={formData.robotsMeta} onChange={e => setFormData({ ...formData, robotsMeta: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none">
+                        <option value="index, follow">Index, Follow (Default)</option>
+                        <option value="noindex, follow">NoIndex, Follow</option>
+                        <option value="index, nofollow">Index, NoFollow</option>
+                        <option value="noindex, nofollow">NoIndex, NoFollow</option>
+                      </select>
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Hreflang</label>
+                      <input value={formData.hreflang} onChange={e => setFormData({ ...formData, hreflang: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none" placeholder="en" />
+                   </div>
                  </div>
               </div>
             </div>

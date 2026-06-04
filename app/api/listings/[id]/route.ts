@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const db = await getDb();
-  const listing = db.listings.find((l: any) => l.id === params.id);
+  const listing = db.listings.find((l: any) => String(l.id) === params.id || String(l._id) === params.id || l.slug === params.id);
   if (!listing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
   return NextResponse.json({ listing });
 }
@@ -30,7 +30,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       const models = require('../../../../lib/models');
       const Listing = models.Listing;
       if (Listing) {
-         const updated = await Listing.findByIdAndUpdate(params.id, data, { new: true });
+         const mongoose = require('mongoose');
+         const isObjectId = mongoose.Types.ObjectId.isValid(params.id);
+         const query = isObjectId ? { _id: params.id } : { slug: params.id };
+         const updated = await Listing.findOneAndUpdate(query, data, { new: true });
          if (updated) {
             if (data.status === 'approved') {
                const { SiteNotification } = require('../../../../lib/models');
@@ -38,7 +41,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
                   await SiteNotification.create({
                      title: 'New Home Listed! 🏠',
                      body: `${updated.title} just hit the market in ${updated.location}.`,
-                     url: `/listings/${updated.id}`,
+                     url: `/listings/${updated.slug || updated.id}`,
                      type: 'listing'
                   });
                }
@@ -50,7 +53,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     // Fallback JSON Update
     const db = await getDb();
-    const listingIndex = db.listings.findIndex((l: any) => String(l.id) === params.id || String(l._id) === params.id);
+    const listingIndex = db.listings.findIndex((l: any) => String(l.id) === params.id || String(l._id) === params.id || l.slug === params.id);
     
     if (listingIndex === -1) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
 
@@ -84,14 +87,17 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       const Listing = models.Listing;
       if (Listing) {
         // Soft delete
-        const updated = await Listing.findByIdAndUpdate(params.id, { status: 'deleted' }, { new: true });
+        const mongoose = require('mongoose');
+        const isObjectId = mongoose.Types.ObjectId.isValid(params.id);
+        const query = isObjectId ? { _id: params.id } : { slug: params.id };
+        const updated = await Listing.findOneAndUpdate(query, { status: 'deleted' }, { new: true });
         if (updated) return NextResponse.json({ success: true, softDeleted: true });
       }
     } catch(e) { /* ignore mongo err */ }
 
     // Fallback JSON Update
     const db = await getDb();
-    const listingIndex = db.listings.findIndex((l: any) => String(l.id) === params.id || String(l._id) === params.id);
+    const listingIndex = db.listings.findIndex((l: any) => String(l.id) === params.id || String(l._id) === params.id || l.slug === params.id);
     
     if (listingIndex === -1) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
 

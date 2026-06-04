@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const db: any = await getDb();
 
-  const blog = db.blogs.find((b: any) => b.id === params.id);
+  const blog = db.blogs.find((b: any) => String(b.id) === params.id || String(b._id) === params.id || b.slug === params.id);
 
   if (!blog) {
     return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
@@ -26,7 +26,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const data = await request.json();
     const db: any = await getDb();
 
-    const blogIndex = db.blogs.findIndex((b: any) => b.id === params.id);
+    const blogIndex = db.blogs.findIndex((b: any) => String(b.id) === params.id || String(b._id) === params.id || b.slug === params.id);
 
     if (blogIndex === -1) {
       return NextResponse.json({ error: 'Blog not found' }, { status: 404 });

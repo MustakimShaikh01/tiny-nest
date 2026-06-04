@@ -36,15 +36,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-16 mb-20">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-8" aria-label="TinyNest – Home">
+            <Link href="/" className="flex items-center gap-3 mb-8" aria-label="TinyNest Marketplace – Home">
               <div className="w-10 h-10 bg-green rounded-tiny flex items-center justify-center" aria-hidden="true">
                 <Home className="text-white w-5 h-5" />
               </div>
-              <span className="font-serif text-3xl font-bold text-white tracking-tight">TinyNest</span>
+              <span className="font-serif text-3xl font-bold text-white tracking-tight">TinyNest Marketplace</span>
             </Link>
             <p className="text-white/50 text-base leading-relaxed mb-10 max-w-sm font-medium">
-              Join the movement that&apos;s changing how America lives. Whether you&apos;re buying, selling, or just
-              dreaming, TinyNest is your home.
+              Find tiny houses for sale and rent, affordably and easily on TinyNest Marketplace (tinynestmarketplace.com) - the perfect place to explore modern, comfortable, and budget-friendly tiny living solutions.
             </p>
             {/* Social Links */}
             <nav aria-label="Social media links">
@@ -132,11 +131,7 @@ export default function Footer() {
                 <ul className="space-y-5 font-semibold text-white/60 text-sm">
                   <li className="flex gap-4 group">
                     <Mail className="w-5 h-5 text-green-light flex-shrink-0" />
-                    <a href="mailto:hello@tinynest.com" className="hover:text-white transition-colors">hello@tinynest.com</a>
-                  </li>
-                  <li className="flex gap-4 group">
-                    <Phone className="w-5 h-5 text-green-light flex-shrink-0" />
-                    <a href="tel:+15550008469" className="hover:text-white transition-colors">1 (555) 000-TINY</a>
+                    <a href="mailto:info@tinynestmarketplace.com" className="hover:text-white transition-colors">info@tinynestmarketplace.com</a>
                   </li>
                   <li className="pt-4 border-t border-white/5">
                     <SupportForm />

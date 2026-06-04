@@ -15,12 +15,17 @@ export default async function AdminPage() {
   await connectDB();
   const { User, Listing, Message, Blog, Community, Support } = require('../../lib/models');
   
-  const users = await User.find().lean();
-  const listings = await Listing.find().lean();
-  const messages = await Message.find().lean();
-  const blogs = await Blog.find().lean();
-  const communities = await Community.find().lean();
-  const support = await Support.find().sort({ createdAt: -1 }).lean();
+  const normalize = (arr: any[]) => arr.map((item: any) => ({
+    ...item,
+    id: item.id || item._id?.toString() || item._id,
+  }));
+
+  const users = normalize(await User.find().lean());
+  const listings = normalize(await Listing.find().lean());
+  const messages = normalize(await Message.find().lean());
+  const blogs = normalize(await Blog.find().lean());
+  const communities = normalize(await Community.find().lean());
+  const support = normalize(await Support.find().sort({ createdAt: -1 }).lean());
 
   const pendingListings = listings.filter((l: any) => l.status === 'pending');
 

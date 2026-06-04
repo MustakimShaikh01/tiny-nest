@@ -19,7 +19,8 @@ async function getListing(id: string) {
   const db = await getDb();
   return db.listings.find((l: any) =>
     String(l.id) === String(id) ||
-    String(l._id) === String(id)
+    String(l._id) === String(id) ||
+    (l.slug && String(l.slug) === String(id))
   );
 }
 
@@ -36,12 +37,28 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
   const title = listing.metaTitle || `${listing.title} – ${listing.type === 'sale' ? 'For Sale' : 'For Rent'} in ${listing.location} | TinyNest`;
   const description = listing.metaDesc || `${listing.title} – ${listing.sqft} sqft, ${listing.beds} bed tiny home ${listing.type === 'sale' ? 'for sale' : 'for rent'} in ${listing.location}. $${listing.price.toLocaleString()}${listing.type === 'rent' ? '/mo' : ''}. ${listing.description?.slice(0, 100)}`;
-  const canonical = listing.slug ? `${siteUrl}/listings/${listing.slug}` : `${siteUrl}/listings/${listing.id}`;
+  
+  // Custom canonical URL override, or slug, or fallback to ID
+  const canonical = listing.canonicalUrl || (listing.slug ? `${siteUrl}/listings/${listing.slug}` : `${siteUrl}/listings/${listing.id}`);
+
+  // Parse robots meta string into index/follow booleans
+  const robotsSetting = listing.robotsMeta || 'index, follow';
+  const robots = {
+    index: robotsSetting.includes('index') && !robotsSetting.includes('noindex'),
+    follow: robotsSetting.includes('follow') && !robotsSetting.includes('nofollow'),
+  };
+
+  // Optional hreflang
+  const languages = listing.hreflang ? { [listing.hreflang]: canonical } : undefined;
 
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { 
+      canonical,
+      ...(languages && { languages })
+    },
+    robots,
     openGraph: {
       title,
       description,

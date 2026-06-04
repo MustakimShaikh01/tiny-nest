@@ -374,6 +374,51 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── 11. STATES & CITIES BROWSE ──────────────────────────────── */}
+      <section className="py-20 bg-gray-50/60 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <h2 className="text-xl font-bold text-charcoal tracking-tight mb-2">Tiny Houses for Sale/Rent by State:</h2>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Search by state across the USA</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-3 gap-x-4 mb-16">
+            {[
+              "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", 
+              "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", 
+              "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", 
+              "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", 
+              "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+            ].map(state => (
+              <Link 
+                key={state} 
+                href={`/listings?location=${encodeURIComponent(state)}`}
+                className="text-sm font-semibold text-gray-500 hover:text-green hover:underline transition-all"
+              >
+                {state} Tiny House
+              </Link>
+            ))}
+          </div>
+
+          <div className="mb-12 border-t border-gray-200/60 pt-12">
+            <h2 className="text-xl font-bold text-charcoal tracking-tight mb-2">Tiny Houses for Sale/Rent by City:</h2>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Search in major cities</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-3 gap-x-4">
+            {[
+              "Austin", "Chicago", "Denver", "Houston", "Los Angeles", "Miami", "New York", "Orlando", "Portland", "San Diego", "Seattle", "Tampa"
+            ].map(city => (
+              <Link 
+                key={city} 
+                href={`/listings?location=${encodeURIComponent(city)}`}
+                className="text-sm font-semibold text-gray-500 hover:text-green hover:underline transition-all"
+              >
+                {city} Tiny House
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </main>
   );

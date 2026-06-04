@@ -17,7 +17,7 @@ export function ModerationList({ initialListings }: { initialListings: any[] }) 
         body: JSON.stringify({ status })
       });
       if (res.ok) {
-        setListings(listings.filter((l: any) => l.id !== id));
+        setListings(listings.filter((l: any) => l.id !== id && l._id !== id));
         router.refresh();
       }
     } catch (err) {
@@ -39,11 +39,11 @@ export function ModerationList({ initialListings }: { initialListings: any[] }) 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {listings.map((listing: any) => (
         <ListingCard 
-          key={listing.id} 
+          key={listing.id || listing._id} 
           listing={listing} 
           showActions={true} 
-          onApprove={() => handleStatusUpdate(listing.id, 'approved')}
-          onReject={() => handleStatusUpdate(listing.id, 'rejected')}
+          onApprove={() => handleStatusUpdate(listing.id || listing._id, 'approved')}
+          onReject={() => handleStatusUpdate(listing.id || listing._id, 'rejected')}
         />
       ))}
     </div>
