@@ -8,10 +8,10 @@ import { getSession } from '../lib/auth';
 import { BlogCard } from '../components/BlogCard';
 import PropertyMap from '../components/PropertyMap';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinyliving.com';
 
 export const metadata: Metadata = {
-  title: 'TinyNest – #1 Tiny House Marketplace | Buy, Sell & Rent Tiny Homes',
+  title: 'Tiny Living Market – #1 Tiny House Marketplace | Buy, Sell & Rent Tiny Homes',
   description: 'Browse the largest collection of tiny house listings. Buy, sell, or rent verified sustainable homes, cabins, and container homes across the USA.',
   alternates: { canonical: siteUrl },
 };
@@ -46,7 +46,7 @@ export default async function Home() {
 
   const faqs = [
     { q: 'How do I list my tiny house?', a: 'Simply click "Add Listing", complete the step-by-step form with photos and details, and our team reviews your listing within 24 hours.' },
-    { q: 'Is TinyNest free to use?', a: 'Browsing and contacting sellers is completely free. We charge a small success fee only when your listing gets approved.' },
+    { q: 'Is Tiny Living Market free to use?', a: 'Browsing and contacting sellers is completely free. We charge a small success fee only when your listing gets approved.' },
     { q: 'How do I contact a seller?', a: 'Once you find a listing you love, click "Contact Seller" to send a direct, encrypted message through our secure messenger.' },
     { q: 'Are listings verified?', a: 'Yes. Every listing is reviewed by our moderation team before it goes live. Sellers must provide accurate photos and details.' },
     { q: 'Can I negotiate the price?', a: 'Absolutely. All negotiations happen directly between buyer and seller via our encrypted messaging system.' },
@@ -244,13 +244,13 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
             <span className="text-green-pale font-bold text-xs tracking-widest uppercase mb-3 block">Our Promise</span>
-            <h2 className="text-4xl font-serif font-bold tracking-tight">Why Choose TinyNest?</h2>
+            <h2 className="text-4xl font-serif font-bold tracking-tight">Why Choose Tiny Living Market?</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { icon: '✅', title: 'Verified Listings', desc: 'Every listing is manually reviewed by our team for accuracy and legitimacy.' },
               { icon: '🔒', title: 'Secure Messaging', desc: 'Direct, end-to-end encrypted communication between buyers and sellers.' },
-              { icon: '💸', title: 'No Hidden Fees', desc: 'Completely free to browse, search, and contact sellers on TinyNest.' },
+              { icon: '💸', title: 'No Hidden Fees', desc: 'Completely free to browse, search, and contact sellers on Tiny Living Market.' },
               { icon: '🌿', title: 'Sustainable Focus', desc: 'We champion eco-friendly tiny living and off-grid communities across the US.' },
             ].map((item, i) => (
               <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all">
@@ -309,7 +309,7 @@ export default async function Home() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-end justify-between mb-12">
               <div>
-                <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">TinyNest Journal</span>
+                <span className="text-green font-bold text-xs tracking-widest uppercase mb-3 block">Tiny Living Market Journal</span>
                 <h2 className="text-4xl font-serif font-bold text-charcoal tracking-tight">Latest Articles</h2>
               </div>
               <Link href="/blogs" className="group flex items-center gap-2 text-sm font-bold text-charcoal hover:text-green transition-colors">

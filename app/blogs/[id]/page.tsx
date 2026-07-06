@@ -7,7 +7,7 @@ import { Calendar, Clock, ArrowRight, User, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinyliving.com';
 
 async function getBlog(id: string) {
   const db = await getDb();
@@ -23,13 +23,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
   if (!blog) {
     return {
-      title: 'Article Not Found | TinyNest Blog',
+      title: 'Article Not Found | Tiny Living Market Blog',
       description: 'This article could not be found.',
     };
   }
 
-  const title = `${blog.title} | TinyNest Blog`;
-  const description = blog.excerpt || blog.content?.slice(0, 155) || 'Read expert tiny house tips and advice on TinyNest.';
+  const title = `${blog.title} | Tiny Living Market Blog`;
+  const description = blog.excerpt || blog.content?.slice(0, 155) || 'Read expert tiny house tips and advice on Tiny Living Market.';
   
   // Custom canonical URL override, or slug, or fallback to ID
   const canonical = blog.canonicalUrl || (blog.slug ? `${siteUrl}/blogs/${blog.slug}` : `${siteUrl}/blogs/${blog.id}`);
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       url: canonical,
       type: 'article',
       publishedTime: blog.date,
-      authors: ['TinyNest Editorial Team'],
+      authors: ['Tiny Living Market Editorial Team'],
       section: blog.category,
       tags: [blog.category, 'tiny house', 'tiny home', 'tiny living'],
     },
@@ -90,12 +90,12 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
     dateModified: blog.date,
     author: {
       '@type': 'Organization',
-      name: 'TinyNest Editorial Team',
+      name: 'Tiny Living Market Editorial Team',
       url: siteUrl,
     },
     publisher: {
       '@type': 'Organization',
-      name: 'TinyNest',
+      name: 'Tiny Living Market',
       url: siteUrl,
       logo: {
         '@type': 'ImageObject',
@@ -155,7 +155,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
           <meta itemProp="headline" content={blog.title} />
           <meta itemProp="description" content={blog.excerpt} />
           <meta itemProp="datePublished" content={blog.date} />
-          <meta itemProp="author" content="TinyNest Editorial Team" />
+          <meta itemProp="author" content="Tiny Living Market Editorial Team" />
 
           <header className="mb-14 text-center">
             <Link href="/blogs" className="group inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-green transition-colors mb-10">
@@ -181,7 +181,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
               </div>
               <div className="flex items-center gap-2" itemProp="author" itemScope itemType="https://schema.org/Organization">
                 <User className="w-4 h-4 text-green-light" aria-hidden="true" />
-                <span itemProp="name">TINYNEST TEAM</span>
+                <span itemProp="name">TINYLIVING TEAM</span>
               </div>
             </div>
           </header>
@@ -296,7 +296,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
             <div className="flex items-center gap-6" itemProp="author" itemScope itemType="https://schema.org/Organization">
               <div className="w-16 h-16 rounded-full bg-green text-white flex items-center justify-center font-serif text-2xl font-bold shadow-xl" aria-hidden="true">T</div>
               <div>
-                <div className="font-bold text-charcoal text-lg mb-1" itemProp="name">TinyNest Editorial Team</div>
+                <div className="font-bold text-charcoal text-lg mb-1" itemProp="name">Tiny Living Market Editorial Team</div>
                 <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Expert insights on the tiny living movement</div>
               </div>
             </div>

@@ -28,9 +28,9 @@ export function ListingCard({
   useEffect(() => {
     setMounted(true);
     const id = String(listing.id || listing._id);
-    const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+    const favorites = JSON.parse(localStorage.getItem('tinyliving_favorites') || '[]');
     setIsFavorite(favorites.includes(id));
-    const compare = JSON.parse(localStorage.getItem('tinynest_compare') || '[]');
+    const compare = JSON.parse(localStorage.getItem('tinyliving_compare') || '[]');
     setInCompare(compare.includes(id));
   }, [listing.id, listing._id]);
 
@@ -38,14 +38,14 @@ export function ListingCard({
     e.preventDefault();
     e.stopPropagation();
     const id = String(listing.id || listing._id);
-    const favorites = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+    const favorites = JSON.parse(localStorage.getItem('tinyliving_favorites') || '[]');
     let updated;
     if (isFavorite) {
       updated = favorites.filter((fid: string) => fid !== id);
     } else {
       updated = [...favorites, id];
     }
-    localStorage.setItem('tinynest_favorites', JSON.stringify(updated));
+    localStorage.setItem('tinyliving_favorites', JSON.stringify(updated));
     setIsFavorite(!isFavorite);
   };
 
@@ -63,10 +63,10 @@ export function ListingCard({
     e.preventDefault();
     e.stopPropagation();
     const id = String(listing.id || listing._id);
-    const compare: string[] = JSON.parse(localStorage.getItem('tinynest_compare') || '[]');
+    const compare: string[] = JSON.parse(localStorage.getItem('tinyliving_compare') || '[]');
     if (compare.includes(id)) {
       const updated = compare.filter(i => i !== id);
-      localStorage.setItem('tinynest_compare', JSON.stringify(updated));
+      localStorage.setItem('tinyliving_compare', JSON.stringify(updated));
       setInCompare(false);
     } else {
       if (compare.length >= 3) {
@@ -74,7 +74,7 @@ export function ListingCard({
         return;
       }
       compare.push(id);
-      localStorage.setItem('tinynest_compare', JSON.stringify(compare));
+      localStorage.setItem('tinyliving_compare', JSON.stringify(compare));
       setInCompare(true);
       router.push('/compare');
     }

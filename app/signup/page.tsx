@@ -49,7 +49,7 @@ export default function SignupPage() {
           <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-tiny flex items-center justify-center transition-transform group-hover:scale-105">
             <Home className="text-white w-5 h-5" />
           </div>
-          <span className="font-serif text-3xl font-bold tracking-tight">TinyNest</span>
+          <span className="font-serif text-3xl font-bold tracking-tight">Tiny Living Market</span>
         </Link>
         <div className="relative z-10 mt-auto max-w-sm">
           <h2 className="font-serif text-4xl xl:text-5xl font-bold text-white mb-6 leading-tight">Start Your <span className="text-cream underline">Journey.</span></h2>
@@ -149,7 +149,7 @@ export default function SignupPage() {
               disabled={loading}
               className="w-full btn btn-primary py-4 text-base justify-center shadow-xl hover:-translate-y-1 transition-all"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Join TinyNest <ArrowRight className="w-5 h-5 ml-2" /></>}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Join Tiny Living Market <ArrowRight className="w-5 h-5 ml-2" /></>}
             </button>
           </form>
 

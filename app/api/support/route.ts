@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       // 1. Notify support team
       await sendMail({
         ...baseOpts,
-        from: `"TinyNest Support System" <${smtpUser}>`,
+        from: `"Tiny Living Market Support System" <${smtpUser}>`,
         to: supportEmail,
         subject: `[Support #${supportId}] ${subject}`,
         html: `

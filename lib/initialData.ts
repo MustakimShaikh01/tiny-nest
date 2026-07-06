@@ -23,7 +23,7 @@ export const initialData = {
     {
       "id": "admin",
       "name": "Admin User",
-      "email": "admin@tinynest.com",
+      "email": "admin@tinyliving.com",
       "password": "adminpassword",
       "role": "admin",
       "joined": "Jan 2026",
@@ -142,7 +142,7 @@ export const initialData = {
       "beds": 0,
       "baths": 1,
       "status": "approved",
-      "seller": "admin@tinynest.com",
+      "seller": "admin@tinyliving.com",
       "sellerName": "Admin Nest",
       "img": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=800",
       "images": [
@@ -201,7 +201,7 @@ export const initialData = {
       "readTime": "7 min read",
       "emoji": "📋",
       "content": "Buying a tiny house is an exciting journey toward minimalism and financial freedom. However, before you sign on the dotted line, there are several critical factors to consider. \n\nFirstly, zoning laws are the most significant hurdle. Many cities still have minimum square footage requirements for permanent dwellings. \n\nSecondly, financing is different than a traditional mortgage. Most tiny homes don't qualify for FHA loans, so you might need to look into RV loans or personal credit lines.",
-      "author": "admin@tinynest.com"
+      "author": "admin@tinyliving.com"
     },
     {
       "id": "2",
@@ -212,7 +212,7 @@ export const initialData = {
       "readTime": "9 min read",
       "emoji": "🗺️",
       "content": "Tiny house regulations vary wildly across the US. Some states like Oregon and California have become pioneers in recognizing tiny homes on wheels as legal dwellings. \n\nFlorida is another great option, with several communities specifically designed for tiny living near the coast. \n\nIn this guide, we break down the legal landscape state by state.",
-      "author": "admin@tinynest.com"
+      "author": "admin@tinyliving.com"
     }
   ],
   "messages": [
@@ -230,7 +230,7 @@ export const initialData = {
       "status": "unread"
     },
     {
-      "to": "admin@tinynest.com",
+      "to": "admin@tinyliving.com",
       "toName": "User",
       "listingId": "4",
       "listingTitle": "Urban Compact Loft",
@@ -248,7 +248,7 @@ export const initialData = {
       "listingTitle": "Urban Compact Loft",
       "text": "this is about ur approval",
       "id": "5g744daln",
-      "from": "admin@tinynest.com",
+      "from": "admin@tinyliving.com",
       "fromName": "Admin User",
       "time": "11:21 AM",
       "date": "Today"

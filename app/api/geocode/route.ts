@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
-      { headers: { 'Accept-Language': 'en', 'User-Agent': 'TinyNest/1.0' } }
+      { headers: { 'Accept-Language': 'en', 'User-Agent': 'Tiny Living Market/1.0' } }
     );
     const data = await res.json();
     if (!data?.[0]) return NextResponse.json(null);

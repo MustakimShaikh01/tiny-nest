@@ -14,7 +14,7 @@ const helpArticles = [
     category: 'Getting Started',
     content: `
 **Step 1: Create Your Account**
-Sign up for a free TinyNest account to get started. You'll need a valid email address.
+Sign up for a free Tiny Living Market account to get started. You'll need a valid email address.
 
 **Step 2: Navigate to "List a Home"**
 Click the "List a Home" button in the navigation bar or go to the Seller Portal.
@@ -41,7 +41,7 @@ Your listing will be reviewed by our admin team and published within 24 hours.
   {
     id: 'how-to-make-payments',
     title: 'How to Make Payments',
-    description: 'Everything you need to know about the payment process on TinyNest marketplace.',
+    description: 'Everything you need to know about the payment process on Tiny Living Market marketplace.',
     icon: CreditCard,
     category: 'Payments',
     content: `
@@ -49,7 +49,7 @@ Your listing will be reviewed by our admin team and published within 24 hours.
 Use our built-in messaging system to negotiate directly with sellers.
 
 **Payment Methods**
-TinyNest supports various payment methods to make your transaction smooth and secure:
+Tiny Living Market supports various payment methods to make your transaction smooth and secure:
 - Direct bank transfer
 - Escrow services
 - Financing options
@@ -67,12 +67,12 @@ All transactions are protected by our end-to-end encrypted messaging system. We 
   {
     id: 'how-to-start',
     title: 'How to Start with Us',
-    description: 'Your complete guide to getting started on TinyNest — from account creation to your first interaction.',
+    description: 'Your complete guide to getting started on Tiny Living Market — from account creation to your first interaction.',
     icon: Rocket,
     category: 'Getting Started',
     content: `
-**Welcome to TinyNest!**
-TinyNest is the #1 tiny house marketplace in the USA. Here's how to get started:
+**Welcome to Tiny Living Market!**
+Tiny Living Market is the #1 tiny house marketplace in the USA. Here's how to get started:
 
 **For Buyers**
 1. Browse our listings to find your dream tiny home
@@ -117,7 +117,7 @@ export default async function HelpPage() {
             <HelpCircle className="w-10 h-10 text-green" />
           </div>
           <h1 className="font-serif text-5xl font-bold text-charcoal mb-4 tracking-tight">Help Center</h1>
-          <p className="text-gray-500 font-medium text-lg max-w-2xl mx-auto">Everything you need to know about buying, selling, and renting tiny homes on TinyNest.</p>
+          <p className="text-gray-500 font-medium text-lg max-w-2xl mx-auto">Everything you need to know about buying, selling, and renting tiny homes on Tiny Living Market.</p>
         </div>
 
         {/* Help Articles */}

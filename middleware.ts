@@ -66,7 +66,7 @@ export async function middleware(request: NextRequest) {
     try {
       // Verify JWT signature to ensure it is authentic and hasn't expired.
       // We import jwtVerify dynamically or directly use jose.
-      const secretKey = process.env.JWT_SECRET || 'tinynest-secret-key-donotuseinprod';
+      const secretKey = process.env.JWT_SECRET || 'tinyliving-secret-key-donotuseinprod';
       const key = new TextEncoder().encode(secretKey);
       await jwtVerify(sessionCookie.value, key);
     } catch (e) {

@@ -15,12 +15,12 @@ export default function TermsOfServicePage() {
          <div className="bg-white rounded-tiny border border-gray-100 shadow-tiny p-10 lg:p-16 prose prose-lg max-w-none text-charcoal">
             <h2 className="text-2xl font-bold mb-4">1. Acceptance of Terms</h2>
             <p className="mb-6 font-medium text-gray-600 leading-relaxed">
-               By accessing or using the TinyNest platform, whether acting as a buyer, seller, or casual visitor, you agree to be legally bound by these Terms of Service. If you disagree with any part of these terms, you may not access the service.
+               By accessing or using the Tiny Living Market platform, whether acting as a buyer, seller, or casual visitor, you agree to be legally bound by these Terms of Service. If you disagree with any part of these terms, you may not access the service.
             </p>
 
-            <h2 className="text-2xl font-bold mb-4">2. The TinyNest Platform</h2>
+            <h2 className="text-2xl font-bold mb-4">2. The Tiny Living Market Platform</h2>
             <p className="mb-6 font-medium text-gray-600 leading-relaxed">
-               TinyNest acts as an administrative marketplace to connect people looking for tiny homes with sellers and builders. We do not own, manage, or operate any of the physical properties listed on the site. All transactions occur directly between the buyer and the seller.
+               Tiny Living Market acts as an administrative marketplace to connect people looking for tiny homes with sellers and builders. We do not own, manage, or operate any of the physical properties listed on the site. All transactions occur directly between the buyer and the seller.
                We cannot guarantee the condition or legality of any specific listing.
             </p>
 
@@ -33,13 +33,13 @@ export default function TermsOfServicePage() {
 
             <h2 className="text-2xl font-bold mb-4">4. Indemnification</h2>
             <p className="mb-6 font-medium text-gray-600 leading-relaxed">
-               You agree to defend, indemnify, and hold harmless TinyNest and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs, or debt.
+               You agree to defend, indemnify, and hold harmless Tiny Living Market and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs, or debt.
             </p>
 
             <h2 className="text-2xl font-bold mb-4">5. Contact Configuration</h2>
             <p className="font-medium text-gray-600 leading-relaxed">
                For legal inquiries, please contact: <br/>
-               <a href="mailto:legal@tinynest.com" className="text-green hover:underline">legal@tinynest.com</a>
+               <a href="mailto:legal@tinyliving.com" className="text-green hover:underline">legal@tinyliving.com</a>
             </p>
          </div>
       </div>

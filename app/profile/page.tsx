@@ -41,7 +41,7 @@ export default function ProfilePage() {
       setMyListings(allListings.filter((l: any) => l.seller === data.user.email));
       
       // Load favorites from localStorage and fetch their data
-      const favIds: string[] = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+      const favIds: string[] = JSON.parse(localStorage.getItem('tinyliving_favorites') || '[]');
       const favListings = allListings.filter((l: any) => favIds.includes(String(l.id || l._id)));
       setFavorites(favListings);
       

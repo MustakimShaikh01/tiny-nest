@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage() {
          <div className="bg-white rounded-tiny border border-gray-100 shadow-tiny p-10 lg:p-16 prose prose-lg max-w-none text-charcoal">
             <h2 className="text-2xl font-bold mb-4">1. Information We Collect</h2>
             <p className="mb-6 font-medium text-gray-600 leading-relaxed">
-               At TinyNest, we collect information you provide directly to us when you create an account, list a property, send messages through our platform, or otherwise communicate with us.
+               At Tiny Living Market, we collect information you provide directly to us when you create an account, list a property, send messages through our platform, or otherwise communicate with us.
                The types of information we may collect include your name, email address, postal address, phone number, and any other information you choose to provide.
             </p>
 
@@ -33,13 +33,13 @@ export default function PrivacyPolicyPage() {
 
             <h2 className="text-2xl font-bold mb-4">3. Security</h2>
             <p className="mb-6 font-medium text-gray-600 leading-relaxed">
-               TinyNest takes reasonable measures to help protect information about you from loss, theft, misuse, and unauthorized access, disclosure, alteration, and destruction.
+               Tiny Living Market takes reasonable measures to help protect information about you from loss, theft, misuse, and unauthorized access, disclosure, alteration, and destruction.
             </p>
 
             <h2 className="text-2xl font-bold mb-4">4. Contact Us</h2>
             <p className="font-medium text-gray-600 leading-relaxed">
                If you have any questions about this Privacy Policy, please contact us at: <br/>
-               <a href="mailto:privacy@tinynest.com" className="text-green hover:underline">privacy@tinynest.com</a>
+               <a href="mailto:privacy@tinyliving.com" className="text-green hover:underline">privacy@tinyliving.com</a>
             </p>
          </div>
       </div>

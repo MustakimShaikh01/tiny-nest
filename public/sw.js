@@ -1,4 +1,4 @@
-// TinyNest Service Worker for Push Notifications
+// Tiny Living Market Service Worker for Push Notifications
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -11,14 +11,14 @@ self.addEventListener('push', (event) => {
   if (!event.data) return;
   const data = event.data.json();
   const options = {
-    body: data.body || 'New update from TinyNest',
+    body: data.body || 'New update from Tiny Living Market',
     icon: '/favicon.ico',
     badge: '/favicon.ico',
     vibrate: [100, 50, 100],
     data: { url: data.url || '/' },
   };
   event.waitUntil(
-    self.registration.showNotification(data.title || 'TinyNest', options)
+    self.registration.showNotification(data.title || 'Tiny Living Market', options)
   );
 });
 

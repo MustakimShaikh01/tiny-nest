@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         try {
             const imageUrl = await new Promise<string>((resolve, reject) => {
                 cloudinary.uploader.upload_stream(
-                    { folder: 'tinynest-marketplace' }, 
+                    { folder: 'tinyliving-market' }, 
                     (error: any, result: any) => {
                         if (error || !result) reject(error);
                         else resolve(result.secure_url);

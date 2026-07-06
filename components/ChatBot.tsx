@@ -13,7 +13,7 @@ type Message = {
 };
 
 const FAQ_DATABASE: Record<string, string> = {
-  'what is tinynest?': 'TinyNest is the premier marketplace for buying, selling, and renting tiny homes across the country.',
+  'what is tinyliving?': 'Tiny Living Market is the premier marketplace for buying, selling, and renting tiny homes across the country.',
   'how do i contact a seller?': 'Navigate to any listing and click the <b>Message Seller</b> button to start a secure, end-to-end encrypted chat.',
   'what about zoning laws?': 'Zoning varies drastically by state and county. We recommend downloading our <a href="https://drive.google.com/file/d/1qr_BeiaLUEn0xj-29EeHZRACqODZ73a_/view" target="_blank" class="text-green underline">Zoning Laws 2026 guide</a> from our resources section.',
   'do you offer financing?': 'We do not provide direct financing, but many of our certified sellers accept third-party tiny home loans. Check our <a href="https://drive.google.com/file/d/1SWqzToHyludoVLrV2U90fCo17Axj9gRk/view" target="_blank" class="text-green underline">Buyer\'s Checklist</a> to prepare!',
@@ -24,7 +24,7 @@ const FAQ_DATABASE: Record<string, string> = {
 };
 
 const SUGGESTIONS = [
-  'What is TinyNest?',
+  'What is Tiny Living Market?',
   'How do I contact a seller?',
   'What about zoning laws?',
   'Do you offer financing?'
@@ -39,7 +39,7 @@ export function ChatBot() {
     {
       id: '1',
       sender: 'bot',
-      text: '👋 Hi there! Welcome to TinyNest. How can I help you find your dream tiny home today?'
+      text: '👋 Hi there! Welcome to Tiny Living Market. How can I help you find your dream tiny home today?'
     }
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -123,7 +123,7 @@ export function ChatBot() {
               <Bot className="w-5 h-5 text-green-400" />
             </div>
             <div>
-               <h3 className="font-bold text-sm">TinyNest Guide</h3>
+               <h3 className="font-bold text-sm">Tiny Living Market Guide</h3>
                <div className="flex items-center gap-1.5 text-[11px] text-green-400">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Online
                </div>

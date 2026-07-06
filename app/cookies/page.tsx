@@ -15,7 +15,7 @@ export default function CookieSettingsPage() {
          <div className="bg-white rounded-tiny border border-gray-100 shadow-tiny p-10 lg:p-16 text-charcoal">
             <h2 className="text-2xl font-bold mb-4">Overview of Our Cookies</h2>
             <p className="mb-10 font-medium text-gray-600 leading-relaxed">
-               TinyNest relies on a few essential and non-essential cookies to enhance your browsing experience, provide secure logins, and understand how our website is utilized securely.
+               Tiny Living Market relies on a few essential and non-essential cookies to enhance your browsing experience, provide secure logins, and understand how our website is utilized securely.
                Below you can review and configure these policies.
             </p>
 

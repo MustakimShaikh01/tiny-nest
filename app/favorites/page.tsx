@@ -28,7 +28,7 @@ export default function FavoritesPage() {
         const allListings = listData.listings || [];
 
         // Load favorites from localStorage
-        const favIds: string[] = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+        const favIds: string[] = JSON.parse(localStorage.getItem('tinyliving_favorites') || '[]');
         
         // Filter based on _id or id
         const favListings = allListings.filter((l: any) => 
@@ -63,14 +63,14 @@ export default function FavoritesPage() {
   }, []);
 
   const toggleFavorite = (id: string) => {
-    const favIds: string[] = JSON.parse(localStorage.getItem('tinynest_favorites') || '[]');
+    const favIds: string[] = JSON.parse(localStorage.getItem('tinyliving_favorites') || '[]');
     let newFavs;
     if (favIds.includes(id)) {
       newFavs = favIds.filter(f => f !== id);
     } else {
       newFavs = [...favIds, id];
     }
-    localStorage.setItem('tinynest_favorites', JSON.stringify(newFavs));
+    localStorage.setItem('tinyliving_favorites', JSON.stringify(newFavs));
     // Trigger re-render of list
     setFavorites(prev => prev.filter(l => (l._id || l.id) !== id));
   };

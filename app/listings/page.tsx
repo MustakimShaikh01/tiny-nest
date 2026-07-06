@@ -5,10 +5,10 @@ import { getSession } from '../../lib/auth';
 import { getDb } from '../../lib/db';
 import ListingMapView from '../../components/ListingMapView';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinyliving.com';
 
 export const metadata: Metadata = {
-  title: 'Tiny Houses for Sale & Rent – Browse 12,400+ Listings | TinyNest',
+  title: 'Tiny Houses for Sale & Rent – Browse 12,400+ Listings | Tiny Living Market',
   description: 'Browse 12,400+ verified tiny house listings across the USA. Filter by price, location, and type.',
   alternates: { canonical: `${siteUrl}/listings` },
 };

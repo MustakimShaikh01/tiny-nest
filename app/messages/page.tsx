@@ -547,7 +547,7 @@ function MessagesContent() {
                 {/* Security Message */}
                 <div className="flex justify-center mb-6">
                     <span className="bg-[#ffeecd] text-charcoal/70 text-[12.5px] px-4 py-1.5 rounded-lg text-center shadow-sm max-w-md">
-                        🔒 Messages are end-to-end encrypted. No one outside of this chat, not even TinyNest, can read to them.
+                        🔒 Messages are end-to-end encrypted. No one outside of this chat, not even Tiny Living Market, can read to them.
                     </span>
                 </div>
 
@@ -648,7 +648,7 @@ function MessagesContent() {
                   </div>
               </div>
               <h2 className="text-[32px] font-light text-[#41525d] mb-4">
-                TinyNest for Web
+                Tiny Living Market for Web
               </h2>
               <p className="text-[14px] text-[#667781] max-w-md leading-relaxed mb-8">
                 Send and receive messages privately with buyers and sellers. <br/>

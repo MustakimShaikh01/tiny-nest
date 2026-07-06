@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getDb } from '../lib/db';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinyliving.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const db = await getDb();

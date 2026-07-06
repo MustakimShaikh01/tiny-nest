@@ -85,7 +85,7 @@ export default function NewsletterPopup() {
                     <CheckCircle2 className="w-8 h-8 text-green" />
                  </div>
                  <h2 className="text-2xl font-serif font-bold text-charcoal mb-2">You're on the list!</h2>
-                 <p className="text-gray-400 font-medium">Welcome to the TinyNest family. <br/>Check your inbox for something special.</p>
+                 <p className="text-gray-400 font-medium">Welcome to the Tiny Living Market family. <br/>Check your inbox for something special.</p>
               </div>
             ) : (
               <>

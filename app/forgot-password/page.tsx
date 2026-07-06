@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
           <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-tiny flex items-center justify-center transition-transform group-hover:scale-105">
             <Home className="text-white w-5 h-5" />
           </div>
-          <span className="font-serif text-3xl font-bold tracking-tight">TinyNest</span>
+          <span className="font-serif text-3xl font-bold tracking-tight">Tiny Living Market</span>
         </Link>
         <div className="relative z-10 mt-auto max-w-sm">
           <h2 className="font-serif text-5xl font-bold text-white mb-6 leading-tight">Reset <span className="text-gray-400">Security.</span></h2>
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
               <div className="w-9 h-9 bg-charcoal rounded-tiny flex items-center justify-center">
                 <Home className="text-white w-5 h-5" />
               </div>
-              <span className="font-serif text-2xl font-bold text-charcoal tracking-tight">TinyNest</span>
+              <span className="font-serif text-2xl font-bold text-charcoal tracking-tight">Tiny Living Market</span>
             </Link>
           </div>
 

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: tiny-nest-marketplace
+    name: tiny-living-market
     runtime: node
     buildCommand: npm install && npm run build
     startCommand: npm start
@@ -10,9 +10,9 @@ services:
       - key: NEXT_PUBLIC_BASE_URL
         fromContext: git_url
     disks:
-      - name: tinynest-uploads
+      - name: tinyliving-uploads
         mountPath: /opt/render/project/src/public/uploads
         sizeGB: 1
-      - name: tinynest-db
+      - name: tinyliving-db
         mountPath: /opt/render/project/src/storage/db
         sizeGB: 1

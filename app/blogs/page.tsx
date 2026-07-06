@@ -7,10 +7,10 @@ import { getDb } from '../../lib/db';
 import { Plus, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinyliving.com';
 
 export const metadata: Metadata = {
-  title: 'Tiny House Blog – Tips, Guides & Inspiration | TinyNest Journal',
+  title: 'Tiny House Blog – Tips, Guides & Inspiration | Tiny Living Market Journal',
   description:
     'Expert tiny house tips, buying guides, zoning laws, design inspiration, and community stories. Your go-to resource for tiny living in 2026.',
   keywords: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: `${siteUrl}/blogs` },
   openGraph: {
-    title: 'Tiny House Blog | TinyNest Journal',
+    title: 'Tiny House Blog | Tiny Living Market Journal',
     description: 'Expert insights, buying guides, and inspiration for the tiny house lifestyle.',
     url: `${siteUrl}/blogs`,
     type: 'website',
@@ -48,7 +48,7 @@ export default async function BlogsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
               <div className="max-w-xl">
-                 <h1 className="font-serif text-5xl font-bold text-charcoal mb-4 tracking-tight">TinyNest Journal</h1>
+                 <h1 className="font-serif text-5xl font-bold text-charcoal mb-4 tracking-tight">Tiny Living Market Journal</h1>
                  <p className="text-gray-500 font-medium text-lg leading-relaxed">
                    Expert insights, community stories, and design inspiration for the tiny house lifestyle.
                  </p>

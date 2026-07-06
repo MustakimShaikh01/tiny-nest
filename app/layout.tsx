@@ -18,16 +18,16 @@ const playfairDisplay = Playfair_Display({
   display: 'swap',
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com'
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinyliving.com'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'TinyNest – Tiny Houses for Sale & Rent | #1 Tiny Home Marketplace USA',
-    template: '%s | TinyNest – Tiny House Marketplace',
+    default: 'Tiny Living Market – Tiny Houses for Sale & Rent | #1 Tiny Home Marketplace USA',
+    template: '%s | Tiny Living Market – Tiny House Marketplace',
   },
   description:
-    'TinyNest is the #1 tiny house marketplace in the USA. Buy, sell, and rent tiny homes, cabins on wheels, and container homes. Browse 12,400+ verified tiny house listings.',
+    'Tiny Living Market is the #1 tiny house marketplace in the USA. Buy, sell, and rent tiny homes, cabins on wheels, and container homes. Browse 12,400+ verified tiny house listings.',
   keywords: [
     'tiny houses for sale',
     'tiny home listings',
@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     'tiny house zoning laws',
     'tiny house financing',
   ],
-  authors: [{ name: 'TinyNest Inc.', url: siteUrl }],
-  creator: 'TinyNest Inc.',
-  publisher: 'TinyNest Inc.',
+  authors: [{ name: 'Tiny Living Market Inc.', url: siteUrl }],
+  creator: 'Tiny Living Market Inc.',
+  publisher: 'Tiny Living Market Inc.',
   category: 'Real Estate',
   robots: {
     index: true,
@@ -64,26 +64,26 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: siteUrl,
-    siteName: 'TinyNest',
-    title: 'TinyNest – Tiny Houses for Sale & Rent | #1 Tiny Home Marketplace USA',
+    siteName: 'Tiny Living Market',
+    title: 'Tiny Living Market – Tiny Houses for Sale & Rent | #1 Tiny Home Marketplace USA',
     description:
-      'Browse 12,400+ tiny house listings across America. Buy, sell, or rent verified tiny homes, cabins, and container homes at TinyNest.',
+      'Browse 12,400+ tiny house listings across America. Buy, sell, or rent verified tiny homes, cabins, and container homes at Tiny Living Market.',
     images: [
       {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'TinyNest – Tiny House Marketplace',
+        alt: 'Tiny Living Market – Tiny House Marketplace',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@tinynest',
-    creator: '@tinynest',
-    title: 'TinyNest – Tiny Houses for Sale & Rent | USA Marketplace',
+    site: '@tinyliving',
+    creator: '@tinyliving',
+    title: 'Tiny Living Market – Tiny Houses for Sale & Rent | USA Marketplace',
     description:
-      'Browse 12,400+ verified tiny homes across America. Buy, sell, and rent tiny houses at TinyNest.',
+      'Browse 12,400+ verified tiny homes across America. Buy, sell, and rent tiny houses at Tiny Living Market.',
     images: [`${siteUrl}/og-image.png`],
   },
   alternates: {

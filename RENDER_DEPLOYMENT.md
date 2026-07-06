@@ -1,4 +1,4 @@
-# 🚀 Deploying TinyNest to Render
+# 🚀 Deploying Tiny Living Market to Render
 
 This marketplace is configured for high-performance deployment on Render using **Persistent Disks** to ensure your data and images are never lost.
 
@@ -26,21 +26,21 @@ If you prefer not to use Blueprints, follow these steps:
 ### B. Add Environment Variables
 Add these in the **Environment** tab:
 - `NODE_ENV`: `production`
-- `NEXT_PUBLIC_BASE_URL`: Your actual URL (e.g., `https://tiny-nest.onrender.com`)
+- `NEXT_PUBLIC_BASE_URL`: Your actual URL (e.g., `https://tiny-living.onrender.com`)
 
 ### C. Add Persistent Disks
 Add these in the **Disks** tab:
-1. **Name**: `tinynest-uploads`
+1. **Name**: `tinyliving-uploads`
    - **Mount Path**: `/opt/render/project/src/public/uploads`
    - **Size**: 1GB (default)
-2. **Name**: `tinynest-db`
+2. **Name**: `tinyliving-db`
    - **Mount Path**: `/opt/render/project/src/storage/db`
    - **Size**: 1GB (default)
 
 ## 4. Important Notes
 - **Cold Starts**: On the Free plan, Render spins down the server after inactivity. Initial loads may take ~50 seconds.
-- **Image Persistence**: Thanks to the `tinynest-uploads` disk, your property images persist even after code updates or server restarts.
-- **Data Persistence**: Your `db.json` is safely stored in the `tinynest-db` disk.
+- **Image Persistence**: Thanks to the `tinyliving-uploads` disk, your property images persist even after code updates or server restarts.
+- **Data Persistence**: Your `db.json` is safely stored in the `tinyliving-db` disk.
 
 ---
 **Build Success Tips:**

@@ -13,7 +13,7 @@ import PropertyMap from '../../../components/PropertyMap';
 import { ListingActions } from '../../../components/ListingActions';
 import { ListingCard } from '../../../components/ListingCard';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinynest.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tinyliving.com';
 
 async function getListing(id: string) {
   const db = await getDb();
@@ -30,12 +30,12 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
   if (!listing) {
     return {
-      title: 'Listing Not Found | TinyNest',
+      title: 'Listing Not Found | Tiny Living Market',
       description: 'This listing could not be found.',
     };
   }
 
-  const title = listing.metaTitle || `${listing.title} – ${listing.type === 'sale' ? 'For Sale' : 'For Rent'} in ${listing.location} | TinyNest`;
+  const title = listing.metaTitle || `${listing.title} – ${listing.type === 'sale' ? 'For Sale' : 'For Rent'} in ${listing.location} | Tiny Living Market`;
   const description = listing.metaDesc || `${listing.title} – ${listing.sqft} sqft, ${listing.beds} bed tiny home ${listing.type === 'sale' ? 'for sale' : 'for rent'} in ${listing.location}. $${listing.price.toLocaleString()}${listing.type === 'rent' ? '/mo' : ''}. ${listing.description?.slice(0, 100)}`;
   
   // Custom canonical URL override, or slug, or fallback to ID

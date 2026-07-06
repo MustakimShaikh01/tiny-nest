@@ -36,30 +36,30 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-16 mb-20">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-8" aria-label="TinyNest Marketplace – Home">
+            <Link href="/" className="flex items-center gap-3 mb-8" aria-label="Tiny Living Market – Home">
               <div className="w-10 h-10 bg-green rounded-tiny flex items-center justify-center" aria-hidden="true">
                 <Home className="text-white w-5 h-5" />
               </div>
-              <span className="font-serif text-3xl font-bold text-white tracking-tight">TinyNest Marketplace</span>
+              <span className="font-serif text-3xl font-bold text-white tracking-tight">Tiny Living Market</span>
             </Link>
             <p className="text-white/50 text-base leading-relaxed mb-10 max-w-sm font-medium">
-              Find tiny houses for sale and rent, affordably and easily on TinyNest Marketplace (tinynestmarketplace.com) - the perfect place to explore modern, comfortable, and budget-friendly tiny living solutions.
+              Find tiny houses for sale and rent, affordably and easily on Tiny Living Market (tinylivingmarket.com) - the perfect place to explore modern, comfortable, and budget-friendly tiny living solutions.
             </p>
             {/* Social Links */}
             <nav aria-label="Social media links">
               <div className="flex gap-4">
                 {[
-                  { icon: Facebook, href: 'https://facebook.com/tinynest', label: 'Facebook' },
-                  { icon: Instagram, href: 'https://instagram.com/tinynest', label: 'Instagram' },
-                  { icon: Twitter, href: 'https://twitter.com/tinynest', label: 'Twitter' },
-                  { icon: Youtube, href: 'https://youtube.com/tinynest', label: 'YouTube' },
+                  { icon: Facebook, href: 'https://facebook.com/tinyliving', label: 'Facebook' },
+                  { icon: Instagram, href: 'https://instagram.com/tinyliving', label: 'Instagram' },
+                  { icon: Twitter, href: 'https://twitter.com/tinyliving', label: 'Twitter' },
+                  { icon: Youtube, href: 'https://youtube.com/tinyliving', label: 'YouTube' },
                 ].map((social) => (
                   <a
                     key={social.label}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`TinyNest on ${social.label}`}
+                    aria-label={`Tiny Living Market on ${social.label}`}
                     className="w-10 h-10 rounded-tiny-sm border border-white/10 flex items-center justify-center hover:bg-green hover:border-green hover:text-white transition-all duration-300 text-white/40"
                   >
                     <social.icon className="w-5 h-5" />
@@ -131,7 +131,7 @@ export default function Footer() {
                 <ul className="space-y-5 font-semibold text-white/60 text-sm">
                   <li className="flex gap-4 group">
                     <Mail className="w-5 h-5 text-green-light flex-shrink-0" />
-                    <a href="mailto:info@tinynestmarketplace.com" className="hover:text-white transition-colors">info@tinynestmarketplace.com</a>
+                    <a href="mailto:info@tinylivingmarket.com" className="hover:text-white transition-colors">info@tinylivingmarket.com</a>
                   </li>
                   <li className="pt-4 border-t border-white/5">
                     <SupportForm />
@@ -144,7 +144,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 font-bold text-xs uppercase tracking-widest text-white/30">
-          <p>© {new Date().getFullYear()} TINYNEST INC. ALL RIGHTS RESERVED.</p>
+          <p>© {new Date().getFullYear()} TINYLIVING INC. ALL RIGHTS RESERVED.</p>
           <nav aria-label="Legal links">
             <div className="flex gap-10">
               {[

@@ -17,7 +17,7 @@ export default function ComparePage() {
     fetch('/api/auth/me').then(r => r.json()).then(d => setUser(d.user));
     
     // Load compare IDs from localStorage
-    const ids: string[] = JSON.parse(localStorage.getItem('tinynest_compare') || '[]');
+    const ids: string[] = JSON.parse(localStorage.getItem('tinyliving_compare') || '[]');
     setCompareIds(ids);
     
     if (ids.length > 0) {
@@ -34,9 +34,9 @@ export default function ComparePage() {
   }, []);
 
   const removeFromCompare = (id: string) => {
-    const ids: string[] = JSON.parse(localStorage.getItem('tinynest_compare') || '[]');
+    const ids: string[] = JSON.parse(localStorage.getItem('tinyliving_compare') || '[]');
     const updated = ids.filter((i) => i !== id);
-    localStorage.setItem('tinynest_compare', JSON.stringify(updated));
+    localStorage.setItem('tinyliving_compare', JSON.stringify(updated));
     setListings(prev => prev.filter(l => (l.id || l._id) !== id));
     setCompareIds(updated);
   };

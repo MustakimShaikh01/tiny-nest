@@ -64,7 +64,7 @@ export default function Nav({ user }: { user: any }) {
           <div className="w-9 h-9 bg-green rounded-tiny flex items-center justify-center transition-transform group-hover:scale-105">
             <Home className="text-white w-5 h-5" />
           </div>
-          <span className="font-serif text-2xl font-bold text-green tracking-tight">TinyNest Marketplace</span>
+          <span className="font-serif text-2xl font-bold text-green tracking-tight">Tiny Living Market</span>
         </Link>
 
         {/* Desktop Links */}
